@@ -8,12 +8,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuthResponseDto {
-    private String token;
+    private String accessToken;
+    private String refreshToken;
     private String tokenType = "Bearer";
     private UserResponseDto user;
 
-    public AuthResponseDto(String token, UserResponseDto user) {
-        this.token = token;
+    public AuthResponseDto(String token, String refreshToken, UserResponseDto user) {
+        this.accessToken = token;
         this.user = user;
+        this.refreshToken = refreshToken;
     }
 }

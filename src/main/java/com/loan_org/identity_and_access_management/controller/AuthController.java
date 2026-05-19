@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("${info.base_url}")
 public class AuthController {
 
     @Autowired
@@ -33,7 +33,8 @@ public class AuthController {
                                                         @RequestParam("password") String password) {
         UserResponseDto response = authService.loginWithEmail(email, password);
         String token = jwtService.generateToken(response);
-        return new ResponseEntity<>(new AuthResponseDto(token, response), HttpStatus.OK);
+        String newAccessToken = jwtService.createRefreshToken(email);
+        return new ResponseEntity<>(new AuthResponseDto(token, newAccessToken, response), HttpStatus.OK);
     }
 
     @GetMapping("/userByUsername")
@@ -41,6 +42,7 @@ public class AuthController {
                                                            @RequestParam("password") String password) {
         UserResponseDto response = authService.loginWithUsername(username, password);
         String token = jwtService.generateToken(response);
-        return new ResponseEntity<>(new AuthResponseDto(token, response), HttpStatus.OK);
+        String newAccessToken = jwtService.createRefreshToken(username);
+        return new ResponseEntity<>(new AuthResponseDto(token, newAccessToken, response), HttpStatus.OK);
     }
 }

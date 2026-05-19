@@ -5,3 +5,6 @@ jwt:
   metadata:
     issuer: ${spring.application.name}
     expiration_in_minutes: 30
+
+  refresh_token:
+    expiration_in_days: 7

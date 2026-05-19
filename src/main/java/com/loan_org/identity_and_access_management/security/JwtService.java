@@ -1,17 +1,23 @@
 package com.loan_org.identity_and_access_management.security;
 
+import com.loan_org.identity_and_access_management.dao.RefreshTokenDao;
 import com.loan_org.identity_and_access_management.dto.UserResponseDto;
+import com.loan_org.identity_and_access_management.entity.RefreshTokenDocument;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class JwtService {
@@ -24,6 +30,12 @@ public class JwtService {
 
     @Value("${jwt.metadata.expiration_in_minutes}")
     private long jwtExpirationInMinutes;
+
+    @Value("${jwt.refresh_token.expiration_in_days}")
+    private long refreshTokenExpirationInDays;
+
+    @Autowired
+    private RefreshTokenDao refreshTokenDao;
 
     private SecretKey signingKey;
     private static final long MINUTES_TO_MILLISECONDS = 60000;
@@ -46,5 +58,20 @@ public class JwtService {
                 .expiration(new Date(System.currentTimeMillis() + jwtExpirationInMinutes * MINUTES_TO_MILLISECONDS))
                 .signWith(signingKey)
                 .compact();
+    }
+
+    public String createRefreshToken(String email) {
+        refreshTokenDao.deleteByUserEmail(email);
+        String tokenValue = UUID.randomUUID().toString() + "-" + UUID.randomUUID().toString();
+        Instant expiry = Instant.now().plus(refreshTokenExpirationInDays, ChronoUnit.DAYS);
+
+        RefreshTokenDocument doc = new RefreshTokenDocument();
+        doc.setToken(tokenValue);
+        doc.setUserEmail(email);
+        doc.setExpiryDate(expiry);
+        doc.setExpireAt(expiry);
+
+        refreshTokenDao.save(doc);
+        return tokenValue;
     }
 }
