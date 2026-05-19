@@ -1,0 +1,3 @@
+spring:
+  application:
+    name: identity_and_access_management
