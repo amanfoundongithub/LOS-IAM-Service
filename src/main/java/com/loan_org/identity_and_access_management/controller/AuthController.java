@@ -1,0 +1,39 @@
+package com.loan_org.identity_and_access_management.controller;
+
+import com.loan_org.identity_and_access_management.dto.UserRegistrationDto;
+import com.loan_org.identity_and_access_management.dto.UserResponseDto;
+import com.loan_org.identity_and_access_management.entity.UserDocument;
+import com.loan_org.identity_and_access_management.service.AuthService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/v1/auth")
+public class AuthController {
+
+    @Autowired
+    private AuthService authService;
+
+    @PostMapping("/register")
+    public ResponseEntity<UserDocument> createRoute(@Valid @RequestBody UserRegistrationDto registration) {
+        UserDocument document = authService.register(registration);
+        return new ResponseEntity<>(document, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/userByEmail")
+    public ResponseEntity<UserResponseDto> loginByEmail(@RequestParam("email") String email,
+                                                        @RequestParam("password") String password) {
+        UserResponseDto response = authService.loginWithEmail(email, password);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/userByUsername")
+    public ResponseEntity<UserResponseDto> loginByUsername(@RequestParam("username") String username,
+                                                           @RequestParam("password") String password) {
+        UserResponseDto response = authService.loginWithUsername(username, password);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+}
