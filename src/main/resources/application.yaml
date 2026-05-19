@@ -1,3 +1,4 @@
 spring:
-  application:
-    name: identity_and_access_management
+  config:
+    import:
+      - application-config.yaml
