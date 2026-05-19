@@ -1,8 +1,10 @@
 package com.loan_org.identity_and_access_management.controller;
 
+import com.loan_org.identity_and_access_management.dto.AuthResponseDto;
 import com.loan_org.identity_and_access_management.dto.UserRegistrationDto;
 import com.loan_org.identity_and_access_management.dto.UserResponseDto;
 import com.loan_org.identity_and_access_management.entity.UserDocument;
+import com.loan_org.identity_and_access_management.security.JwtService;
 import com.loan_org.identity_and_access_management.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,9 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
+    @Autowired
+    private JwtService jwtService;
+
     @PostMapping("/register")
     public ResponseEntity<UserDocument> createRoute(@Valid @RequestBody UserRegistrationDto registration) {
         UserDocument document = authService.register(registration);
@@ -24,16 +29,18 @@ public class AuthController {
     }
 
     @GetMapping("/userByEmail")
-    public ResponseEntity<UserResponseDto> loginByEmail(@RequestParam("email") String email,
+    public ResponseEntity<AuthResponseDto> loginByEmail(@RequestParam("email") String email,
                                                         @RequestParam("password") String password) {
         UserResponseDto response = authService.loginWithEmail(email, password);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        String token = jwtService.generateToken(response);
+        return new ResponseEntity<>(new AuthResponseDto(token, response), HttpStatus.OK);
     }
 
     @GetMapping("/userByUsername")
-    public ResponseEntity<UserResponseDto> loginByUsername(@RequestParam("username") String username,
+    public ResponseEntity<AuthResponseDto> loginByUsername(@RequestParam("username") String username,
                                                            @RequestParam("password") String password) {
         UserResponseDto response = authService.loginWithUsername(username, password);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        String token = jwtService.generateToken(response);
+        return new ResponseEntity<>(new AuthResponseDto(token, response), HttpStatus.OK);
     }
 }
