@@ -2,6 +2,7 @@ package com.loan_org.identity_and_access_management.config;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,6 +22,9 @@ public class SecurityConfig {
     @Autowired
     private CorsProperties corsProperties;
 
+    @Value("${info.base_url}")
+    private String authBasePath;
+
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -39,7 +43,7 @@ public class SecurityConfig {
                             res.getWriter().write("{ \"error\": \"Unauthorized\", \"message\": \"Full authentication is required.\" }");
                         }))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers(authBasePath + "/**").permitAll()
                         .anyRequest().authenticated()
                 );
 

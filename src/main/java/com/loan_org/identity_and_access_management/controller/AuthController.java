@@ -1,11 +1,13 @@
 package com.loan_org.identity_and_access_management.controller;
 
 import com.loan_org.identity_and_access_management.dto.AuthResponseDto;
+import com.loan_org.identity_and_access_management.dto.RefreshTokenRequestDto;
 import com.loan_org.identity_and_access_management.dto.UserRegistrationDto;
 import com.loan_org.identity_and_access_management.dto.UserResponseDto;
 import com.loan_org.identity_and_access_management.entity.UserDocument;
 import com.loan_org.identity_and_access_management.security.JwtService;
 import com.loan_org.identity_and_access_management.service.AuthService;
+import com.loan_org.identity_and_access_management.service.RefreshTokenService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,9 @@ public class AuthController {
 
     @Autowired
     private JwtService jwtService;
+
+    @Autowired
+    private RefreshTokenService refreshTokenService;
 
     @PostMapping("/register")
     public ResponseEntity<UserDocument> createRoute(@Valid @RequestBody UserRegistrationDto registration) {
@@ -44,5 +49,10 @@ public class AuthController {
         String token = jwtService.generateToken(response);
         String newAccessToken = jwtService.createRefreshToken(username);
         return new ResponseEntity<>(new AuthResponseDto(token, newAccessToken, response), HttpStatus.OK);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<String> refreshToken(@Valid @RequestBody RefreshTokenRequestDto request) {
+        return new ResponseEntity<>(refreshTokenService.refreshToken(request), HttpStatus.CREATED);
     }
 }
