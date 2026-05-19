@@ -11,11 +11,13 @@ import com.loan_org.identity_and_access_management.exception.AccountAlreadyExist
 import com.loan_org.identity_and_access_management.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
+@Service
 public class AuthServiceImpl implements AuthService {
 
     @Autowired
