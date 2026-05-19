@@ -19,6 +19,7 @@ public class UserDocument {
     @Id
     private String id;
     private String email;
+    private String username;
     private UserStatus status;
 
     // Security block stores secured data
