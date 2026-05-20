@@ -36,7 +36,7 @@ public class EmailServiceImpl implements EmailService {
     @Override
     @Async
     public void sendActivationEmail(String email, String username, String token) {
-        String activationUrl = baseUrl + "/api/v1/auth/verify-activation?token=" + token;
+        String activationUrl = baseUrl + "/api/v1/auth/verify?token=" + token;
         Map<String, Object> variables = Map.of(
                 "name", username,
                 "activationUrl", activationUrl

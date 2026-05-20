@@ -2,7 +2,6 @@ package com.loan_org.identity_and_access_management.security;
 
 import com.loan_org.identity_and_access_management.dao.RefreshTokenDao;
 import com.loan_org.identity_and_access_management.dto.UserResponseDto;
-import com.loan_org.identity_and_access_management.entity.RefreshTokenDocument;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -12,8 +11,6 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,18 +57,7 @@ public class JwtService {
                 .compact();
     }
 
-    public String createRefreshToken(String email) {
-        refreshTokenDao.deleteByUserEmail(email);
-        String tokenValue = UUID.randomUUID().toString() + "-" + UUID.randomUUID().toString();
-        Instant expiry = Instant.now().plus(refreshTokenExpirationInDays, ChronoUnit.DAYS);
-
-        RefreshTokenDocument doc = new RefreshTokenDocument();
-        doc.setToken(tokenValue);
-        doc.setUserEmail(email);
-        doc.setExpiryDate(expiry);
-        doc.setExpireAt(expiry);
-
-        refreshTokenDao.save(doc);
-        return tokenValue;
+    public String createRefreshToken() {
+        return UUID.randomUUID().toString() + "-" + UUID.randomUUID().toString();
     }
 }

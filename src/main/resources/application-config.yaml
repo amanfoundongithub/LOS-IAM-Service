@@ -24,7 +24,7 @@ app:
   mail:
     from-email: ${secret.mail.username}
     from-name: Identity & Access Management Service (IAM)
-  base-url: http://localhost:8080
+  base-url: http://localhost:5600
 
 server:
   port: 5600
