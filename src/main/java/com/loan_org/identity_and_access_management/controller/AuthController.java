@@ -7,6 +7,7 @@ import com.loan_org.identity_and_access_management.dto.UserResponseDto;
 import com.loan_org.identity_and_access_management.entity.UserDocument;
 import com.loan_org.identity_and_access_management.security.JwtService;
 import com.loan_org.identity_and_access_management.service.AuthService;
+import com.loan_org.identity_and_access_management.service.EmailService;
 import com.loan_org.identity_and_access_management.service.RefreshTokenService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +26,15 @@ public class AuthController {
     private JwtService jwtService;
 
     @Autowired
+    private EmailService emailService;
+
+    @Autowired
     private RefreshTokenService refreshTokenService;
 
     @PostMapping("/register")
     public ResponseEntity<UserDocument> createRoute(@Valid @RequestBody UserRegistrationDto registration) {
         UserDocument document = authService.register(registration);
+        emailService.sendActivationEmail(document.getEmail(), document.getUsername(), "abcd");
         return new ResponseEntity<>(document, HttpStatus.CREATED);
     }
 
