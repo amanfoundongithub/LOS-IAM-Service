@@ -46,7 +46,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendPasswordResetEmail(String email, String username, String token) {
-        String resetUrl = baseUrl + "/reset-password?token=" + token;
+        String resetUrl = baseUrl + "/reset/password?token=" + token;
         Map<String, Object> variables = Map.of(
                 "name", username,
                 "resetUrl", resetUrl

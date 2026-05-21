@@ -53,6 +53,6 @@ public interface TokenManagementService {
      *
      * @param passwordResetToken The token for the password
      */
-    void verifyPasswordResetToken(String passwordResetToken);
+    void verifyPasswordResetToken(String passwordResetToken, String newPassword);
 
 }

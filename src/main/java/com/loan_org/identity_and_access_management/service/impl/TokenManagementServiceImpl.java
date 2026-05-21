@@ -14,6 +14,7 @@ import com.loan_org.identity_and_access_management.service.EmailService;
 import com.loan_org.identity_and_access_management.service.TokenManagementService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -36,6 +37,7 @@ public class TokenManagementServiceImpl implements TokenManagementService {
     private final ActivationTokenDao activationTokenDao;
     private final PasswordResetTokenDao passwordResetTokenDao;
     private final EmailService emailService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     // Service to create tokens
     private final JwtService jwtService;
@@ -142,7 +144,7 @@ public class TokenManagementServiceImpl implements TokenManagementService {
     }
 
     @Override
-    public void verifyPasswordResetToken(String passwordResetToken) {
+    public void verifyPasswordResetToken(String passwordResetToken, String newPassword) {
         log.info("Verification Request for Password Reset Token!");
         Optional<PasswordResetTokenDocument> optionalDocument = passwordResetTokenDao.findByToken(passwordResetToken);
         if(optionalDocument.isEmpty()) {
@@ -158,7 +160,9 @@ public class TokenManagementServiceImpl implements TokenManagementService {
             throw new AccountNotFoundException("No account found with email: " + document.getUserEmail());
         }
         UserDocument userDocument = optionalUserDocument.get();
-        userDocument.setStatus(UserStatus.ACTIVE);
+        SecurityBlock securityBlock = userDocument.getSecurity();
+        securityBlock.setPasswordHash(passwordEncoder.encode(newPassword));
+        userDocument.setSecurity(securityBlock);
         userDao.save(userDocument);
         passwordResetTokenDao.delete(document);
     }
