@@ -62,4 +62,10 @@ public class AuthController {
         return new ResponseEntity<>("Account successfully activated! You can now log in.", HttpStatus.OK);
     }
 
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPasswordRequest(@RequestParam("email") String email) {
+        tokenManagementService.generatePasswordResetToken(email);
+        return new ResponseEntity<>("Sent to:" + email, HttpStatus.CREATED);
+    }
+
 }

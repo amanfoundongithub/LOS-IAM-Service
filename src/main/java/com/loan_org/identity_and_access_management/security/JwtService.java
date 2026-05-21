@@ -60,4 +60,8 @@ public class JwtService {
     public String createRefreshToken() {
         return UUID.randomUUID().toString() + "-" + UUID.randomUUID().toString();
     }
+
+    public String createPasswordResetToken() {
+        return UUID.randomUUID().toString();
+    }
 }
