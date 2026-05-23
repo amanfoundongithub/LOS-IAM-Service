@@ -12,5 +12,4 @@ public interface AuthService {
     UserDocument    register(UserRegistrationDto registrationData);
     UserResponseDto loginWithEmail(String email, String password);
     UserResponseDto loginWithUsername(String username, String password);
-
 }

@@ -7,7 +7,7 @@ import com.loan_org.identity_and_access_management.dto.UserResponseDto;
 import com.loan_org.identity_and_access_management.entity.UserDocument;
 import com.loan_org.identity_and_access_management.security.JwtService;
 import com.loan_org.identity_and_access_management.service.AuthService;
-import com.loan_org.identity_and_access_management.service.RefreshTokenService;
+import com.loan_org.identity_and_access_management.service.TokenManagementService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,7 @@ public class AuthController {
     private JwtService jwtService;
 
     @Autowired
-    private RefreshTokenService refreshTokenService;
+    private TokenManagementService tokenManagementService;
 
     @PostMapping("/register")
     public ResponseEntity<UserDocument> createRoute(@Valid @RequestBody UserRegistrationDto registration) {
@@ -38,7 +38,7 @@ public class AuthController {
                                                         @RequestParam("password") String password) {
         UserResponseDto response = authService.loginWithEmail(email, password);
         String token = jwtService.generateToken(response);
-        String newAccessToken = jwtService.createRefreshToken(email);
+        String newAccessToken = jwtService.createRefreshToken();
         return new ResponseEntity<>(new AuthResponseDto(token, newAccessToken, response), HttpStatus.OK);
     }
 
@@ -47,12 +47,25 @@ public class AuthController {
                                                            @RequestParam("password") String password) {
         UserResponseDto response = authService.loginWithUsername(username, password);
         String token = jwtService.generateToken(response);
-        String newAccessToken = jwtService.createRefreshToken(username);
+        String newAccessToken = jwtService.createRefreshToken();
         return new ResponseEntity<>(new AuthResponseDto(token, newAccessToken, response), HttpStatus.OK);
     }
 
     @PostMapping("/refresh")
     public ResponseEntity<String> refreshToken(@Valid @RequestBody RefreshTokenRequestDto request) {
-        return new ResponseEntity<>(refreshTokenService.refreshToken(request), HttpStatus.CREATED);
+        return new ResponseEntity<>(tokenManagementService.generateRefreshToken(request), HttpStatus.CREATED);
     }
+
+    @GetMapping("/verify")
+    public ResponseEntity<String> verifyAccount(@RequestParam("token") String token) {
+        tokenManagementService.verifyActivationToken(token);
+        return new ResponseEntity<>("Account successfully activated! You can now log in.", HttpStatus.OK);
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPasswordRequest(@RequestParam("email") String email) {
+        tokenManagementService.generatePasswordResetToken(email);
+        return new ResponseEntity<>("Sent to:" + email, HttpStatus.CREATED);
+    }
+
 }

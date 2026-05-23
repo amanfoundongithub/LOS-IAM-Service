@@ -3,15 +3,15 @@ package com.loan_org.identity_and_access_management.service.impl;
 import com.loan_org.identity_and_access_management.dao.UserDao;
 import com.loan_org.identity_and_access_management.dto.UserRegistrationDto;
 import com.loan_org.identity_and_access_management.dto.UserResponseDto;
-import com.loan_org.identity_and_access_management.entity.MetadataBlock;
-import com.loan_org.identity_and_access_management.entity.SecurityBlock;
-import com.loan_org.identity_and_access_management.entity.UserDocument;
-import com.loan_org.identity_and_access_management.entity.UserStatus;
+import com.loan_org.identity_and_access_management.entity.*;
 import com.loan_org.identity_and_access_management.exception.AccountAlreadyExistsException;
 import com.loan_org.identity_and_access_management.exception.AccountNotFoundException;
 import com.loan_org.identity_and_access_management.exception.UnauthorizedAccessException;
 import com.loan_org.identity_and_access_management.service.AuthService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.loan_org.identity_and_access_management.service.EmailService;
+import com.loan_org.identity_and_access_management.service.TokenManagementService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,13 +20,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class AuthServiceImpl implements AuthService {
 
-    @Autowired
-    private UserDao userDao;
+    // Services for the authentication
+    private final TokenManagementService tokenManagementService;
+    private final EmailService emailService;
 
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    // DAO
+    private final UserDao userDao;
+
+    // Security helper
+    private final BCryptPasswordEncoder passwordEncoder;
 
 
     @Override
@@ -44,7 +50,7 @@ public class AuthServiceImpl implements AuthService {
 
         UserDocument document  = new UserDocument();
         document.setEmail(registrationData.getEmail());
-        document.setStatus(UserStatus.ACTIVE);
+        document.setStatus(UserStatus.PENDING_VERIFICATION);
         document.setUsername(registrationData.getUsername());
 
         // Security
@@ -67,7 +73,13 @@ public class AuthServiceImpl implements AuthService {
         document.setMetadata(metadata);
 
         // Save
-        return userDao.save(document);
+        UserDocument savedUser = userDao.save(document);
+
+        // Create & Send token
+        String tokenString = tokenManagementService.generateActivationToken(document.getEmail());
+        emailService.sendActivationEmail(savedUser.getEmail(), savedUser.getUsername(), tokenString);
+
+        return savedUser;
     }
 
     @Override
@@ -121,7 +133,7 @@ public class AuthServiceImpl implements AuthService {
         security.setFailedLoginAttempts(attempts);
 
         if (attempts >= 5) {
-            security.setLockoutUntil(Instant.now().plusSeconds(15 * 60));
+            security.setLockoutUntil(Instant.now().plusSeconds(15 * 60L));
         }
         userDao.save(user);
     }
