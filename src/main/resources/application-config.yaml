@@ -24,7 +24,15 @@ app:
   mail:
     from-email: ${secret.mail.username}
     from-name: Identity & Access Management Service (IAM)
+
+  async:
+    core-pool-size: 5
+    max-pool-size: 10
+    queue-capacity: 500
+    thread-name-prefix: "iam-async-"
   base-url: http://localhost:5600/api/v1/auth
+
+
 
 mdc:
   header: X-Trace-Id
