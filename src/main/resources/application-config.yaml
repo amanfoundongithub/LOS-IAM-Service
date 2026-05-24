@@ -32,6 +32,11 @@ app:
     thread-name-prefix: "iam-async-"
   base-url: http://localhost:5600/api/v1/auth
 
+  bucket:
+    capacity: 100
+    refill: 100
+    intervalInMinutes: 1
+
 
 
 mdc:
