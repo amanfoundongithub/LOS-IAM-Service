@@ -46,7 +46,7 @@ public class UserDocument {
     // Access management block
     private Map<String, Object> attributes;
 
-    // Metadata block
-    private MetadataBlock metadata;
+    @Builder.Default
+    private MetadataBlock metadata = new MetadataBlock();
 
 }
