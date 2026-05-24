@@ -4,3 +4,4 @@ spring:
       - application-config.yaml
       - application-jwt.yaml
       - application-local.yaml
+      - application-security.yaml
