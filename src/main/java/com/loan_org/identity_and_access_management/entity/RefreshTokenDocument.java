@@ -1,6 +1,5 @@
 package com.loan_org.identity_and_access_management.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -31,7 +30,6 @@ public class RefreshTokenDocument {
     @Id
     private String id;
 
-    @JsonIgnore
     @Indexed(unique = true)
     @NotBlank
     private String token;
