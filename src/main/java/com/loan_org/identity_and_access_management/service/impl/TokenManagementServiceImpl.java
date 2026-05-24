@@ -55,7 +55,7 @@ public class TokenManagementServiceImpl implements TokenManagementService {
         RefreshTokenDocument document = refreshTokenDocument.get();
 
         // Check for token's expiry, if not request for login
-        if(document.getExpiryDate().isBefore(Instant.now())) {
+        if(document.isExpired()) {
             throw new UnauthorizedAccessException("The refresh token has EXPIRED! Please try to login again" +
                     " for the same.");
         }
@@ -70,8 +70,7 @@ public class TokenManagementServiceImpl implements TokenManagementService {
         RefreshTokenDocument newTokenDocument = new RefreshTokenDocument();
         newTokenDocument.setToken(newRefreshToken);
         newTokenDocument.setUserEmail(document.getUserEmail());
-        newTokenDocument.setExpireAt(expiry);
-        newTokenDocument.setExpiryDate(expiry);
+        newTokenDocument.setExpiresAt(expiry);
 
         refreshTokenDao.save(newTokenDocument);
 
