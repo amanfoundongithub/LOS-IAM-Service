@@ -14,57 +14,62 @@ import com.loan_org.identity_and_access_management.service.EmailService;
 import com.loan_org.identity_and_access_management.service.TokenManagementService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Implementation of the TokenCreationService class
+ * Enterprise implementation of the {@link TokenManagementService} responsible for the atomic
+ * orchestration of verification, secure storage, and generation lifecycle of infrastructure tokens.
  *
  * @author Aman Raj
+ * @since 1.0.0
  */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class TokenManagementServiceImpl implements TokenManagementService {
 
-    // Data access objects for database interactions
     private final UserDao userDao;
     private final RefreshTokenDao refreshTokenDao;
     private final ActivationTokenDao activationTokenDao;
     private final PasswordResetTokenDao passwordResetTokenDao;
     private final EmailService emailService;
     private final BCryptPasswordEncoder passwordEncoder;
-
-    // Service to create tokens
     private final JwtService jwtService;
 
+    @Value("${app.token.refresh_token.expiry_in_days}")
+    private int refreshExpiryDays;
+
+    @Value("${app.token.activation_token.expiry_in_hours}")
+    private int activationExpiryHours;
+
+    @Value("${app.token.reset_token.expiry_in_hours}")
+    private int resetExpiryHours;
+
     @Override
+    @Transactional
     public String generateRefreshToken(RefreshTokenRequestDto request) {
-        log.info("Received request for REFRESH TOKEN RENEWAL");
-        // Find in DB, if not throw an exception
+        log.info("Processing request for refresh token renewal.");
+
         String originalToken = request.getRefreshToken();
-        Optional<RefreshTokenDocument> refreshTokenDocument = refreshTokenDao.findByToken(originalToken);
-        if(refreshTokenDocument.isEmpty()) {
-            throw new TokenNotProvidedException("No refresh token has been provided. Please provide one for" +
-                    " verification.");
-        }
-        RefreshTokenDocument document = refreshTokenDocument.get();
+        RefreshTokenDocument document = refreshTokenDao.findByToken(originalToken)
+                .orElseThrow(() -> new TokenNotProvidedException("Provided refresh token is invalid or missing. Verification failed."));
 
-        // Check for token's expiry, if not request for login
-        if(document.isExpired()) {
-            throw new UnauthorizedAccessException("The refresh token has EXPIRED! Please try to login again" +
-                    " for the same.");
+        if (document.isExpired()) {
+            refreshTokenDao.delete(document);
+            throw new UnauthorizedAccessException("The refresh token has expired. Please re-authenticate.");
         }
 
-        // All checks passed now generate a fresh one
         String newRefreshToken = jwtService.createRefreshToken();
-        Instant expiry = Instant.now().plus(24, ChronoUnit.DAYS);
+        Instant expiry = Instant.now().plus(refreshExpiryDays, ChronoUnit.DAYS);
 
-        // Add to the database
+        // Atomic cycle prevents multi-node cluster collisions
         refreshTokenDao.deleteByUserEmail(document.getUserEmail());
 
         RefreshTokenDocument newTokenDocument = new RefreshTokenDocument();
@@ -73,98 +78,98 @@ public class TokenManagementServiceImpl implements TokenManagementService {
         newTokenDocument.setExpiresAt(expiry);
 
         refreshTokenDao.save(newTokenDocument);
+        log.info("Successfully cycled refresh token for secure destination context.");
 
-        log.info("Successful Generation of New Refresh Token!");
         return newRefreshToken;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public String generateActivationToken(String email) {
-        log.info("Received request for Activation Token Creation");
-        // Check if email is there or not
-        Optional<UserDocument> userDocument = userDao.findByEmail(email);
-        if(userDocument.isEmpty()) {
-            throw new AccountNotFoundException("No account found with email: " + email + "!");
-        }
+        log.info("Initiating production validation workflow for activation token generation.");
 
-        // Create new token
+        userDao.findByEmail(email)
+                .orElseThrow(() -> new AccountNotFoundException("No account linked to email destination: " + email));
+
         String tokenString = UUID.randomUUID().toString();
         ActivationTokenDocument tokenDocument = new ActivationTokenDocument(
-            tokenString, email, 24
+                tokenString, email, activationExpiryHours
         );
+
         activationTokenDao.save(tokenDocument);
-        log.info("Successfully created activation token for: {} for 24 hours!", email);
+        log.info("Successfully recorded temporary activation token for user: {}", email);
+
         return tokenString;
     }
 
     @Override
+    @Transactional // Critical: Multi-table mutation operations require atomic transactional guarantees
     public void verifyActivationToken(String activationToken) {
-        log.info("Verification Request for Activation Token!");
-        Optional<ActivationTokenDocument> optionalDocument = activationTokenDao.findByToken(activationToken);
-        if(optionalDocument.isEmpty()) {
-            throw new UnauthorizedAccessException("Invalid activation token");
-        }
-        ActivationTokenDocument document = optionalDocument.get();
-        if(document.isExpired()) {
+        log.info("Executing transaction synchronization for activation verification.");
+
+        ActivationTokenDocument document = activationTokenDao.findByToken(activationToken)
+                .orElseThrow(() -> new UnauthorizedAccessException("The activation token provided is invalid."));
+
+        if (document.isExpired()) {
             activationTokenDao.delete(document);
-            throw new UnauthorizedAccessException("Token expired, please generate a new one!");
+            throw new UnauthorizedAccessException("The activation token has expired. Please request a new link.");
         }
-        Optional<UserDocument> optionalUserDocument = userDao.findByEmail(document.getUserEmail());
-        if(optionalUserDocument.isEmpty()) {
-            throw new AccountNotFoundException("No account found with email: " + document.getUserEmail());
-        }
-        UserDocument userDocument = optionalUserDocument.get();
+
+        UserDocument userDocument = userDao.findByEmail(document.getUserEmail())
+                .orElseThrow(() -> new AccountNotFoundException("Corrupt data token. No target user matches email: " + document.getUserEmail()));
+
         userDocument.setStatus(UserStatus.ACTIVE);
         userDao.save(userDocument);
+
+        // Remove token only after user state transitions cleanly
         activationTokenDao.delete(document);
+        log.info("Account status transitioned to ACTIVE for identifier: {}", document.getUserEmail());
     }
 
     @Override
+    @Transactional
     public String generatePasswordResetToken(String email) {
-        log.info("Received request for Password Reset Token Creation");
-        // Check if email is there or not
-        Optional<UserDocument> userDocument = userDao.findByEmail(email);
-        if(userDocument.isEmpty()) {
-            throw new AccountNotFoundException("No account found with email: " + email + "!");
-        }
+        log.info("Validating baseline identity for password reset generation sequence.");
 
-        // Create new token
+        UserDocument userDocument = userDao.findByEmail(email)
+                .orElseThrow(() -> new AccountNotFoundException("No account linked to email destination: " + email));
+
         String tokenString = UUID.randomUUID().toString();
         PasswordResetTokenDocument tokenDocument = new PasswordResetTokenDocument(
-                tokenString, email, 24
+                tokenString, email, resetExpiryHours
         );
         passwordResetTokenDao.save(tokenDocument);
 
-        // Send email
-        emailService.sendPasswordResetEmail(email, userDocument.get().getUsername(), tokenString);
+        // Dispatches to your decoupled, non-blocking @Async thread layout
+        emailService.sendPasswordResetEmail(email, userDocument.getUsername(), tokenString);
 
-        log.info("Successfully created password reset token for: {} for 24 hours!", email);
+        log.info("Successfully dispatched secure reset link generation to destination account: {}", email);
         return tokenString;
     }
 
     @Override
+    @Transactional
     public void verifyPasswordResetToken(String passwordResetToken, String newPassword) {
-        log.info("Verification Request for Password Reset Token!");
-        Optional<PasswordResetTokenDocument> optionalDocument = passwordResetTokenDao.findByToken(passwordResetToken);
-        if(optionalDocument.isEmpty()) {
-            throw new UnauthorizedAccessException("Invalid activation token");
-        }
-        PasswordResetTokenDocument document = optionalDocument.get();
-        if(document.isExpired()) {
+        log.info("Executing secure transaction validation verification for reset verification.");
+
+        PasswordResetTokenDocument document = passwordResetTokenDao.findByToken(passwordResetToken)
+                .orElseThrow(() -> new UnauthorizedAccessException("The credentials token provided is invalid."));
+
+        if (document.isExpired()) {
             passwordResetTokenDao.delete(document);
-            throw new UnauthorizedAccessException("Token expired, please generate a new one!");
+            throw new UnauthorizedAccessException("The password reset token has expired. Please initiate request again.");
         }
-        Optional<UserDocument> optionalUserDocument = userDao.findByEmail(document.getUserEmail());
-        if(optionalUserDocument.isEmpty()) {
-            throw new AccountNotFoundException("No account found with email: " + document.getUserEmail());
-        }
-        UserDocument userDocument = optionalUserDocument.get();
+
+        UserDocument userDocument = userDao.findByEmail(document.getUserEmail())
+                .orElseThrow(() -> new AccountNotFoundException("No target user account matches token identifier: " + document.getUserEmail()));
+
         SecurityBlock securityBlock = userDocument.getSecurity();
         securityBlock.setPasswordHash(passwordEncoder.encode(newPassword));
         userDocument.setSecurity(securityBlock);
+
         userDao.save(userDocument);
         passwordResetTokenDao.delete(document);
+
+        log.info("Credentials security block hashed and updated for user destination: {}", document.getUserEmail());
     }
-
-
 }

@@ -29,6 +29,14 @@ app:
       delay_in_seconds: 2
       delay_multiplier: 2.0
 
+  token:
+    refresh_token:
+      expiry_in_days: 30
+    activation_token:
+      expiry_in_hours: 24
+    reset_token:
+      expiry_in_hours: 20
+
   async:
     core-pool-size: 5
     max-pool-size: 10
