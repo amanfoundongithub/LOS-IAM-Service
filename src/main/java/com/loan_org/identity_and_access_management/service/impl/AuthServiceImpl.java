@@ -1,6 +1,7 @@
 package com.loan_org.identity_and_access_management.service.impl;
 
 import com.loan_org.identity_and_access_management.dao.UserDao;
+import com.loan_org.identity_and_access_management.dto.UserLoginDto;
 import com.loan_org.identity_and_access_management.dto.UserRegistrationDto;
 import com.loan_org.identity_and_access_management.dto.UserResponseDto;
 import com.loan_org.identity_and_access_management.entity.*;
@@ -10,107 +11,202 @@ import com.loan_org.identity_and_access_management.exception.UnauthorizedAccessE
 import com.loan_org.identity_and_access_management.service.AuthService;
 import com.loan_org.identity_and_access_management.service.EmailService;
 import com.loan_org.identity_and_access_management.service.TokenManagementService;
+import com.loan_org.identity_and_access_management.util.AuthServiceMessageFactory;
+import com.loan_org.identity_and_access_management.util.UserAttributeFactory;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.Map;
 
+import static java.time.Duration.between;
+
+/**
+ * Implementation of the {@link AuthService} providing core Identity and Access Management (IAM)
+ * operations, including secure user registration and multi-identifier authentication workflows.
+ *
+ * <h3>Security and Core Features:</h3>
+ * <ul>
+ * <li><b>Brute-Force Protection:</b> Implements a time-bound account lockout mechanism
+ * after a configurable threshold of consecutive failed login attempts.</li>
+ * <li><b>Attribute-Based Access Control (ABAC):</b> Dynamically attaches operational attributes
+ * (e.g., signing limits, roles) to the user document during registration for downstream
+ * fine-grained authorization.</li>
+ * <li><b>Asynchronous Verification:</b> Integrates with token management and email subsystems
+ * to dispatch secure registration activation tokens.</li>
+ * </ul>
+ *
+ * <h3>Transaction Management:</h3>
+ * This implementation utilizes Spring's transactional boundaries where state mutation and downstream
+ * side-effects (such as email dispatch) must maintain atomicity.
+ *
+ * @author Aman Raj
+ * @since 1.0.0
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class AuthServiceImpl implements AuthService {
 
-    // Services for the authentication
+    @Value("${user.max_attempts}")
+    private int maxAttempts;
+
+    @Value("${user.lockout_minutes}")
+    private int lockoutMinutes;
+
+    private static final long MINUTES_TO_SECONDS = 60L;
+
+    // Services injected for the authentication
     private final TokenManagementService tokenManagementService;
     private final EmailService emailService;
+    private final UserAttributeFactory userAttributeFactory;
 
-    // DAO
+    // User's DAO
     private final UserDao userDao;
 
     // Security helper
     private final BCryptPasswordEncoder passwordEncoder;
 
-
     @Override
+    @Transactional
     public UserDocument register(UserRegistrationDto registrationData) {
 
-        if(userDao.findByEmail(registrationData.getEmail()).isPresent()) {
-            throw new AccountAlreadyExistsException("An account with email : " + registrationData.getEmail()
-                    + "already exists! Please try a different account");
-        }
+        // Step 1: Validate if there are unique identifiers or not
+        String email = registrationData.getEmail();
+        String username = registrationData.getUsername();
+        hasUniqueIdentifier(email, username);
 
-        if(userDao.findByUsername(registrationData.getUsername()).isPresent()) {
-            throw new AccountAlreadyExistsException("An account with username : " + registrationData.getUsername()
-                    + "already exists! Please try a different account");
-        }
+        // Step 2: Since both are unique, now create an object for the user
 
-        UserDocument document  = new UserDocument();
-        document.setEmail(registrationData.getEmail());
-        document.setStatus(UserStatus.PENDING_VERIFICATION);
-        document.setUsername(registrationData.getUsername());
+        // Step 2.1: Create security block
+        String password = registrationData.getPassword();
+        SecurityBlock securityBlock = buildSecurityBlock(password);
 
-        // Security
-        SecurityBlock security = new SecurityBlock();
-        security.setPasswordHash(passwordEncoder.encode(registrationData.getPassword()));
-        security.setEmailVerified(true);
-        security.setMfaEnabled(false);
-        document.setSecurity(security);
+        // Step 2.2: Create metadata block
+        MetadataBlock metadataBlock = buildMetadataBlock();
 
-        // ABAC
-        Map<String, Object> attributes = new HashMap<>();
-        attributes.put("max_approval_limit_inr", registrationData.getSigningLimit());
-        attributes.put("user_role", registrationData.getRole());
-        document.setAttributes(attributes);
+        // Step 2.3: Create a basic ABAC
+        Map<String, Object> attributes = userAttributeFactory.buildRegistrationAttributes(registrationData);
 
-        // Metadata
-        MetadataBlock metadata = new MetadataBlock();
-        metadata.setCreatedAt(Instant.now());
-        metadata.setUpdatedAt(Instant.now());
-        document.setMetadata(metadata);
+        // Step 2.4: Create the document
+        UserDocument userDocument = UserDocument.builder()
+                .email(email)
+                .username(username)
+                .status(UserStatus.PENDING_VERIFICATION)
+                .security(securityBlock)
+                .metadata(metadataBlock)
+                .attributes(attributes)
+                .build();
 
-        // Save
-        UserDocument savedUser = userDao.save(document);
-
-        // Create & Send token
-        String tokenString = tokenManagementService.generateActivationToken(document.getEmail());
-        emailService.sendActivationEmail(savedUser.getEmail(), savedUser.getUsername(), tokenString);
-
+        // Step 3: Save the document in MongoDB and continue post registration stuff
+        UserDocument savedUser = userDao.save(userDocument);
+        postRegistrationWorkflow(savedUser);
         return savedUser;
     }
 
     @Override
-    public UserResponseDto loginWithEmail(String email, String password) {
-        UserDocument document = userDao.findByEmail(email)
-                .orElseThrow(() -> new AccountNotFoundException("No account found for:" + email));
+    public UserResponseDto login(UserLoginDto loginRequest) {
+        UserDocument userDocument = null;
 
-        return authenticateAndBuildResponse(document, password);
+        String email = loginRequest.getEmail();
+        String username = loginRequest.getUsername();
+        if(email != null && !email.isBlank()) {
+            userDocument = userDao.findByEmail(email)
+                    .orElseThrow(() ->
+                            new AccountNotFoundException(AuthServiceMessageFactory.emailNotFound(email)));
+
+        }
+        else if(username != null && !username.isBlank()) {
+            userDocument = userDao.findByUsername(username)
+                    .orElseThrow(() ->
+                            new AccountNotFoundException(AuthServiceMessageFactory.usernameNotFound(username)));
+        }
+
+        // Authenticate and build response
+        String password = loginRequest.getPassword();
+        if(userDocument != null) {
+            return authenticateAndBuildResponse(userDocument, password);
+        } else {
+            throw new AccountNotFoundException(AuthServiceMessageFactory.accountNotFound());
+        }
     }
 
-    @Override
-    public UserResponseDto loginWithUsername(String username, String password) {
-        UserDocument document = userDao.findByUsername(username)
-                .orElseThrow(() -> new AccountNotFoundException("No account found for:" + username));
+    // ---------------------- HELPER FUNCTIONS FOR REGISTRATION ---------------------------
 
-        return authenticateAndBuildResponse(document, password);
+    private void hasUniqueIdentifier(String email, String username) {
+        if(userDao.findByEmail(email).isPresent()) {
+            throw new AccountAlreadyExistsException(AuthServiceMessageFactory.emailAlreadyExists(email));
+        }
+        if(userDao.findByUsername(username).isPresent()) {
+            throw new AccountAlreadyExistsException(AuthServiceMessageFactory.usernameAlreadyExists(username));
+        }
     }
+
+    private SecurityBlock buildSecurityBlock(String plainPassword) {
+        String hashedPassword = passwordEncoder.encode(plainPassword);
+        return SecurityBlock.builder()
+                .passwordHash(hashedPassword)
+                .emailVerified(false)
+                .mfaEnabled(false)
+                .build();
+    }
+
+    private MetadataBlock buildMetadataBlock() {
+        return MetadataBlock.builder()
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
+                .build();
+    }
+
+    private void postRegistrationWorkflow(UserDocument userDocument) {
+        // Read values
+        String email = userDocument.getEmail();
+        String username = userDocument.getUsername();
+
+        String tokenString = tokenManagementService.generateActivationToken(email);
+
+        if(TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    emailService.sendActivationEmail(email, username, tokenString);
+                }
+            });
+        } else {
+            emailService.sendActivationEmail(email, username, tokenString);
+        }
+    }
+
+    // ---------------------- HELPER FUNCTIONS FOR LOGIN ---------------------------
 
     private UserResponseDto authenticateAndBuildResponse(UserDocument document, String password) {
+
         SecurityBlock block = document.getSecurity();
         if(document.getStatus() == UserStatus.SUSPENDED) {
-            throw new UnauthorizedAccessException("This account is suspended, Please contact the admin");
+            throw new UnauthorizedAccessException(AuthServiceMessageFactory.accountSuspended());
         }
 
         if (block.getLockoutUntil() != null && block.getLockoutUntil().isAfter(Instant.now())) {
-            throw new UnauthorizedAccessException("Account is temporarily locked. Try again later.");
+            long minutesRemaining = between(Instant.now(), block.getLockoutUntil()).toMinutes();
+            if(minutesRemaining < 1) {
+                long secondsRemaining = between(Instant.now(), block.getLockoutUntil()).toSeconds();
+                throw new UnauthorizedAccessException(AuthServiceMessageFactory.accountLocked(secondsRemaining, "seconds"));
+            }
+            throw new UnauthorizedAccessException(AuthServiceMessageFactory.accountLocked(minutesRemaining, "minutes"));
         }
 
         if (!passwordEncoder.matches(password, block.getPasswordHash())) {
+            int currentAttempts = block.getFailedLoginAttempts() + 1;
             handleFailedLogin(document);
-            throw new UnauthorizedAccessException("Invalid credentials provided.");
+            int leftAttempts = Math.max(0, maxAttempts - currentAttempts);
+            throw new UnauthorizedAccessException(AuthServiceMessageFactory.wrongPasswordAttempt(leftAttempts));
         }
 
         block.setFailedLoginAttempts(0);
@@ -131,9 +227,9 @@ public class AuthServiceImpl implements AuthService {
         SecurityBlock security = user.getSecurity();
         int attempts = security.getFailedLoginAttempts() + 1;
         security.setFailedLoginAttempts(attempts);
-
-        if (attempts >= 5) {
-            security.setLockoutUntil(Instant.now().plusSeconds(15 * 60L));
+        if (attempts >= maxAttempts) {
+            security.setLockoutUntil(Instant.now().plusSeconds(lockoutMinutes * MINUTES_TO_SECONDS));
+            log.warn("Account with username: {} locked due to incorrect attempts!", user.getUsername());
         }
         userDao.save(user);
     }

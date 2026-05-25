@@ -1,9 +1,6 @@
 package com.loan_org.identity_and_access_management.controller;
 
-import com.loan_org.identity_and_access_management.dto.AuthResponseDto;
-import com.loan_org.identity_and_access_management.dto.RefreshTokenRequestDto;
-import com.loan_org.identity_and_access_management.dto.UserRegistrationDto;
-import com.loan_org.identity_and_access_management.dto.UserResponseDto;
+import com.loan_org.identity_and_access_management.dto.*;
 import com.loan_org.identity_and_access_management.entity.UserDocument;
 import com.loan_org.identity_and_access_management.security.JwtService;
 import com.loan_org.identity_and_access_management.service.AuthService;
@@ -33,19 +30,9 @@ public class AuthController {
         return new ResponseEntity<>(document, HttpStatus.CREATED);
     }
 
-    @GetMapping("/userByEmail")
-    public ResponseEntity<AuthResponseDto> loginByEmail(@RequestParam("email") String email,
-                                                        @RequestParam("password") String password) {
-        UserResponseDto response = authService.loginWithEmail(email, password);
-        String token = jwtService.generateToken(response);
-        String newAccessToken = jwtService.createRefreshToken();
-        return new ResponseEntity<>(new AuthResponseDto(token, newAccessToken, response), HttpStatus.OK);
-    }
-
-    @GetMapping("/userByUsername")
-    public ResponseEntity<AuthResponseDto> loginByUsername(@RequestParam("username") String username,
-                                                           @RequestParam("password") String password) {
-        UserResponseDto response = authService.loginWithUsername(username, password);
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponseDto> login(@Valid @RequestBody UserLoginDto loginRequest) {
+        UserResponseDto response = authService.login(loginRequest);
         String token = jwtService.generateToken(response);
         String newAccessToken = jwtService.createRefreshToken();
         return new ResponseEntity<>(new AuthResponseDto(token, newAccessToken, response), HttpStatus.OK);
