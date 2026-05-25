@@ -24,6 +24,10 @@ app:
   mail:
     from-email: ${secret.mail.username}
     from-name: Identity & Access Management Service (IAM)
+    retry:
+      max_attempts: 3
+      delay_in_seconds: 2
+      delay_multiplier: 2.0
 
   async:
     core-pool-size: 5
