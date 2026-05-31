@@ -20,6 +20,11 @@ spring:
             required: true
     default-encoding: UTF-8
 
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
 app:
   mail:
     from-email: ${secret.mail.username}
