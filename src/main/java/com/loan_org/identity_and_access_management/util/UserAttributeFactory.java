@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Component
 public class UserAttributeFactory {
@@ -12,12 +13,24 @@ public class UserAttributeFactory {
     public static final String KEY_MAX_APPROVAL_LIMIT = "max_approval_limit_inr";
     public static final String KEY_USER_ROLE = "user_role";
 
+    public static final String DOCUMENT_UPLOAD_PERMISSION = "document:upload";
+
     public Map<String, Object> buildRegistrationAttributes(UserRegistrationDto registrationData) {
         Map<String, Object> attributes = new HashMap<>();
 
         attributes.put(KEY_MAX_APPROVAL_LIMIT, registrationData.getSigningLimit());
         attributes.put(KEY_USER_ROLE, registrationData.getRole());
 
+        if(Objects.equals(registrationData.getRole(), "LOAN_OFFICER")) {
+            getAttributesForLoanOfficer(attributes);
+        }
+
         return attributes;
     }
+
+    private void getAttributesForLoanOfficer(Map<String, Object> attributes) {
+        attributes.put(DOCUMENT_UPLOAD_PERMISSION, true);
+    }
+
+
 }
