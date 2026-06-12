@@ -16,6 +16,7 @@ public class UserAttributeFactory {
     public static final String DOCUMENT_UPLOAD_PERMISSION = "document:upload";
     public static final String DOCUMENT_DOWNLOAD_PERMISSION = "document:download";
     public static final String DOCUMENT_FETCH_PERMISSION = "document:view";
+    public static final String DOCUMENT_DELETE_PERMISSION = "document:delete";
 
     public Map<String, Object> buildRegistrationAttributes(UserRegistrationDto registrationData) {
         Map<String, Object> attributes = new HashMap<>();
@@ -34,6 +35,7 @@ public class UserAttributeFactory {
         attributes.put(DOCUMENT_UPLOAD_PERMISSION, true);
         attributes.put(DOCUMENT_DOWNLOAD_PERMISSION, true);
         attributes.put(DOCUMENT_FETCH_PERMISSION, true);
+        attributes.put(DOCUMENT_DELETE_PERMISSION, true);
     }
 
 
