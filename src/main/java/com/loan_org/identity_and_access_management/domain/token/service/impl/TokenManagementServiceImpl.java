@@ -96,7 +96,7 @@ public class TokenManagementServiceImpl implements TokenManagementService {
         userRepository.findByEmail(email)
                 .orElseThrow(() -> new AccountNotFoundException("No account linked to email destination: " + email));
 
-        String tokenString = UUID.randomUUID().toString();
+        String tokenString = jwtService.createAccountActivationToken();
         ActivationTokenDocument tokenDocument = ActivationTokenDocument.builder()
                 .token(tokenString)
                 .userEmail(email)
@@ -140,7 +140,7 @@ public class TokenManagementServiceImpl implements TokenManagementService {
         UserDocument userDocument = userRepository.findByEmail(email)
                 .orElseThrow(() -> new AccountNotFoundException("No account linked to email destination: " + email));
 
-        String tokenString = UUID.randomUUID().toString();
+        String tokenString = jwtService.createPasswordResetToken();
         PasswordResetTokenDocument tokenDocument = PasswordResetTokenDocument.builder()
                 .token(tokenString)
                 .expiresAt(Instant.now().plus(resetExpiryHours, ChronoUnit.HOURS))

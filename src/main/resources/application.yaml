@@ -1,7 +1,104 @@
 spring:
-  config:
-    import:
-      - application-config.yaml
-      - application-jwt.yaml
-      - application-local.yaml
-      - application-security.yaml
+  profiles:
+    active: local
+  application:
+    name: iam-service
+
+  data:
+    mongodb:
+      uri: ${MONGO_URI}
+
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_USER}
+    password: ${RABBITMQ_PASS}
+app:
+
+  token:
+    refresh_token:
+      expiry_in_days: 30
+    activation_token:
+      expiry_in_hours: 24
+    reset_token:
+      expiry_in_hours: 20
+
+  async:
+    core-pool-size: 5
+    max-pool-size: 10
+    queue-capacity: 500
+    thread-name-prefix: "iam-async-"
+  base-url: http://localhost:5600/api/v1/auth
+
+  bucket:
+    capacity: 100
+    refill: 100
+    intervalInMinutes: 1
+
+user:
+  max_attempts: 5
+  lockout_minutes: 15
+
+mdc:
+  header: X-Trace-Id
+  key: traceId
+
+server:
+  port: 4200
+
+logging:
+  level:
+    root: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - [Trace: %X{${mdc.key}:-NoTrace}] - %msg%n"
+
+info:
+  app:
+    name: ${spring.application.name}
+    description: "Service to manage identity and access"
+    version: 1.0.0
+  base_url: "/api/v1/auth"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+jwt:
+  secret:
+    key: ${JWT_SECRET_KEY}
+
+  metadata:
+    issuer: ${spring.application.name}
+    expiration_in_minutes: 30
+
+iam:
+  security:
+    cors:
+      allowed_origins:
+        - "http://localhost:4200"  # Angular UI
+      allowed_methods:
+        - GET
+        - POST
+        - PUT
+        - PATCH
+        - DELETE
+        - OPTIONS
+      allowed_headers:
+        - "Authorization"
+        - "Content-Type"
+        - "Cache-Control"
+        - "X-Requested-With"
+      exposed_headers:
+        - "Authorization"
+      allow_credentials: true
+      max_age: 3600
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_HOST}:8761/eureka/
