@@ -3,10 +3,6 @@ spring:
     active: local
   application:
     name: iam-service
-  
-  config:
-    import:
-      - application-security.yaml
 
   data:
     mongodb:
@@ -80,11 +76,29 @@ jwt:
     issuer: ${spring.application.name}
     expiration_in_minutes: 30
 
-  refresh_token:
-    expiration_in_days: 7
+iam:
+  security:
+    cors:
+      allowed_origins:
+        - "http://localhost:4200"  # Angular UI
+      allowed_methods:
+        - GET
+        - POST
+        - PUT
+        - PATCH
+        - DELETE
+        - OPTIONS
+      allowed_headers:
+        - "Authorization"
+        - "Content-Type"
+        - "Cache-Control"
+        - "X-Requested-With"
+      exposed_headers:
+        - "Authorization"
+      allow_credentials: true
+      max_age: 3600
 
-# Service Registry Discovery
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://${EUREKA_HOST}:8761/eureka/
