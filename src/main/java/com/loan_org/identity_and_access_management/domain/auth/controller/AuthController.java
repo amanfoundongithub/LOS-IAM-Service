@@ -1,28 +1,31 @@
-package com.loan_org.identity_and_access_management.controller;
+package com.loan_org.identity_and_access_management.domain.auth.controller;
 
-import com.loan_org.identity_and_access_management.dto.*;
-import com.loan_org.identity_and_access_management.entity.UserDocument;
+import com.loan_org.identity_and_access_management.domain.auth.dto.AuthResponseDto;
+import com.loan_org.identity_and_access_management.domain.auth.dto.UserLoginDto;
+import com.loan_org.identity_and_access_management.domain.auth.dto.UserRegistrationDto;
+import com.loan_org.identity_and_access_management.domain.token.dto.RefreshTokenRequestDto;
+import com.loan_org.identity_and_access_management.domain.user.dto.UserResponseDto;
+import com.loan_org.identity_and_access_management.domain.user.entity.UserDocument;
 import com.loan_org.identity_and_access_management.security.JwtService;
 import com.loan_org.identity_and_access_management.service.AuthService;
 import com.loan_org.identity_and_access_management.service.TokenManagementService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("${info.base_url}")
 public class AuthController {
 
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
 
-    @Autowired
-    private JwtService jwtService;
+    private final JwtService jwtService;
 
-    @Autowired
-    private TokenManagementService tokenManagementService;
+    private final TokenManagementService tokenManagementService;
 
     @PostMapping("/register")
     public ResponseEntity<UserDocument> createRoute(@Valid @RequestBody UserRegistrationDto registration) {
