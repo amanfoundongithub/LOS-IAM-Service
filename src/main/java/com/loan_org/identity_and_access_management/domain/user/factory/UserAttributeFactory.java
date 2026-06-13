@@ -1,6 +1,6 @@
-package com.loan_org.identity_and_access_management.util;
+package com.loan_org.identity_and_access_management.domain.user.factory;
 
-import com.loan_org.identity_and_access_management.dto.UserRegistrationDto;
+import com.loan_org.identity_and_access_management.domain.auth.dto.UserRegistrationDto;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
