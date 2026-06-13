@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.config;
+package com.loan_org.identity_and_access_management.infra.config;
 
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
