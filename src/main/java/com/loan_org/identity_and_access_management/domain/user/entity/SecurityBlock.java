@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.entity;
+package com.loan_org.identity_and_access_management.domain.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
@@ -23,14 +23,22 @@ import java.time.Instant;
 public class SecurityBlock {
 
     @JsonIgnore
+    @ToString.Exclude
     private String  passwordHash;
 
     @JsonIgnore
+    @ToString.Exclude
     private String  mfaSecretEncrypted;
 
-    private boolean emailVerified;
-    private boolean mfaEnabled;
-    private int     failedLoginAttempts;
+    @Builder.Default
+    private boolean emailVerified = false;
+
+    @Builder.Default
+    private boolean mfaEnabled = false;
+
+    @Builder.Default
+    private int failedLoginAttempts = 0;
+
     private Instant lockoutUntil;
     private Instant passwordChangedAt;
 }
