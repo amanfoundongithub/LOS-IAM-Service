@@ -1,17 +1,22 @@
-package com.loan_org.identity_and_access_management.service.impl;
+package com.loan_org.identity_and_access_management.domain.token.service.impl;
 
-import com.loan_org.identity_and_access_management.dao.ActivationTokenDao;
-import com.loan_org.identity_and_access_management.dao.PasswordResetTokenDao;
-import com.loan_org.identity_and_access_management.dao.RefreshTokenDao;
-import com.loan_org.identity_and_access_management.dao.UserDao;
-import com.loan_org.identity_and_access_management.dto.RefreshTokenRequestDto;
-import com.loan_org.identity_and_access_management.entity.*;
+import com.loan_org.identity_and_access_management.domain.token.repository.ActivationTokenRepository;
+import com.loan_org.identity_and_access_management.domain.token.repository.PasswordResetTokenRepository;
+import com.loan_org.identity_and_access_management.domain.token.repository.RefreshTokenRepository;
+import com.loan_org.identity_and_access_management.domain.token.entity.ActivationTokenDocument;
+import com.loan_org.identity_and_access_management.domain.token.entity.PasswordResetTokenDocument;
+import com.loan_org.identity_and_access_management.domain.token.entity.RefreshTokenDocument;
+import com.loan_org.identity_and_access_management.domain.user.repository.UserRepository;
+import com.loan_org.identity_and_access_management.domain.user.entity.SecurityBlock;
+import com.loan_org.identity_and_access_management.domain.user.entity.UserDocument;
+import com.loan_org.identity_and_access_management.domain.user.entity.UserStatus;
+import com.loan_org.identity_and_access_management.domain.token.dto.RefreshTokenRequestDto;
 import com.loan_org.identity_and_access_management.exception.AccountNotFoundException;
 import com.loan_org.identity_and_access_management.exception.TokenNotProvidedException;
 import com.loan_org.identity_and_access_management.exception.UnauthorizedAccessException;
-import com.loan_org.identity_and_access_management.security.JwtService;
-import com.loan_org.identity_and_access_management.service.EmailService;
-import com.loan_org.identity_and_access_management.service.TokenManagementService;
+import com.loan_org.identity_and_access_management.domain.auth.service.JwtService;
+import com.loan_org.identity_and_access_management.messaging.service.EmailService;
+import com.loan_org.identity_and_access_management.domain.token.service.TokenManagementService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,10 +40,10 @@ import java.util.UUID;
 @Slf4j
 public class TokenManagementServiceImpl implements TokenManagementService {
 
-    private final UserDao userDao;
-    private final RefreshTokenDao refreshTokenDao;
-    private final ActivationTokenDao activationTokenDao;
-    private final PasswordResetTokenDao passwordResetTokenDao;
+    private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final ActivationTokenRepository activationTokenRepository;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final EmailService emailService;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtService jwtService;
@@ -58,11 +63,11 @@ public class TokenManagementServiceImpl implements TokenManagementService {
         log.info("Processing request for refresh token renewal.");
 
         String originalToken = request.getRefreshToken();
-        RefreshTokenDocument document = refreshTokenDao.findByToken(originalToken)
+        RefreshTokenDocument document = refreshTokenRepository.findByToken(originalToken)
                 .orElseThrow(() -> new TokenNotProvidedException("Provided refresh token is invalid or missing. Verification failed."));
 
         if (document.isExpired()) {
-            refreshTokenDao.delete(document);
+            refreshTokenRepository.delete(document);
             throw new UnauthorizedAccessException("The refresh token has expired. Please re-authenticate.");
         }
 
@@ -70,14 +75,14 @@ public class TokenManagementServiceImpl implements TokenManagementService {
         Instant expiry = Instant.now().plus(refreshExpiryDays, ChronoUnit.DAYS);
 
         // Atomic cycle prevents multi-node cluster collisions
-        refreshTokenDao.deleteByUserEmail(document.getUserEmail());
+        refreshTokenRepository.deleteByUserEmail(document.getUserEmail());
 
         RefreshTokenDocument newTokenDocument = new RefreshTokenDocument();
         newTokenDocument.setToken(newRefreshToken);
         newTokenDocument.setUserEmail(document.getUserEmail());
         newTokenDocument.setExpiresAt(expiry);
 
-        refreshTokenDao.save(newTokenDocument);
+        refreshTokenRepository.save(newTokenDocument);
         log.info("Successfully cycled refresh token for secure destination context.");
 
         return newRefreshToken;
@@ -88,15 +93,17 @@ public class TokenManagementServiceImpl implements TokenManagementService {
     public String generateActivationToken(String email) {
         log.info("Initiating production validation workflow for activation token generation.");
 
-        userDao.findByEmail(email)
+        userRepository.findByEmail(email)
                 .orElseThrow(() -> new AccountNotFoundException("No account linked to email destination: " + email));
 
         String tokenString = UUID.randomUUID().toString();
-        ActivationTokenDocument tokenDocument = new ActivationTokenDocument(
-                tokenString, email, activationExpiryHours
-        );
+        ActivationTokenDocument tokenDocument = ActivationTokenDocument.builder()
+                .token(tokenString)
+                .userEmail(email)
+                .expiresAt(Instant.now().plus(activationExpiryHours, ChronoUnit.HOURS))
+                .build();
 
-        activationTokenDao.save(tokenDocument);
+        activationTokenRepository.save(tokenDocument);
         log.info("Successfully recorded temporary activation token for user: {}", email);
 
         return tokenString;
@@ -107,22 +114,21 @@ public class TokenManagementServiceImpl implements TokenManagementService {
     public void verifyActivationToken(String activationToken) {
         log.info("Executing transaction synchronization for activation verification.");
 
-        ActivationTokenDocument document = activationTokenDao.findByToken(activationToken)
+        ActivationTokenDocument document = activationTokenRepository.findByToken(activationToken)
                 .orElseThrow(() -> new UnauthorizedAccessException("The activation token provided is invalid."));
 
         if (document.isExpired()) {
-            activationTokenDao.delete(document);
+            activationTokenRepository.delete(document);
             throw new UnauthorizedAccessException("The activation token has expired. Please request a new link.");
         }
 
-        UserDocument userDocument = userDao.findByEmail(document.getUserEmail())
+        UserDocument userDocument = userRepository.findByEmail(document.getUserEmail())
                 .orElseThrow(() -> new AccountNotFoundException("Corrupt data token. No target user matches email: " + document.getUserEmail()));
 
         userDocument.setStatus(UserStatus.ACTIVE);
-        userDao.save(userDocument);
+        userRepository.save(userDocument);
 
-        // Remove token only after user state transitions cleanly
-        activationTokenDao.delete(document);
+        activationTokenRepository.delete(document);
         log.info("Account status transitioned to ACTIVE for identifier: {}", document.getUserEmail());
     }
 
@@ -131,14 +137,15 @@ public class TokenManagementServiceImpl implements TokenManagementService {
     public String generatePasswordResetToken(String email) {
         log.info("Validating baseline identity for password reset generation sequence.");
 
-        UserDocument userDocument = userDao.findByEmail(email)
+        UserDocument userDocument = userRepository.findByEmail(email)
                 .orElseThrow(() -> new AccountNotFoundException("No account linked to email destination: " + email));
 
         String tokenString = UUID.randomUUID().toString();
-        PasswordResetTokenDocument tokenDocument = new PasswordResetTokenDocument(
-                tokenString, email, resetExpiryHours
-        );
-        passwordResetTokenDao.save(tokenDocument);
+        PasswordResetTokenDocument tokenDocument = PasswordResetTokenDocument.builder()
+                .token(tokenString)
+                .expiresAt(Instant.now().plus(resetExpiryHours, ChronoUnit.HOURS))
+                .build();
+        passwordResetTokenRepository.save(tokenDocument);
 
         // Dispatches to your decoupled, non-blocking @Async thread layout
         emailService.sendPasswordResetEmail(email, userDocument.getUsername(), tokenString);
@@ -152,23 +159,23 @@ public class TokenManagementServiceImpl implements TokenManagementService {
     public void verifyPasswordResetToken(String passwordResetToken, String newPassword) {
         log.info("Executing secure transaction validation verification for reset verification.");
 
-        PasswordResetTokenDocument document = passwordResetTokenDao.findByToken(passwordResetToken)
+        PasswordResetTokenDocument document = passwordResetTokenRepository.findByToken(passwordResetToken)
                 .orElseThrow(() -> new UnauthorizedAccessException("The credentials token provided is invalid."));
 
         if (document.isExpired()) {
-            passwordResetTokenDao.delete(document);
+            passwordResetTokenRepository.delete(document);
             throw new UnauthorizedAccessException("The password reset token has expired. Please initiate request again.");
         }
 
-        UserDocument userDocument = userDao.findByEmail(document.getUserEmail())
+        UserDocument userDocument = userRepository.findByEmail(document.getUserEmail())
                 .orElseThrow(() -> new AccountNotFoundException("No target user account matches token identifier: " + document.getUserEmail()));
 
         SecurityBlock securityBlock = userDocument.getSecurity();
         securityBlock.setPasswordHash(passwordEncoder.encode(newPassword));
         userDocument.setSecurity(securityBlock);
 
-        userDao.save(userDocument);
-        passwordResetTokenDao.delete(document);
+        userRepository.save(userDocument);
+        passwordResetTokenRepository.delete(document);
 
         log.info("Credentials security block hashed and updated for user destination: {}", document.getUserEmail());
     }
