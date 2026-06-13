@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.infra.config;
+package com.loan_org.identity_and_access_management.messaging;
 
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
