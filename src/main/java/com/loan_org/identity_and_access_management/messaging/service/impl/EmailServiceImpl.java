@@ -1,8 +1,8 @@
-package com.loan_org.identity_and_access_management.service.impl;
+package com.loan_org.identity_and_access_management.messaging.service.impl;
 
-import com.loan_org.identity_and_access_management.config.RabbitMQConfig;
-import com.loan_org.identity_and_access_management.dto.NotificationEventDto;
-import com.loan_org.identity_and_access_management.service.EmailService;
+import com.loan_org.identity_and_access_management.infra.config.RabbitMQConfig;
+import com.loan_org.identity_and_access_management.messaging.dto.NotificationEventDto;
+import com.loan_org.identity_and_access_management.messaging.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -37,22 +37,22 @@ public class EmailServiceImpl implements EmailService {
 
         // Match the layout variables expected by your notification template engine
         Map<String, Object> templateVariables = Map.of(
-                "borrowerName", username, // Unified with notification schema
+                "borrowerName", username,
                 "activationUrl", activationUrl
         );
 
         NotificationEventDto event = NotificationEventDto.builder()
-                .userId(username) // Or pass actual user UUID string if available
+                .userId(username)
                 .transactionId("iam-act-" + UUID.randomUUID().toString().substring(0, 8))
                 .recipient(email)
                 .channel("EMAIL")
                 .templateCode("USER_ACTIVATION")
-                .priority("HIGH") // Triggers the high-priority AMQP pipeline queue
+                .priority("HIGH")
                 .title("Activate Your Apex Lending Account")
                 .templateVariables(templateVariables)
                 .build();
 
-        dispatchToBroker(RabbitMQConfig.ROUTING_KEY_HIGH, event);
+        dispatchToBroker(event);
     }
 
     @Override
@@ -77,24 +77,23 @@ public class EmailServiceImpl implements EmailService {
                 .templateVariables(templateVariables)
                 .build();
 
-        dispatchToBroker(RabbitMQConfig.ROUTING_KEY_HIGH, event);
+        dispatchToBroker(event);
     }
 
     /**
      * Helper to gracefully push the structured event down the RabbitMQ wire.
      */
-    private void dispatchToBroker(String routingKey, NotificationEventDto event) {
+    private void dispatchToBroker(NotificationEventDto event) {
         try {
             rabbitTemplate.convertAndSend(
                     RabbitMQConfig.EXCHANGE_NAME,
-                    routingKey,
+                    RabbitMQConfig.ROUTING_KEY_HIGH,
                     event
             );
-            log.debug("Notification event successfully placed on exchange with routing key: {}", routingKey);
+            log.debug("Notification event successfully placed on exchange with routing key: {}", RabbitMQConfig.ROUTING_KEY_HIGH);
         } catch (Exception e) {
             log.error("Critical failure publishing notification event to AMQP infrastructure for transaction: {}",
                     event.getTransactionId(), e);
-            // Throwing a runtime exception ensures transaction boundaries fail if broker is completely reachable
             throw new RuntimeException("Messaging broker communication failure", e);
         }
     }
