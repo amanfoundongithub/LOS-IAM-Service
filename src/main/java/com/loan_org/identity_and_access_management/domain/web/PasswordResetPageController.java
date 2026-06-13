@@ -1,20 +1,19 @@
-package com.loan_org.identity_and_access_management.controller;
+package com.loan_org.identity_and_access_management.domain.web;
 
 import com.loan_org.identity_and_access_management.service.TokenManagementService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("${info.base_url}")
 public class PasswordResetPageController {
 
-    @Autowired
-    private TokenManagementService tokenManagementService;
+    private final TokenManagementService tokenManagementService;
 
     @GetMapping("/reset/password")
     public String showResetPasswordForm(@RequestParam("token") String token, Model model) {
