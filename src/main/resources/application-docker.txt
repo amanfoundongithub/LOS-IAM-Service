@@ -1,0 +1,7 @@
+MONGO_URI: "mongodb://mongo-db-container:27017/user_db"
+RABBITMQ_HOST: "rabbitmq-container"
+RABBITMQ_PORT: 5672
+RABBITMQ_USER: "guest"
+RABBITMQ_PASS: "guest"
+EUREKA_HOST: "registry-service"
+JWT_SECRET_KEY:

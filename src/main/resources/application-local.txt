@@ -1,0 +1,7 @@
+MONGO_URI: "mongodb://localhost:27017/user_db"
+RABBITMQ_HOST: localhost
+RABBITMQ_PORT: 5672
+RABBITMQ_USER: "guest"
+RABBITMQ_PASS: "guest"
+EUREKA_HOST: localhost
+JWT_SECRET_KEY:
