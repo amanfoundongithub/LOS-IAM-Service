@@ -63,7 +63,7 @@ mdc:
   key: traceId
 
 server:
-  port: 5600
+  port: 4200
 
 logging:
   level:
