@@ -1,6 +1,6 @@
-package com.loan_org.identity_and_access_management.dao;
+package com.loan_org.identity_and_access_management.domain.token.repository;
 
-import com.loan_org.identity_and_access_management.entity.ActivationTokenDocument;
+import com.loan_org.identity_and_access_management.domain.token.entity.ActivationTokenDocument;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.Optional;
 
@@ -32,7 +32,7 @@ import java.util.Optional;
  * @author Aman Raj
  * @since 1.0
  */
-public interface ActivationTokenDao
+public interface ActivationTokenRepository
         extends MongoRepository<ActivationTokenDocument, String> {
 
     /**

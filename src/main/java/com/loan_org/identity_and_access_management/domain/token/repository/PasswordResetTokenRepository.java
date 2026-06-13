@@ -1,6 +1,6 @@
-package com.loan_org.identity_and_access_management.dao;
+package com.loan_org.identity_and_access_management.domain.token.repository;
 
-import com.loan_org.identity_and_access_management.entity.PasswordResetTokenDocument;
+import com.loan_org.identity_and_access_management.domain.token.entity.PasswordResetTokenDocument;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.Optional;
 
@@ -32,7 +32,7 @@ import java.util.Optional;
  * @author Aman Raj
  * @since 1.0
  */
-public interface PasswordResetTokenDao
+public interface PasswordResetTokenRepository
         extends MongoRepository<PasswordResetTokenDocument, String> {
 
     /**

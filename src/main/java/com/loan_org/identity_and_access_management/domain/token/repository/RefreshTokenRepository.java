@@ -1,6 +1,6 @@
-package com.loan_org.identity_and_access_management.dao;
+package com.loan_org.identity_and_access_management.domain.token.repository;
 
-import com.loan_org.identity_and_access_management.entity.RefreshTokenDocument;
+import com.loan_org.identity_and_access_management.domain.token.entity.RefreshTokenDocument;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.Optional;
 
@@ -31,7 +31,7 @@ import java.util.Optional;
  * @author Aman Raj
  * @since 1.0
  */
-public interface RefreshTokenDao extends MongoRepository<RefreshTokenDocument, String> {
+public interface RefreshTokenRepository extends MongoRepository<RefreshTokenDocument, String> {
 
     /**
      * Retrieves a refresh token document by its token value.
