@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.entity;
+package com.loan_org.identity_and_access_management.domain.token.entity;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -6,9 +6,7 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 
 /**
  * MongoDB document representing a time-bound password reset token
@@ -28,6 +26,7 @@ import java.time.temporal.ChronoUnit;
 public class PasswordResetTokenDocument {
 
     @Id
+    @Setter(AccessLevel.NONE) // Protect database-assigned ID immutability
     private String id;
 
     @Indexed(unique = true)
@@ -42,12 +41,9 @@ public class PasswordResetTokenDocument {
     @Indexed(expireAfterSeconds = 0)
     private Instant expiresAt;
 
-    public PasswordResetTokenDocument(String token, String userEmail, int expiryHours) {
-        this.token = token;
-        this.userEmail = userEmail;
-        this.expiresAt = Instant.now().plus(expiryHours, ChronoUnit.HOURS);
-    }
-
+    /**
+     * Runtime validation utility ensuring token freshness.
+     */
     public boolean isExpired() {
         return Instant.now().isAfter(this.expiresAt);
     }
