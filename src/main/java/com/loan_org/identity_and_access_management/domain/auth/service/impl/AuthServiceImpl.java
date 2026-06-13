@@ -14,7 +14,7 @@ import com.loan_org.identity_and_access_management.exception.UnauthorizedAccessE
 import com.loan_org.identity_and_access_management.domain.auth.service.AuthService;
 import com.loan_org.identity_and_access_management.messaging.service.EmailService;
 import com.loan_org.identity_and_access_management.domain.token.service.TokenManagementService;
-import com.loan_org.identity_and_access_management.util.AuthServiceMessageFactory;
+import com.loan_org.identity_and_access_management.domain.auth.util.AuthServiceMessageFactory;
 import com.loan_org.identity_and_access_management.util.UserAttributeFactory;
 
 import lombok.RequiredArgsConstructor;
