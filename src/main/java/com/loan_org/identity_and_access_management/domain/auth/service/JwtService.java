@@ -1,10 +1,11 @@
-package com.loan_org.identity_and_access_management.security;
+package com.loan_org.identity_and_access_management.domain.auth.service;
 
-import com.loan_org.identity_and_access_management.dao.RefreshTokenDao;
-import com.loan_org.identity_and_access_management.dto.UserResponseDto;
+import com.loan_org.identity_and_access_management.domain.token.repository.RefreshTokenRepository;
+import com.loan_org.identity_and_access_management.domain.user.dto.UserResponseDto;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class JwtService {
 
     @Value("${jwt.secret.key}")
@@ -31,8 +33,7 @@ public class JwtService {
     @Value("${jwt.refresh_token.expiration_in_days}")
     private long refreshTokenExpirationInDays;
 
-    @Autowired
-    private RefreshTokenDao refreshTokenDao;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     private SecretKey signingKey;
     private static final long MINUTES_TO_MILLISECONDS = 60000;
