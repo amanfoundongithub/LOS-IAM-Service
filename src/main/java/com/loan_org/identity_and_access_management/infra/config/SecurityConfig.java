@@ -1,7 +1,7 @@
-package com.loan_org.identity_and_access_management.config;
+package com.loan_org.identity_and_access_management.infra.config;
 
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.loan_org.identity_and_access_management.config.CorsProperties;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,11 +16,11 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
+@RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private CorsProperties corsProperties;
+    private final CorsProperties corsProperties;
 
     @Value("${info.base_url}")
     private String authBasePath;
@@ -36,12 +36,6 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(exceptions ->
-                        exceptions.authenticationEntryPoint((req, res, authException)-> {
-                            res.setContentType("application/json");
-                            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                            res.getWriter().write("{ \"error\": \"Unauthorized\", \"message\": \"Full authentication is required.\" }");
-                        }))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(authBasePath + "/**").permitAll()
                         .anyRequest().authenticated()
