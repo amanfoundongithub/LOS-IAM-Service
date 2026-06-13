@@ -1,0 +1,73 @@
+name: loan_origination_system
+
+services:
+  # ==============================================================================
+  # 1. Identity & Access Management Service (IAM)
+  # ==============================================================================
+  iam-service:
+    container_name: iam-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "4200:4200"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      mongo-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - loan-network
+
+  # ==============================================================================
+  # 2. Database Layer (MongoDB)
+  # ==============================================================================
+  mongo-db:
+    image: mongo:6.0
+    container_name: mongo-db-container
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - loan-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ==============================================================================
+  # 3. Message Broker (RabbitMQ)
+  # ==============================================================================
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: rabbitmq-container
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - loan-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+# ==============================================================================
+# NETWORKS & VOLUMES STORAGE CONFIGURATION
+# ==============================================================================
+networks:
+  loan-network:
+    name: loan_origination_system_loan-network
+    external: true
+
+volumes:
+  mongo-data:
+    driver: local
+  rabbitmq-data:
+    driver: local
