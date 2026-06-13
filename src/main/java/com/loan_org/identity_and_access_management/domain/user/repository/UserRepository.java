@@ -1,6 +1,6 @@
-package com.loan_org.identity_and_access_management.dao;
+package com.loan_org.identity_and_access_management.domain.user.repository;
 
-import com.loan_org.identity_and_access_management.entity.UserDocument;
+import com.loan_org.identity_and_access_management.domain.user.entity.UserDocument;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -34,7 +34,7 @@ import java.util.Optional;
  * @since 1.0
  */
 @Repository
-public interface UserDao extends MongoRepository<UserDocument, String> {
+public interface UserRepository extends MongoRepository<UserDocument, String> {
 
     /**
      * Retrieves a user by their email address.
