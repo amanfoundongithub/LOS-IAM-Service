@@ -33,7 +33,7 @@ public class EmailServiceImpl implements EmailService {
     public void sendActivationEmail(String email, String username, String token) {
         log.info("Publishing USER_ACTIVATION event to broker for username: {}", username);
 
-        String activationUrl = baseUrl + "/api/v1/auth/verify?token=" + token;
+        String activationUrl = baseUrl + "/verify?token=" + token;
 
         // Match the layout variables expected by your notification template engine
         Map<String, Object> templateVariables = Map.of(
