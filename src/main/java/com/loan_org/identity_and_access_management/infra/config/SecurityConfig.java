@@ -1,6 +1,5 @@
 package com.loan_org.identity_and_access_management.infra.config;
 
-import com.loan_org.identity_and_access_management.config.CorsProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
