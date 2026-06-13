@@ -30,11 +30,6 @@ public class JwtService {
     @Value("${jwt.metadata.expiration_in_minutes}")
     private long jwtExpirationInMinutes;
 
-    @Value("${jwt.refresh_token.expiration_in_days}")
-    private long refreshTokenExpirationInDays;
-
-    private final RefreshTokenRepository refreshTokenRepository;
-
     private SecretKey signingKey;
     private static final long MINUTES_TO_MILLISECONDS = 60000;
 
@@ -59,10 +54,14 @@ public class JwtService {
     }
 
     public String createRefreshToken() {
-        return UUID.randomUUID().toString() + "-" + UUID.randomUUID().toString();
+        return UUID.randomUUID() + "-" + UUID.randomUUID();
     }
 
     public String createPasswordResetToken() {
+        return UUID.randomUUID().toString();
+    }
+
+    public String createAccountActivationToken() {
         return UUID.randomUUID().toString();
     }
 }
