@@ -1,6 +1,6 @@
 package com.loan_org.identity_and_access_management.mdc;
 
-import com.loan_org.identity_and_access_management.filter.MdcHeaderFilter;
+import com.loan_org.identity_and_access_management.middleware.filter.MdcHeaderFilter;
 import jakarta.servlet.FilterChain;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
