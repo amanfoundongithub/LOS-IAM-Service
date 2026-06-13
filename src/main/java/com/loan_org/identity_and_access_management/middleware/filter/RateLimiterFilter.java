@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.filter;
+package com.loan_org.identity_and_access_management.middleware.filter;
 
 import com.loan_org.identity_and_access_management.config.RateLimiterService;
 import io.github.bucket4j.Bucket;
