@@ -1,6 +1,6 @@
 package com.loan_org.identity_and_access_management.messaging.service.impl;
 
-import com.loan_org.identity_and_access_management.infra.config.RabbitMQConfig;
+import com.loan_org.identity_and_access_management.messaging.RabbitMQConfig;
 import com.loan_org.identity_and_access_management.messaging.dto.NotificationEventDto;
 import com.loan_org.identity_and_access_management.messaging.service.EmailService;
 import lombok.RequiredArgsConstructor;

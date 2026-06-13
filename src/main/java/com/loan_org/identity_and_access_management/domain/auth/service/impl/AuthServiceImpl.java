@@ -13,7 +13,7 @@ import com.loan_org.identity_and_access_management.exception.AccountNotFoundExce
 import com.loan_org.identity_and_access_management.exception.UnauthorizedAccessException;
 import com.loan_org.identity_and_access_management.domain.auth.service.AuthService;
 import com.loan_org.identity_and_access_management.messaging.service.EmailService;
-import com.loan_org.identity_and_access_management.service.TokenManagementService;
+import com.loan_org.identity_and_access_management.domain.token.service.TokenManagementService;
 import com.loan_org.identity_and_access_management.util.AuthServiceMessageFactory;
 import com.loan_org.identity_and_access_management.util.UserAttributeFactory;
 

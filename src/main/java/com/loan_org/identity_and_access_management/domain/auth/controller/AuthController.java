@@ -6,12 +6,11 @@ import com.loan_org.identity_and_access_management.domain.auth.dto.UserRegistrat
 import com.loan_org.identity_and_access_management.domain.token.dto.RefreshTokenRequestDto;
 import com.loan_org.identity_and_access_management.domain.user.dto.UserResponseDto;
 import com.loan_org.identity_and_access_management.domain.user.entity.UserDocument;
-import com.loan_org.identity_and_access_management.security.JwtService;
-import com.loan_org.identity_and_access_management.service.AuthService;
-import com.loan_org.identity_and_access_management.service.TokenManagementService;
+import com.loan_org.identity_and_access_management.domain.auth.service.JwtService;
+import com.loan_org.identity_and_access_management.domain.auth.service.AuthService;
+import com.loan_org.identity_and_access_management.domain.token.service.TokenManagementService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

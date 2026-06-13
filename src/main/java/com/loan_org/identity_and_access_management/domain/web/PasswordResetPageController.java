@@ -1,6 +1,6 @@
 package com.loan_org.identity_and_access_management.domain.web;
 
-import com.loan_org.identity_and_access_management.service.TokenManagementService;
+import com.loan_org.identity_and_access_management.domain.token.service.TokenManagementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
