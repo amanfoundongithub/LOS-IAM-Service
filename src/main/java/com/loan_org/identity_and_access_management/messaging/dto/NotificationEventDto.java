@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.dto;
+package com.loan_org.identity_and_access_management.messaging.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
