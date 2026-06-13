@@ -1,15 +1,18 @@
-package com.loan_org.identity_and_access_management.service.impl;
+package com.loan_org.identity_and_access_management.domain.auth.service.impl;
 
-import com.loan_org.identity_and_access_management.dao.UserDao;
-import com.loan_org.identity_and_access_management.dto.UserLoginDto;
-import com.loan_org.identity_and_access_management.dto.UserRegistrationDto;
-import com.loan_org.identity_and_access_management.dto.UserResponseDto;
-import com.loan_org.identity_and_access_management.entity.*;
+import com.loan_org.identity_and_access_management.domain.user.repository.UserRepository;
+import com.loan_org.identity_and_access_management.domain.user.entity.MetadataBlock;
+import com.loan_org.identity_and_access_management.domain.user.entity.SecurityBlock;
+import com.loan_org.identity_and_access_management.domain.user.entity.UserDocument;
+import com.loan_org.identity_and_access_management.domain.user.entity.UserStatus;
+import com.loan_org.identity_and_access_management.domain.auth.dto.UserLoginDto;
+import com.loan_org.identity_and_access_management.domain.auth.dto.UserRegistrationDto;
+import com.loan_org.identity_and_access_management.domain.user.dto.UserResponseDto;
 import com.loan_org.identity_and_access_management.exception.AccountAlreadyExistsException;
 import com.loan_org.identity_and_access_management.exception.AccountNotFoundException;
 import com.loan_org.identity_and_access_management.exception.UnauthorizedAccessException;
-import com.loan_org.identity_and_access_management.service.AuthService;
-import com.loan_org.identity_and_access_management.service.EmailService;
+import com.loan_org.identity_and_access_management.domain.auth.service.AuthService;
+import com.loan_org.identity_and_access_management.messaging.service.EmailService;
 import com.loan_org.identity_and_access_management.service.TokenManagementService;
 import com.loan_org.identity_and_access_management.util.AuthServiceMessageFactory;
 import com.loan_org.identity_and_access_management.util.UserAttributeFactory;
@@ -69,7 +72,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserAttributeFactory userAttributeFactory;
 
     // User's DAO
-    private final UserDao userDao;
+    private final UserRepository userRepository;
 
     // Security helper
     private final BCryptPasswordEncoder passwordEncoder;
@@ -106,7 +109,7 @@ public class AuthServiceImpl implements AuthService {
                 .build();
 
         // Step 3: Save the document in MongoDB and continue post registration stuff
-        UserDocument savedUser = userDao.save(userDocument);
+        UserDocument savedUser = userRepository.save(userDocument);
         postRegistrationWorkflow(savedUser);
         return savedUser;
     }
@@ -118,13 +121,13 @@ public class AuthServiceImpl implements AuthService {
         String email = loginRequest.getEmail();
         String username = loginRequest.getUsername();
         if(email != null && !email.isBlank()) {
-            userDocument = userDao.findByEmail(email)
+            userDocument = userRepository.findByEmail(email)
                     .orElseThrow(() ->
                             new AccountNotFoundException(AuthServiceMessageFactory.emailNotFound(email)));
 
         }
         else if(username != null && !username.isBlank()) {
-            userDocument = userDao.findByUsername(username)
+            userDocument = userRepository.findByUsername(username)
                     .orElseThrow(() ->
                             new AccountNotFoundException(AuthServiceMessageFactory.usernameNotFound(username)));
         }
@@ -141,10 +144,10 @@ public class AuthServiceImpl implements AuthService {
     // ---------------------- HELPER FUNCTIONS FOR REGISTRATION ---------------------------
 
     private void hasUniqueIdentifier(String email, String username) {
-        if(userDao.findByEmail(email).isPresent()) {
+        if(userRepository.findByEmail(email).isPresent()) {
             throw new AccountAlreadyExistsException(AuthServiceMessageFactory.emailAlreadyExists(email));
         }
-        if(userDao.findByUsername(username).isPresent()) {
+        if(userRepository.findByUsername(username).isPresent()) {
             throw new AccountAlreadyExistsException(AuthServiceMessageFactory.usernameAlreadyExists(username));
         }
     }
@@ -212,7 +215,7 @@ public class AuthServiceImpl implements AuthService {
         block.setFailedLoginAttempts(0);
         block.setLockoutUntil(null);
         document.getMetadata().setLastLoginAt(Instant.now());
-        userDao.save(document);
+        userRepository.save(document);
 
         return UserResponseDto.builder()
                 .id(document.getId())
@@ -231,6 +234,6 @@ public class AuthServiceImpl implements AuthService {
             security.setLockoutUntil(Instant.now().plusSeconds(lockoutMinutes * MINUTES_TO_SECONDS));
             log.warn("Account with username: {} locked due to incorrect attempts!", user.getUsername());
         }
-        userDao.save(user);
+        userRepository.save(user);
     }
 }
