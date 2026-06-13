@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.service;
+package com.loan_org.identity_and_access_management.messaging.service;
 
 public interface EmailService {
     public void sendActivationEmail(String email, String username, String token);
