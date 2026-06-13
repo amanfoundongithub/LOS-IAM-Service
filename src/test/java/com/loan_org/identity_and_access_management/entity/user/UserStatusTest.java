@@ -1,6 +1,6 @@
 package com.loan_org.identity_and_access_management.entity.user;
 
-import com.loan_org.identity_and_access_management.entity.UserStatus;
+import com.loan_org.identity_and_access_management.domain.user.entity.UserStatus;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;

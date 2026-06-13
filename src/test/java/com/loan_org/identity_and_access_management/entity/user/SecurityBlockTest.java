@@ -1,6 +1,6 @@
 package com.loan_org.identity_and_access_management.entity.user;
 
-import com.loan_org.identity_and_access_management.entity.SecurityBlock;
+import com.loan_org.identity_and_access_management.domain.user.entity.SecurityBlock;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;

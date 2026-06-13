@@ -1,9 +1,9 @@
 package com.loan_org.identity_and_access_management.entity.user;
 
-import com.loan_org.identity_and_access_management.entity.MetadataBlock;
-import com.loan_org.identity_and_access_management.entity.SecurityBlock;
-import com.loan_org.identity_and_access_management.entity.UserDocument;
-import com.loan_org.identity_and_access_management.entity.UserStatus;
+import com.loan_org.identity_and_access_management.domain.user.entity.MetadataBlock;
+import com.loan_org.identity_and_access_management.domain.user.entity.SecurityBlock;
+import com.loan_org.identity_and_access_management.domain.user.entity.UserDocument;
+import com.loan_org.identity_and_access_management.domain.user.entity.UserStatus;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;

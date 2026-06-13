@@ -1,15 +1,20 @@
 package com.loan_org.identity_and_access_management.service;
 
-import com.loan_org.identity_and_access_management.dao.UserDao;
-import com.loan_org.identity_and_access_management.dto.UserLoginDto;
-import com.loan_org.identity_and_access_management.dto.UserRegistrationDto;
-import com.loan_org.identity_and_access_management.dto.UserResponseDto;
-import com.loan_org.identity_and_access_management.entity.*;
+import com.loan_org.identity_and_access_management.domain.token.service.TokenManagementService;
+import com.loan_org.identity_and_access_management.domain.user.repository.UserRepository;
+import com.loan_org.identity_and_access_management.domain.user.entity.MetadataBlock;
+import com.loan_org.identity_and_access_management.domain.user.entity.SecurityBlock;
+import com.loan_org.identity_and_access_management.domain.user.entity.UserDocument;
+import com.loan_org.identity_and_access_management.domain.user.entity.UserStatus;
+import com.loan_org.identity_and_access_management.domain.auth.dto.UserLoginDto;
+import com.loan_org.identity_and_access_management.domain.auth.dto.UserRegistrationDto;
+import com.loan_org.identity_and_access_management.domain.user.dto.UserResponseDto;
 import com.loan_org.identity_and_access_management.exception.AccountAlreadyExistsException;
 import com.loan_org.identity_and_access_management.exception.AccountNotFoundException;
 import com.loan_org.identity_and_access_management.exception.UnauthorizedAccessException;
-import com.loan_org.identity_and_access_management.service.impl.AuthServiceImpl;
-import com.loan_org.identity_and_access_management.util.UserAttributeFactory;
+import com.loan_org.identity_and_access_management.messaging.service.EmailService;
+import com.loan_org.identity_and_access_management.domain.auth.service.impl.AuthServiceImpl;
+import com.loan_org.identity_and_access_management.domain.user.factory.UserAttributeFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,7 +44,7 @@ class AuthServiceImplTest {
     @Mock
     private UserAttributeFactory userAttributeFactory;
     @Mock
-    private UserDao userDao;
+    private UserRepository userRepository;
     @Mock
     private BCryptPasswordEncoder passwordEncoder;
 
@@ -79,8 +84,8 @@ class AuthServiceImplTest {
     void register_Success_WithActiveTransaction() {
         // Arrange
         UserRegistrationDto dto = createRegistrationDto();
-        when(userDao.findByEmail(dto.getEmail())).thenReturn(Optional.empty());
-        when(userDao.findByUsername(dto.getUsername())).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(dto.getEmail())).thenReturn(Optional.empty());
+        when(userRepository.findByUsername(dto.getUsername())).thenReturn(Optional.empty());
         when(passwordEncoder.encode(dto.getPassword())).thenReturn("hashedPassword");
         when(userAttributeFactory.buildRegistrationAttributes(dto)).thenReturn(Collections.emptyMap());
         when(tokenManagementService.generateActivationToken(dto.getEmail())).thenReturn("token123");
@@ -96,7 +101,7 @@ class AuthServiceImplTest {
                 .email(dto.getEmail())
                 .username(dto.getUsername())
                 .build();
-        when(userDao.save(any(UserDocument.class))).thenReturn(savedDoc);
+        when(userRepository.save(any(UserDocument.class))).thenReturn(savedDoc);
 
         // Act
         UserDocument result = authService.register(dto);
@@ -118,11 +123,11 @@ class AuthServiceImplTest {
     void register_Success_WithoutTransactionSynchronization() {
         // Arrange
         UserRegistrationDto dto = createRegistrationDto();
-        when(userDao.findByEmail(dto.getEmail())).thenReturn(Optional.empty());
-        when(userDao.findByUsername(dto.getUsername())).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(dto.getEmail())).thenReturn(Optional.empty());
+        when(userRepository.findByUsername(dto.getUsername())).thenReturn(Optional.empty());
         mockedSyncManager.when(TransactionSynchronizationManager::isSynchronizationActive).thenReturn(false);
         when(tokenManagementService.generateActivationToken(dto.getEmail())).thenReturn("token123");
-        when(userDao.save(any(UserDocument.class))).thenReturn(UserDocument.builder().email(dto.getEmail()).username(dto.getUsername()).build());
+        when(userRepository.save(any(UserDocument.class))).thenReturn(UserDocument.builder().email(dto.getEmail()).username(dto.getUsername()).build());
 
         // Act
         authService.register(dto);
@@ -134,17 +139,17 @@ class AuthServiceImplTest {
     @Test
     void register_ThrowsException_WhenEmailAlreadyExists() {
         UserRegistrationDto dto = createRegistrationDto();
-        when(userDao.findByEmail(dto.getEmail())).thenReturn(Optional.of(new UserDocument()));
+        when(userRepository.findByEmail(dto.getEmail())).thenReturn(Optional.of(new UserDocument()));
 
         assertThrows(AccountAlreadyExistsException.class, () -> authService.register(dto));
-        verify(userDao, never()).save(any());
+        verify(userRepository, never()).save(any());
     }
 
     @Test
     void register_ThrowsException_WhenUsernameAlreadyExists() {
         UserRegistrationDto dto = createRegistrationDto();
-        when(userDao.findByEmail(dto.getEmail())).thenReturn(Optional.empty());
-        when(userDao.findByUsername(dto.getUsername())).thenReturn(Optional.of(new UserDocument()));
+        when(userRepository.findByEmail(dto.getEmail())).thenReturn(Optional.empty());
+        when(userRepository.findByUsername(dto.getUsername())).thenReturn(Optional.of(new UserDocument()));
 
         assertThrows(AccountAlreadyExistsException.class, () -> authService.register(dto));
     }
@@ -160,12 +165,12 @@ class AuthServiceImplTest {
         request.setPassword("password");
 
         UserDocument mockUser = createActiveUser();
-        when(userDao.findByEmail(request.getEmail())).thenReturn(Optional.of(mockUser));
+        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(mockUser));
         when(passwordEncoder.matches(request.getPassword(), mockUser.getSecurity().getPasswordHash())).thenReturn(true);
 
         UserResponseDto response = authService.login(request);
         assertNotNull(response);
-        verify(userDao).save(mockUser);
+        verify(userRepository).save(mockUser);
     }
 
     @Test
@@ -175,7 +180,7 @@ class AuthServiceImplTest {
         request.setPassword("password");
 
         UserDocument mockUser = createActiveUser();
-        when(userDao.findByUsername(request.getUsername())).thenReturn(Optional.of(mockUser));
+        when(userRepository.findByUsername(request.getUsername())).thenReturn(Optional.of(mockUser));
         when(passwordEncoder.matches(request.getPassword(), mockUser.getSecurity().getPasswordHash())).thenReturn(true);
 
         UserResponseDto response = authService.login(request);
@@ -187,7 +192,7 @@ class AuthServiceImplTest {
         UserLoginDto request = new UserLoginDto();
         request.setEmail("notfound@loan.com");
 
-        when(userDao.findByEmail(request.getEmail())).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.empty());
         assertThrows(AccountNotFoundException.class, () -> authService.login(request));
     }
 
@@ -196,7 +201,7 @@ class AuthServiceImplTest {
         UserLoginDto request = new UserLoginDto();
         request.setUsername("unknown_user");
 
-        when(userDao.findByUsername(request.getUsername())).thenReturn(Optional.empty());
+        when(userRepository.findByUsername(request.getUsername())).thenReturn(Optional.empty());
         assertThrows(AccountNotFoundException.class, () -> authService.login(request));
     }
 
@@ -218,7 +223,7 @@ class AuthServiceImplTest {
         UserDocument suspendedUser = createActiveUser();
         suspendedUser.setStatus(UserStatus.SUSPENDED);
 
-        when(userDao.findByEmail(request.getEmail())).thenReturn(Optional.of(suspendedUser));
+        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(suspendedUser));
         assertThrows(UnauthorizedAccessException.class, () -> authService.login(request));
     }
 
@@ -231,7 +236,7 @@ class AuthServiceImplTest {
         // Lockout expires exactly 5 minutes into the future
         lockedUser.getSecurity().setLockoutUntil(fixedInstant.plusSeconds(300));
 
-        when(userDao.findByEmail(request.getEmail())).thenReturn(Optional.of(lockedUser));
+        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(lockedUser));
         assertThrows(UnauthorizedAccessException.class, () -> authService.login(request));
     }
 
@@ -244,7 +249,7 @@ class AuthServiceImplTest {
         // Lockout expires exactly 45 seconds into the future (under 1 minute)
         lockedUser.getSecurity().setLockoutUntil(fixedInstant.plusSeconds(45));
 
-        when(userDao.findByEmail(request.getEmail())).thenReturn(Optional.of(lockedUser));
+        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(lockedUser));
         assertThrows(UnauthorizedAccessException.class, () -> authService.login(request));
     }
 
@@ -257,12 +262,12 @@ class AuthServiceImplTest {
         UserDocument mockUser = createActiveUser();
         mockUser.getSecurity().setFailedLoginAttempts(2); // Attempt will become 3
 
-        when(userDao.findByEmail(request.getEmail())).thenReturn(Optional.of(mockUser));
+        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(mockUser));
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
 
         assertThrows(UnauthorizedAccessException.class, () -> authService.login(request));
         assertEquals(3, mockUser.getSecurity().getFailedLoginAttempts());
-        verify(userDao).save(mockUser);
+        verify(userRepository).save(mockUser);
     }
 
     @Test
@@ -274,7 +279,7 @@ class AuthServiceImplTest {
         UserDocument mockUser = createActiveUser();
         mockUser.getSecurity().setFailedLoginAttempts(4); // 4 + 1 = 5 (Triggers Max Attempts Limit)
 
-        when(userDao.findByEmail(request.getEmail())).thenReturn(Optional.of(mockUser));
+        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(mockUser));
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
 
         assertThrows(UnauthorizedAccessException.class, () -> authService.login(request));
@@ -293,8 +298,8 @@ class AuthServiceImplTest {
 
         // Act & Assert
         assertThrows(AccountNotFoundException.class, () -> authService.login(request));
-        verify(userDao, never()).findByEmail(anyString());
-        verify(userDao, never()).findByUsername(anyString());
+        verify(userRepository, never()).findByEmail(anyString());
+        verify(userRepository, never()).findByUsername(anyString());
     }
 
     @Test
@@ -307,8 +312,8 @@ class AuthServiceImplTest {
 
         // Act & Assert
         assertThrows(AccountNotFoundException.class, () -> authService.login(request));
-        verify(userDao, never()).findByEmail(anyString());
-        verify(userDao, never()).findByUsername(anyString());
+        verify(userRepository, never()).findByEmail(anyString());
+        verify(userRepository, never()).findByUsername(anyString());
     }
 
     @Test
@@ -321,8 +326,8 @@ class AuthServiceImplTest {
 
         // Act & Assert
         assertThrows(AccountNotFoundException.class, () -> authService.login(request));
-        verify(userDao, never()).findByEmail(anyString());
-        verify(userDao, never()).findByUsername(anyString());
+        verify(userRepository, never()).findByEmail(anyString());
+        verify(userRepository, never()).findByUsername(anyString());
     }
 
     @Test
@@ -336,7 +341,7 @@ class AuthServiceImplTest {
         // Lockout expired 5 minutes ago
         mockUser.getSecurity().setLockoutUntil(fixedInstant.minusSeconds(300));
 
-        when(userDao.findByEmail(request.getEmail())).thenReturn(Optional.of(mockUser));
+        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(mockUser));
         when(passwordEncoder.matches(request.getPassword(), mockUser.getSecurity().getPasswordHash())).thenReturn(true);
 
         // Act
@@ -345,7 +350,7 @@ class AuthServiceImplTest {
         // Assert: It should bypass the lockout block, execute successfully, and clear the expired lock
         assertNotNull(response);
         assertNull(mockUser.getSecurity().getLockoutUntil());
-        verify(userDao).save(mockUser);
+        verify(userRepository).save(mockUser);
     }
 
     // =========================================================================

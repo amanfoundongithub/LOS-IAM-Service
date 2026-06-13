@@ -1,6 +1,6 @@
 package com.loan_org.identity_and_access_management.mdc;
 
-import com.loan_org.identity_and_access_management.config.AsyncMdcConfig;
+import com.loan_org.identity_and_access_management.middleware.config.AsyncMdcConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

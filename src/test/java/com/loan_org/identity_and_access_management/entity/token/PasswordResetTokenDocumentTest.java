@@ -1,6 +1,6 @@
 package com.loan_org.identity_and_access_management.entity.token;
 
-import com.loan_org.identity_and_access_management.entity.PasswordResetTokenDocument;
+import com.loan_org.identity_and_access_management.domain.token.entity.PasswordResetTokenDocument;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;

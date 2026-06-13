@@ -1,6 +1,6 @@
 package com.loan_org.identity_and_access_management.entity.token;
 
-import com.loan_org.identity_and_access_management.entity.ActivationTokenDocument;
+import com.loan_org.identity_and_access_management.domain.token.entity.ActivationTokenDocument;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
