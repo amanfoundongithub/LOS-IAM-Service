@@ -1,7 +1,8 @@
-package com.loan_org.identity_and_access_management.dto;
+package com.loan_org.identity_and_access_management.domain.auth.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -23,5 +24,6 @@ public class UserRegistrationDto {
     @NotBlank(message = "Your role is required")
     private String role;
 
+    @PositiveOrZero(message = "Signing limit cannot be negative")
     private Double signingLimit;
 }
