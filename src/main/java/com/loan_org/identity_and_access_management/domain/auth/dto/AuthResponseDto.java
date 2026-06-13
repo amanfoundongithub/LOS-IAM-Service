@@ -1,5 +1,6 @@
-package com.loan_org.identity_and_access_management.dto;
+package com.loan_org.identity_and_access_management.domain.auth.dto;
 
+import com.loan_org.identity_and_access_management.domain.user.dto.UserResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
