@@ -1,8 +1,5 @@
 package com.loan_org.identity_and_access_management.domain.user.entity;
 
-import com.loan_org.identity_and_access_management.entity.MetadataBlock;
-import com.loan_org.identity_and_access_management.entity.SecurityBlock;
-import com.loan_org.identity_and_access_management.entity.UserStatus;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
