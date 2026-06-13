@@ -1,5 +1,8 @@
-package com.loan_org.identity_and_access_management.entity;
+package com.loan_org.identity_and_access_management.domain.user.entity;
 
+import com.loan_org.identity_and_access_management.entity.MetadataBlock;
+import com.loan_org.identity_and_access_management.entity.SecurityBlock;
+import com.loan_org.identity_and_access_management.entity.UserStatus;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -26,6 +29,7 @@ import java.util.Map;
 public class UserDocument {
 
     @Id
+    @Setter(AccessLevel.NONE)
     private String id;
 
     @Indexed(unique = true)
