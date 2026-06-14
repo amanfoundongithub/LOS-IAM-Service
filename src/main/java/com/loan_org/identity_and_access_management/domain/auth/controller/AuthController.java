@@ -17,17 +17,17 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("${info.base_url}")
+@RequestMapping("${api.base_url}")
 public class AuthController {
 
-    private final AuthService authService;
-
-    private final JwtService jwtService;
-
+    private final AuthService            authService;
+    private final JwtService             jwtService;
     private final TokenManagementService tokenManagementService;
 
     @PostMapping("/register")
-    public ResponseEntity<UserDocument> createRoute(@Valid @RequestBody UserRegistrationDto registration) {
+    public ResponseEntity<UserDocument> register(
+            @Valid @RequestBody UserRegistrationDto registration
+    ) {
         UserDocument document = authService.register(registration);
         return new ResponseEntity<>(document, HttpStatus.CREATED);
     }
@@ -35,8 +35,8 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDto> login(@Valid @RequestBody UserLoginDto loginRequest) {
         UserResponseDto response = authService.login(loginRequest);
-        String token = jwtService.generateToken(response);
-        String newAccessToken = jwtService.createRefreshToken();
+        String token             = jwtService.generateToken(response);
+        String newAccessToken    = jwtService.createRefreshToken();
         return new ResponseEntity<>(new AuthResponseDto(token, newAccessToken, response), HttpStatus.OK);
     }
 
