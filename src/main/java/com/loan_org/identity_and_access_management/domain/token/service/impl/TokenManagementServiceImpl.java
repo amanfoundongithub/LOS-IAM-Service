@@ -93,9 +93,6 @@ public class TokenManagementServiceImpl implements TokenManagementService {
     public String generateActivationToken(String email) {
         log.info("Initiating production validation workflow for activation token generation.");
 
-        userRepository.findByEmail(email)
-                .orElseThrow(() -> new AccountNotFoundException("No account linked to email destination: " + email));
-
         String tokenString = jwtService.createAccountActivationToken();
         ActivationTokenDocument tokenDocument = ActivationTokenDocument.builder()
                 .token(tokenString)
