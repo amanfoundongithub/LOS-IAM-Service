@@ -5,8 +5,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -16,32 +15,65 @@ import java.io.IOException;
 import java.util.UUID;
 
 @Component
+@Slf4j
 public class MdcHeaderFilter extends OncePerRequestFilter {
 
-    @Value("${mdc.header}")
-    private String mdcHeader;
+    /**
+     * Correlation configurations
+     */
+    @Value("${filter.mdc.correlation.header}")
+    private String correlationHeader;
 
-    @Value("${mdc.key}")
-    private String mdcKey;
+    @Value("${filter.mdc.correlation.key}")
+    private String mdcCorrelationKey;
 
-    // Logger for logging
-    private static final Logger LOGGER = LoggerFactory.getLogger(MdcHeaderFilter.class);
+    /**
+     * Trace configurations
+     */
+    @Value("${filter.mdc.trace.header}")
+    private String traceHeader;
+
+    @Value("${filter.mdc.trace.key}")
+    private String mdcTraceKey;
+
 
     @Override
     protected void doFilterInternal(@Nonnull HttpServletRequest request,
                                     @Nonnull HttpServletResponse response,
                                     @Nonnull FilterChain filterChain) throws ServletException, IOException {
         try {
-            String traceId = request.getHeader(mdcHeader);
-            if(traceId == null || traceId.trim().isEmpty()) {
-                // Warning: No correlation found
-                traceId = UUID.randomUUID().toString();
-                LOGGER.warn("No {} header found for request; switching to random traceId: {}. Please consider passing one for traceability.", mdcHeader, traceId);
+
+            // Handle correlationId first
+            String correlationId = request.getHeader(correlationHeader);
+            if(correlationId == null || correlationId.isBlank()) {
+                correlationId = "CORR-LOS-" + UUID.randomUUID();
+                log.warn("Missing tracking header [{}]. Generated fallback correlationId: {}",
+                        correlationHeader,
+                        correlationId);
             }
-            MDC.put(mdcKey, traceId);
-            response.addHeader(mdcHeader, traceId);
+
+            // Handle traceId next
+            String traceId = request.getHeader(traceHeader);
+            if(traceId == null || traceId.isBlank()) {
+                traceId = UUID.randomUUID().toString().replace("-", "");
+                log.warn("Missing tracking header [{}]. Generated standalone traceId: {}",
+                        traceHeader,
+                        traceId);
+            }
+
+            // Add them to MDC
+            MDC.put(mdcTraceKey, traceId);
+            MDC.put(mdcCorrelationKey, correlationId);
+
+            // Add them to response header
+            response.addHeader(correlationHeader, correlationId);
+            response.addHeader(traceHeader, traceId);
+
+            // Continue the rest of the business as usual, Chain-of-Command style
             filterChain.doFilter(request, response);
+
         } finally {
+            // Clean up local thread to prevent MDC pollution
             MDC.clear();
         }
     }
