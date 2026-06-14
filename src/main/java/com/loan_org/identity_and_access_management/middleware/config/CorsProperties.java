@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "iam.security.cors")
+@ConfigurationProperties(prefix = "security-config.cors")
 public class CorsProperties {
     private List<String> allowedOrigins;
     private List<String> allowedMethods;

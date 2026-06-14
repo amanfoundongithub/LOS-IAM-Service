@@ -1,5 +1,7 @@
 package com.loan_org.identity_and_access_management.middleware.config;
 
+import com.loan_org.identity_and_access_management.middleware.filter.MdcHeaderFilter;
+import com.loan_org.identity_and_access_management.middleware.filter.RateLimiterFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +12,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -19,10 +22,12 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final CorsProperties corsProperties;
+    private final CorsProperties    corsProperties;
+    private final RateLimiterFilter rateLimiterFilter;
+    private final MdcHeaderFilter   mdcHeaderFilter;
 
-    @Value("${info.base_url}")
-    private String authBasePath;
+    @Value("${api.base_url}")
+    private String apiBaseUrl;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -30,15 +35,19 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http){
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(authBasePath + "/**").permitAll()
+                        .requestMatchers(getPermittedUrls(apiBaseUrl)).permitAll()
                         .anyRequest().authenticated()
                 );
+
+        // Add filter ordering here
+        http.addFilterBefore(mdcHeaderFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(rateLimiterFilter, MdcHeaderFilter.class);
 
         return http.build();
     }
@@ -56,5 +65,13 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    private String getPermittedUrls(String baseUrl) {
+        if(baseUrl.endsWith("/")) {
+            return baseUrl + "**";
+        } else {
+            return baseUrl + "/**";
+        }
     }
 }
