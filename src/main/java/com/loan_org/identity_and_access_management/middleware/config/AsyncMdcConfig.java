@@ -1,11 +1,11 @@
 package com.loan_org.identity_and_access_management.middleware.config;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskDecorator;
-import org.springframework.lang.NonNull;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -16,26 +16,30 @@ import java.util.concurrent.Executor;
 @EnableAsync
 public class AsyncMdcConfig {
 
-    @Value("${app.async.core-pool-size}")
+    @Value("${threadConfig.async.corePoolSize}")
     private int corePoolSize;
 
-    @Value("${app.async.max-pool-size}")
+    @Value("${threadConfig.async.maxPoolSize}")
     private int maxPoolSize;
 
-    @Value("${app.async.queue-capacity}")
+    @Value("${threadConfig.async.queueCapacity}")
     private int queueCapacity;
 
-    @Value("${app.async.thread-name-prefix}")
+    @Value("${threadConfig.async.threadNamePrefix}")
     private String threadNamePrefix;
 
     @Bean(name = "taskExecutor")
     public Executor taskExecutor() {
+
+        // Define a new task executor
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        // Dynamic properties mapped from YAML
+
+        // Set params from the yaml
         executor.setCorePoolSize(corePoolSize);
         executor.setMaxPoolSize(maxPoolSize);
         executor.setQueueCapacity(queueCapacity);
         executor.setThreadNamePrefix(threadNamePrefix);
+
         // Our context tracking bridge
         executor.setTaskDecorator(new MdcTaskDecorator());
         executor.initialize();
@@ -44,6 +48,7 @@ public class AsyncMdcConfig {
 }
 
 class MdcTaskDecorator implements TaskDecorator {
+
     @Override
     @NonNull
     public Runnable decorate(@NonNull Runnable runnable) {
@@ -52,6 +57,8 @@ class MdcTaskDecorator implements TaskDecorator {
             try {
                 if (contextMap != null) {
                     MDC.setContextMap(contextMap);
+                } else {
+                    MDC.clear();
                 }
                 runnable.run();
             } finally {
@@ -59,4 +66,5 @@ class MdcTaskDecorator implements TaskDecorator {
             }
         };
     }
+
 }
