@@ -35,13 +35,21 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public UserDocument register(UserRegistrationDto registrationData) {
 
-        // Check for uniqueness
+        log.info("Received request for creating account for new {} with username {}.",
+                registrationData.getRole(),
+                registrationData.getUsername());
+
+        log.info("Starting check for existing account...");
         hasUniqueIdentifier(registrationData.getEmail(), registrationData.getUsername());
 
         // Do the workflow as needed
+        log.info("No existing account is found. Creating the account now...");
         UserDocument newEntity = userRegistrationFactory.createPendingUser(registrationData);
         UserDocument savedEntity = userRepository.save(newEntity);
         registrationWorkflowCoordinator.initiatePostRegistration(savedEntity);
+        log.info("Account has been created successfully for email: {} and username: {}",
+                savedEntity.getEmail(),
+                savedEntity.getUsername());
         return savedEntity;
     }
 
@@ -49,16 +57,16 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public UserResponseDto login(UserLoginDto loginRequest) {
 
-        // Find the user document
+        log.info("Received request for login for user. Finding user in DB...");
         UserDocument userDocument = findUser(loginRequest);
 
-        // Evaluate the account policies before verification
+        log.info("User document is found. Performing account policy checks...");
         loginSecurityEvaluatorService.verifyAccountPolicies(userDocument);
 
-        // Verify actual credentials now
+        log.info("Policy checks successful. Now verifying credentials...");
         loginSecurityEvaluatorService.verifyCredentials(userDocument, loginRequest.getPassword());
 
-        // Process successful login
+        log.info("User is successfully verified. LOGIN OK");
         userDocument.getSecurity().setFailedLoginAttempts(0);
         userDocument.getSecurity().setLockoutUntil(null);
         userDocument.getMetadata().setLastLoginAt(Instant.now());
