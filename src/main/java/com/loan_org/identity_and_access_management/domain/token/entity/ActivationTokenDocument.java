@@ -38,7 +38,7 @@ public class ActivationTokenDocument {
     @Email
     private String userEmail;
 
-    @Indexed(expireAfterSeconds = 0)
+    @Indexed(expireAfter = "0s")
     private Instant expiresAt;
 
     /**

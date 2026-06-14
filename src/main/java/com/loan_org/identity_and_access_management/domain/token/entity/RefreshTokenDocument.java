@@ -38,7 +38,7 @@ public class RefreshTokenDocument {
     @Email
     private String userEmail;
 
-    @Indexed(name = "refresh_token_expiry_idx", expireAfterSeconds = 0)
+    @Indexed(name = "refresh_token_expiry_idx", expireAfter = "0s")
     private Instant expiresAt;
 
     /**
