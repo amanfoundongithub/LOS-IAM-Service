@@ -1,15 +1,14 @@
+# Spring configuration
 spring:
   profiles:
     active: local
   application:
     name: iam-service
-
   rabbitmq:
     host: ${RABBITMQ_HOST}
     port: ${RABBITMQ_PORT}
     username: ${RABBITMQ_USER}
     password: ${RABBITMQ_PASS}
-
   mongodb:
     uri: ${MONGO_URI}
 
@@ -20,6 +19,11 @@ server:
 # API related configuration
 api:
   base_url: /api/v1/auth
+
+# Login configuration for user
+login:
+  max_attempt: 5
+  lockout_in_minutes: 15
 
 # Filter Level Configuration
 filter:
@@ -76,7 +80,6 @@ security-config:
     allow_credentials: true
     max_age: 3600
 
-
 app:
 
   base-url: http://localhost:5600/api/v1/auth
@@ -88,11 +91,6 @@ app:
       expiry_in_hours: 24
     reset_token:
       expiry_in_hours: 20
-
-
-user:
-  max_attempts: 5
-  lockout_minutes: 15
 
 info:
   app:
