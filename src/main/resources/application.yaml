@@ -4,15 +4,22 @@ spring:
   application:
     name: iam-service
 
-  data:
-    mongodb:
-      uri: ${MONGO_URI}
-
   rabbitmq:
     host: ${RABBITMQ_HOST}
     port: ${RABBITMQ_PORT}
     username: ${RABBITMQ_USER}
     password: ${RABBITMQ_PASS}
+
+  mongodb:
+    uri: ${MONGO_URI}
+
+# Server port configuration
+server:
+  port: 4200
+
+# API related configuration
+api:
+  base_url: /api/v1/auth
 
 # Filter Level Configuration
 filter:
@@ -47,7 +54,31 @@ threadConfig:
     queueCapacity: 500
     threadNamePrefix: "iam-async-"
 
+# Security configuration
+security-config:
+  cors:
+    allowed_origins:
+      - "http://localhost:4200"
+    allowed_methods:
+      - GET
+      - POST
+      - PUT
+      - PATCH
+      - DELETE
+      - OPTIONS
+    allowed_headers:
+      - "Authorization"
+      - "Content-Type"
+      - "Cache-Control"
+      - "X-Requested-With"
+    exposed_headers:
+      - "Authorization"
+    allow_credentials: true
+    max_age: 3600
+
+
 app:
+
   base-url: http://localhost:5600/api/v1/auth
 
   token:
@@ -62,9 +93,6 @@ app:
 user:
   max_attempts: 5
   lockout_minutes: 15
-
-server:
-  port: 4200
 
 logging:
   level:
@@ -95,28 +123,6 @@ jwt:
   metadata:
     issuer: ${spring.application.name}
     expiration_in_minutes: 30
-
-iam:
-  security:
-    cors:
-      allowed_origins:
-        - "http://localhost:4200"  # Angular UI
-      allowed_methods:
-        - GET
-        - POST
-        - PUT
-        - PATCH
-        - DELETE
-        - OPTIONS
-      allowed_headers:
-        - "Authorization"
-        - "Content-Type"
-        - "Cache-Control"
-        - "X-Requested-With"
-      exposed_headers:
-        - "Authorization"
-      allow_credentials: true
-      max_age: 3600
 
 #eureka:
 #  client:
