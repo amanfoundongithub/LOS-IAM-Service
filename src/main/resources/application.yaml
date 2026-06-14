@@ -13,6 +13,16 @@ spring:
     port: ${RABBITMQ_PORT}
     username: ${RABBITMQ_USER}
     password: ${RABBITMQ_PASS}
+
+# Filter Level Configuration
+filter:
+  mdc:
+    trace:
+      header: X-Trace-Id
+      key: traceId
+    correlation:
+      header: X-Correlation-Id
+      key: correlationId
 app:
 
   token:
@@ -38,10 +48,6 @@ app:
 user:
   max_attempts: 5
   lockout_minutes: 15
-
-mdc:
-  header: X-Trace-Id
-  key: traceId
 
 server:
   port: 4200
@@ -98,7 +104,7 @@ iam:
       allow_credentials: true
       max_age: 3600
 
-eureka:
-  client:
-    service-url:
-      defaultZone: http://${EUREKA_HOST}:8761/eureka/
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://${EUREKA_HOST}:8761/eureka/
