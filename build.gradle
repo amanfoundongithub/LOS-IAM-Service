@@ -72,7 +72,17 @@ dependencies {
 
     // Test-related libraries
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    // Testcontainers BOM (Bill of Materials) to align versions flawlessly
+    testImplementation platform("org.testcontainers:testcontainers-bom:1.19.7")
+
+    // Testcontainers modules for JUnit 5, Mongo, and RabbitMQ
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:mongodb'
+    testImplementation 'org.testcontainers:rabbitmq'
+
 }
 
 dependencyManagement {
@@ -81,7 +91,25 @@ dependencyManagement {
     }
 }
 
+tasks.register('e2eTest', Test) {
+    description = 'Runs all End-to-End infrastructure scenario suites ending with E2ETest.'
+    group = 'verification'
+
+    // Explicit source set paths so your test classes compile smoothly
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+
+    useJUnitPlatform()
+
+    // Dynamically targets all E2E classes globally across packages
+    include '**/*E2ETest.class'
+
+    // Forces execution on every run even if no files changed
+    outputs.upToDateWhen { false }
+}
+
 tasks.named('test') {
     useJUnitPlatform()
+    exclude '**/*E2ETest.class'
     finalizedBy jacocoTestReport
 }
