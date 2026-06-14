@@ -26,8 +26,8 @@ public class SecurityConfig {
     private final RateLimiterFilter rateLimiterFilter;
     private final MdcHeaderFilter   mdcHeaderFilter;
 
-    @Value("${info.base_url}")
-    private String authBasePath;
+    @Value("${api.base_url}")
+    private String apiBaseUrl;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(authBasePath + "/**").permitAll()
+                        .requestMatchers(getPermittedUrls(apiBaseUrl)).permitAll()
                         .anyRequest().authenticated()
                 );
 
@@ -65,5 +65,13 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    private String getPermittedUrls(String baseUrl) {
+        if(baseUrl.endsWith("/")) {
+            return baseUrl + "**";
+        } else {
+            return baseUrl + "/**";
+        }
     }
 }
