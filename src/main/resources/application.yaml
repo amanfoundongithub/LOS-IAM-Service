@@ -39,6 +39,7 @@ filter:
         maxSize: 10000
         expiresAfterHour: 1
 
+# Thread level Configuration for Async Processing
 threadConfig:
   async:
     corePoolSize: 5
