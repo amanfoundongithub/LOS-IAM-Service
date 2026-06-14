@@ -23,6 +23,22 @@ filter:
     correlation:
       header: X-Correlation-Id
       key: correlationId
+  rateLimiter:
+    apiKey:
+      header: X-API-KEY
+    forwardedFor:
+      header: X-Forwarded-For
+    retryAfter:
+      header: Retry-After
+      seconds: 60
+    bucket:
+      capacity: 500
+      refill: 500
+      intervalInMinutes: 1
+      cache:
+        maxSize: 10000
+        expiresAfterHour: 1
+
 app:
 
   token:
@@ -39,11 +55,6 @@ app:
     queue-capacity: 500
     thread-name-prefix: "iam-async-"
   base-url: http://localhost:5600/api/v1/auth
-
-  bucket:
-    capacity: 100
-    refill: 100
-    intervalInMinutes: 1
 
 user:
   max_attempts: 5
