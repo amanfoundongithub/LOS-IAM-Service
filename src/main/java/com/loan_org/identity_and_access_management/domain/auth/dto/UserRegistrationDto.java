@@ -1,9 +1,7 @@
 package com.loan_org.identity_and_access_management.domain.auth.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
+import com.loan_org.identity_and_access_management.domain.user.entity.UserRole;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 @Data
@@ -21,8 +19,8 @@ public class UserRegistrationDto {
     @Size(min = 8, message = "Password must be at least 8 characters long")
     private String password;
 
-    @NotBlank(message = "Your role is required")
-    private String role;
+    @NotNull(message = "Your role is required, please provide a valid role")
+    private UserRole role;
 
     @PositiveOrZero(message = "Signing limit cannot be negative")
     private Double signingLimit;
