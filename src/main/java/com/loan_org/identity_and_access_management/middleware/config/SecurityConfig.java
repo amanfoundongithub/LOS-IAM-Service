@@ -28,7 +28,7 @@ public class SecurityConfig {
     private final MdcHeaderFilter         mdcHeaderFilter;
     private final JwtAuthenticationFilter jwtAuthFilter;
 
-    @Value("${api.base_url}")
+    @Value("${api.auth.base_url}")
     private String baseUrl;
 
     @Bean

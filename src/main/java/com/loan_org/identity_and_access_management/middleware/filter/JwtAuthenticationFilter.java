@@ -23,7 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    @Value("${api.base_url}")
+    @Value("${api.auth.base_url}")
     private String baseUrl;
 
     private final JwtVerificationService jwtVerificationService;
