@@ -33,28 +33,36 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDto> login(@Valid @RequestBody UserLoginDto loginRequest) {
+    public ResponseEntity<AuthResponseDto> login(
+            @Valid @RequestBody UserLoginDto loginRequest
+    ) {
         UserResponseDto response = authService.login(loginRequest);
-        String token             = jwtService.generateToken(response);
-        String newAccessToken    = jwtService.createRefreshToken();
-        return new ResponseEntity<>(new AuthResponseDto(token, newAccessToken, response), HttpStatus.OK);
+        String accessToken       = jwtService.generateToken(response);
+        String refreshToken      = jwtService.createRefreshToken();
+        return new ResponseEntity<>(new AuthResponseDto(accessToken, refreshToken, response), HttpStatus.OK);
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<String> refreshToken(@Valid @RequestBody RefreshTokenRequestDto request) {
-        return new ResponseEntity<>(tokenManagementService.generateRefreshToken(request), HttpStatus.CREATED);
+    public ResponseEntity<String> refreshToken(
+            @Valid @RequestBody RefreshTokenRequestDto request
+    ) {
+        return new ResponseEntity<>(tokenManagementService.generateRefreshToken(request), HttpStatus.OK);
     }
 
     @GetMapping("/verify")
-    public ResponseEntity<String> verifyAccount(@RequestParam("token") String token) {
+    public ResponseEntity<String> verifyAccount(
+            @RequestParam("token") String token
+    ) {
         tokenManagementService.verifyActivationToken(token);
         return new ResponseEntity<>("Account successfully activated! You can now log in.", HttpStatus.OK);
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<String> resetPasswordRequest(@RequestParam("email") String email) {
+    public ResponseEntity<String> resetPasswordRequest(
+            @RequestParam("email") String email
+    ) {
         tokenManagementService.generatePasswordResetToken(email);
-        return new ResponseEntity<>("Sent to:" + email, HttpStatus.CREATED);
+        return new ResponseEntity<>("Sent to:" + email, HttpStatus.ACCEPTED);
     }
 
 }

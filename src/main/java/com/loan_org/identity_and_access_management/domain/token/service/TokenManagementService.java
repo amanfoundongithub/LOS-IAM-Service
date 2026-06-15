@@ -44,9 +44,9 @@ public interface TokenManagementService {
      * Generates a new token for password reset.
      *
      * @param email The email of the user
-     * @return The token
+     *
      */
-    String generatePasswordResetToken(String email);
+    void generatePasswordResetToken(String email);
 
     /**
      * Verifies a password reset token for user's password reset
