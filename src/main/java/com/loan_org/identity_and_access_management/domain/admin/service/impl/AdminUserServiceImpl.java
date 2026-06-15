@@ -5,8 +5,8 @@ import com.loan_org.identity_and_access_management.domain.admin.dto.UserAccountU
 import com.loan_org.identity_and_access_management.domain.admin.dto.UserSearchAttributes;
 import com.loan_org.identity_and_access_management.domain.admin.dto.UserSearchResults;
 import com.loan_org.identity_and_access_management.domain.admin.service.AdminUserService;
-import com.loan_org.identity_and_access_management.domain.audit.entity.UserAccountLockAudit;
-import com.loan_org.identity_and_access_management.domain.audit.repository.UserAccountLockAuditRepository;
+import com.loan_org.identity_and_access_management.domain.audit.entity.UserAccountModificationAuditDocument;
+import com.loan_org.identity_and_access_management.domain.audit.service.UserAccountModificationAuditService;
 import com.loan_org.identity_and_access_management.domain.token.repository.RefreshTokenRepository;
 import com.loan_org.identity_and_access_management.domain.user.dto.UserResponseDto;
 import com.loan_org.identity_and_access_management.domain.user.entity.UserDocument;
@@ -26,9 +26,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminUserServiceImpl implements AdminUserService {
 
-    private final UserRepository userRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final UserAccountLockAuditRepository userAccountLockAuditRepository;
+    private final UserRepository                                 userRepository;
+    private final RefreshTokenRepository                         refreshTokenRepository;
+    private final UserAccountModificationAuditService            userAccountModificationAuditService;
 
     @Override
     public UserSearchResults searchUsers(UserSearchAttributes searchAttributes) {
@@ -84,29 +84,34 @@ public class AdminUserServiceImpl implements AdminUserService {
 
     @Override
     public String lockUser(String userId, String lockerEmail, UserAccountLockRequest request) {
-        log.info("Received request from ADMIN to lock a user account.");
+
+        log.info("Received request from ADMIN to lock a user account. Finding user in DB before locking...");
         UserDocument userDocument = userRepository.findById(userId)
                 .orElseThrow(() -> new AccountNotFoundException("No user found with id: " + userId));
-        if(userDocument.getStatus() == UserStatus.LOCKED){
-            log.info("User account is already locked by another admin.");
-            return "User account is already locked. No need to lock again.";
-        }
 
-        log.info("Found the unlocked user in DB. Starting locking...");
+        log.info("Found user in DB. Checking the account status...");
+        UserStatus originalStatus = userDocument.getStatus();
+        if(originalStatus == UserStatus.LOCKED){
+            log.warn("The user account is already locked. Aborting...");
+            return "User account is already locked";
+        }
         userDocument.setStatus(UserStatus.LOCKED);
         userRepository.save(userDocument);
 
-        log.info("Locked user in DB. Removing all active session(s)...");
+        log.info("Successfully locked user in DB. Removing all active session(s)...");
         refreshTokenRepository.deleteByUserEmail(userDocument.getEmail());
 
-        log.info("All sessions deleted. Locking SUCCESS.");
-        UserAccountLockAudit audit = UserAccountLockAudit.builder()
-                .lockedBy(lockerEmail)
-                .lockedAccount(userDocument.getEmail())
-                .lockReason(request.reason())
-                .lockedAt(Instant.now())
-                .build();
-        userAccountLockAuditRepository.save(audit);
+        log.info("All active sessions are removed. Locking SUCCESS");
+        UserAccountModificationAuditDocument.ModificationListEntity logEntry =
+                UserAccountModificationAuditDocument.ModificationListEntity.builder()
+                        .modificationDate(Instant.now())
+                        .modificationDoneBy(lockerEmail)
+                        .modifiedAttribute("status")
+                        .originalValue(originalStatus)
+                        .newValue(UserStatus.LOCKED)
+                        .modificationReason(request.reason())
+                        .build();
+        userAccountModificationAuditService.addLog(userDocument.getEmail(), logEntry);
         return "User account has been locked successfully";
     }
 
@@ -115,7 +120,8 @@ public class AdminUserServiceImpl implements AdminUserService {
         log.info("Received request from ADMIN to unlock a user account.");
         UserDocument userDocument = userRepository.findById(userId)
                 .orElseThrow(() -> new AccountNotFoundException("No user found with id to unlock: " + userId));
-        if(userDocument.getStatus() != UserStatus.LOCKED){
+        UserStatus originalStatus = userDocument.getStatus();
+        if(originalStatus != UserStatus.LOCKED){
             log.info("User account is already unlocked.");
             return "User account is already unlocked. No need to unlock again.";
         }
@@ -124,16 +130,17 @@ public class AdminUserServiceImpl implements AdminUserService {
         userDocument.setStatus(UserStatus.ACTIVE);
         userRepository.save(userDocument);
 
-        UserAccountLockAudit audit = userAccountLockAuditRepository.findByLockedByAndLockedAccount(
-                lockerEmail, userDocument.getEmail()
-        ).orElseThrow(() -> new AccountNotFoundException("No locker found with id to unlock: " + userId));
-
-        log.info("Successfully unlocked user in DB! UNLOCKING SUCCESS.");
-
-        audit.setStillLocked(false);
-        audit.setUnlockReason(request.reason());
-        audit.setUnlockedAt(Instant.now());
-        userAccountLockAuditRepository.save(audit);
+        log.info("Successfully unlocked user in DB. Unlocking SUCCESS");
+        UserAccountModificationAuditDocument.ModificationListEntity logEntry =
+                UserAccountModificationAuditDocument.ModificationListEntity.builder()
+                        .modificationDate(Instant.now())
+                        .modificationDoneBy(lockerEmail)
+                        .modifiedAttribute("status")
+                        .originalValue(originalStatus)
+                        .newValue(UserStatus.ACTIVE)
+                        .modificationReason(request.reason())
+                        .build();
+        userAccountModificationAuditService.addLog(userDocument.getEmail(), logEntry);
         return "User account has been unlocked successfully";
     }
 
