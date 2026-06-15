@@ -18,7 +18,11 @@ server:
 
 # API related configuration
 api:
-  base_url: /api/v1/auth
+  auth:
+    base_url: /api/v1/auth
+  user:
+    base_url: /api/v1/user
+
 
 # Login configuration for user
 login:
