@@ -3,6 +3,7 @@ package com.loan_org.identity_and_access_management.domain.auth.service.impl;
 import com.loan_org.identity_and_access_management.domain.auth.dto.PasswordChangeRequestDto;
 import com.loan_org.identity_and_access_management.domain.auth.service.UserManagementService;
 import com.loan_org.identity_and_access_management.domain.token.service.TokenManagementService;
+import com.loan_org.identity_and_access_management.domain.user.dto.UserResponseDto;
 import com.loan_org.identity_and_access_management.domain.user.entity.UserDocument;
 import com.loan_org.identity_and_access_management.domain.user.repository.UserRepository;
 import com.loan_org.identity_and_access_management.exception.AccountNotFoundException;
@@ -39,5 +40,27 @@ public class UserManagementServiceImpl implements UserManagementService {
                 email);
         userRepository.save(userDocument);
         tokenManagementService.revokeRefreshToken(email);
+    }
+
+    @Override
+    public UserResponseDto fetchUserByEmail(String email) {
+        log.info("Received request to fetch user details for email: {}",
+                email);
+
+        UserDocument userDocument = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AccountNotFoundException("No account found for user with email: " + email));
+
+        log.info("Fetched user successfully from database.");
+        return toUserResponseDto(userDocument);
+    }
+
+    private UserResponseDto toUserResponseDto(UserDocument userDocument) {
+        return UserResponseDto.builder()
+                .id(userDocument.getId())
+                .email(userDocument.getEmail())
+                .username(userDocument.getUsername())
+                .status(userDocument.getStatus())
+                .attributes(userDocument.getAttributes())
+                .build();
     }
 }
