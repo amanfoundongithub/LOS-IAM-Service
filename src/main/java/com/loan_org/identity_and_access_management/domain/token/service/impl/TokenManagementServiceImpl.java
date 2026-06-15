@@ -1,5 +1,6 @@
 package com.loan_org.identity_and_access_management.domain.token.service.impl;
 
+import com.loan_org.identity_and_access_management.domain.token.dto.RefreshTokenRevokeDto;
 import com.loan_org.identity_and_access_management.domain.token.repository.ActivationTokenRepository;
 import com.loan_org.identity_and_access_management.domain.token.repository.PasswordResetTokenRepository;
 import com.loan_org.identity_and_access_management.domain.token.repository.RefreshTokenRepository;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -86,6 +88,19 @@ public class TokenManagementServiceImpl implements TokenManagementService {
         log.info("Successfully cycled refresh token for secure destination context.");
 
         return newRefreshToken;
+    }
+
+    @Override
+    @Transactional
+    public void revokeRefreshToken(RefreshTokenRevokeDto request) {
+        log.info("Processing request for revoking refresh token...");
+        Optional<RefreshTokenDocument> tokenDocument = refreshTokenRepository.findByToken(request.refreshToken());
+        if(tokenDocument.isEmpty()) {
+            log.warn("The given refresh token is not found in record. No active session going on.");
+        } else {
+            refreshTokenRepository.delete(tokenDocument.get());
+            log.info("Successfully revoked refresh token from records.");
+        }
     }
 
     @Override
