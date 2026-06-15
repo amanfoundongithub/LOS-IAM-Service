@@ -53,8 +53,8 @@ public class JwtVerificationServiceImpl implements JwtVerificationService {
     public String extractRole(String token) {
         return extractClaim(token, claims -> {
             Map<String, Object> attributes = claims.get("attributes", Map.class);
-            if (attributes != null && attributes.containsKey("role")) {
-                return (String) attributes.get("role");
+            if (attributes != null && attributes.containsKey("user_role")) {
+                return (String) attributes.get("user_role");
             }
             return "GUEST";
         });
