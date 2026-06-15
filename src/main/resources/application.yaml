@@ -122,7 +122,7 @@ jwt:
     issuer: ${spring.application.name}
     expiration_in_minutes: 30
 
-#eureka:
-#  client:
-#    service-url:
-#      defaultZone: http://${EUREKA_HOST}:8761/eureka/
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_HOST}:8761/eureka/
