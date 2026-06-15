@@ -1,15 +1,18 @@
 package com.loan_org.identity_and_access_management.domain.admin.controller;
 
+import com.loan_org.identity_and_access_management.domain.admin.dto.UserAccountLockRequest;
 import com.loan_org.identity_and_access_management.domain.admin.dto.UserSearchAttributes;
 import com.loan_org.identity_and_access_management.domain.admin.dto.UserSearchResults;
 import com.loan_org.identity_and_access_management.domain.admin.service.AdminUserService;
 import com.loan_org.identity_and_access_management.domain.user.entity.UserRole;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,6 +42,20 @@ public class AdminController {
 
         // Return the search results
         return ResponseEntity.ok(adminUserService.searchUsers(searchAttributes));
+    }
+
+    @PostMapping("/{id}/lock")
+    public ResponseEntity<Map<String, String>> lock(
+            @PathVariable("id") String userId,
+            @Valid @RequestBody UserAccountLockRequest lockRequest,
+            @AuthenticationPrincipal String lockerEmail
+    ) {
+        adminUserService.lockUser(userId, lockerEmail, lockRequest);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                Map.of(
+                        "message", "User account has been successfully locked."
+                )
+        );
     }
 
 

@@ -1,17 +1,23 @@
 package com.loan_org.identity_and_access_management.domain.admin.service.impl;
 
+import com.loan_org.identity_and_access_management.domain.admin.dto.UserAccountLockRequest;
 import com.loan_org.identity_and_access_management.domain.admin.dto.UserSearchAttributes;
 import com.loan_org.identity_and_access_management.domain.admin.dto.UserSearchResults;
 import com.loan_org.identity_and_access_management.domain.admin.service.AdminUserService;
+import com.loan_org.identity_and_access_management.domain.audit.entity.UserAccountLockAudit;
+import com.loan_org.identity_and_access_management.domain.audit.repository.UserAccountLockAuditRepository;
+import com.loan_org.identity_and_access_management.domain.token.repository.RefreshTokenRepository;
 import com.loan_org.identity_and_access_management.domain.user.dto.UserResponseDto;
 import com.loan_org.identity_and_access_management.domain.user.entity.UserDocument;
 import com.loan_org.identity_and_access_management.domain.user.entity.UserStatus;
 import com.loan_org.identity_and_access_management.domain.user.repository.UserRepository;
+import com.loan_org.identity_and_access_management.exception.AccountNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -20,6 +26,8 @@ import java.util.List;
 public class AdminUserServiceImpl implements AdminUserService {
 
     private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final UserAccountLockAuditRepository userAccountLockAuditRepository;
 
     @Override
     public UserSearchResults searchUsers(UserSearchAttributes searchAttributes) {
@@ -72,6 +80,31 @@ public class AdminUserServiceImpl implements AdminUserService {
                 .isLast(userPage.isLast())
                 .build();
     }
+
+    @Override
+    public void lockUser(String userId, String lockerEmail, UserAccountLockRequest request) {
+        log.info("Received request from ADMIN to lock a user account.");
+        UserDocument userDocument = userRepository.findById(userId)
+                .orElseThrow(() -> new AccountNotFoundException("No user found with id: " + userId));
+
+        log.info("Found user in DB. Starting locking...");
+        userDocument.setStatus(UserStatus.LOCKED);
+        userRepository.save(userDocument);
+
+        log.info("Locked user in DB. Removing all active session(s)...");
+        refreshTokenRepository.deleteByUserEmail(userDocument.getEmail());
+
+        log.info("All sessions deleted. Locking SUCCESS.");
+        UserAccountLockAudit audit = UserAccountLockAudit.builder()
+                .lockedBy(lockerEmail)
+                .lockedAccount(userDocument.getEmail())
+                .reason(request.reason())
+                .lockedAt(Instant.now())
+                .build();
+        userAccountLockAuditRepository.save(audit);
+    }
+
+
 
     private UserResponseDto mapToResponseDto(UserDocument userDocument) {
         return UserResponseDto.builder()
