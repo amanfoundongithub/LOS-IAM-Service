@@ -4,6 +4,7 @@ import com.loan_org.identity_and_access_management.domain.auth.dto.AuthResponseD
 import com.loan_org.identity_and_access_management.domain.auth.dto.UserLoginDto;
 import com.loan_org.identity_and_access_management.domain.auth.dto.UserRegistrationDto;
 import com.loan_org.identity_and_access_management.domain.token.dto.RefreshTokenRequestDto;
+import com.loan_org.identity_and_access_management.domain.token.dto.RefreshTokenRevokeDto;
 import com.loan_org.identity_and_access_management.domain.user.dto.UserResponseDto;
 import com.loan_org.identity_and_access_management.domain.user.entity.UserDocument;
 import com.loan_org.identity_and_access_management.domain.auth.service.JwtService;
@@ -38,7 +39,7 @@ public class AuthController {
     ) {
         UserResponseDto response = authService.login(loginRequest);
         String accessToken       = jwtService.generateToken(response);
-        String refreshToken      = jwtService.createRefreshToken();
+        String refreshToken      = tokenManagementService.generateRefreshToken(response.getEmail());
         return new ResponseEntity<>(new AuthResponseDto(accessToken, refreshToken, response), HttpStatus.OK);
     }
 
@@ -63,6 +64,14 @@ public class AuthController {
     ) {
         tokenManagementService.generatePasswordResetToken(email);
         return new ResponseEntity<>("Sent to:" + email, HttpStatus.ACCEPTED);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(
+            @Valid @RequestBody RefreshTokenRevokeDto revocationRequest
+    ) {
+        tokenManagementService.revokeRefreshToken(revocationRequest);
+        return ResponseEntity.noContent().build();
     }
 
 }
