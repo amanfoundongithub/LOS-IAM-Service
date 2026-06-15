@@ -12,4 +12,5 @@ public interface AuthService {
 
     UserDocument    register(UserRegistrationDto registrationData);
     UserResponseDto login(UserLoginDto loginRequest);
+
 }
