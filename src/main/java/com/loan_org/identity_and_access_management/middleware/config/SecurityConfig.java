@@ -1,5 +1,6 @@
 package com.loan_org.identity_and_access_management.middleware.config;
 
+import com.loan_org.identity_and_access_management.middleware.filter.JwtAuthenticationFilter;
 import com.loan_org.identity_and_access_management.middleware.filter.MdcHeaderFilter;
 import com.loan_org.identity_and_access_management.middleware.filter.RateLimiterFilter;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +23,13 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final CorsProperties    corsProperties;
-    private final RateLimiterFilter rateLimiterFilter;
-    private final MdcHeaderFilter   mdcHeaderFilter;
+    private final CorsProperties          corsProperties;
+    private final RateLimiterFilter       rateLimiterFilter;
+    private final MdcHeaderFilter         mdcHeaderFilter;
+    private final JwtAuthenticationFilter jwtAuthFilter;
 
-    @Value("${api.base_url}")
-    private String apiBaseUrl;
+    @Value("${api.auth.base_url}")
+    private String baseUrl;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -41,9 +43,15 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(getPermittedUrls(apiBaseUrl)).permitAll()
+                        .requestMatchers(baseUrl + "/register").permitAll()
+                        .requestMatchers(baseUrl + "/login").permitAll()
+                        .requestMatchers(baseUrl + "/refresh").permitAll()
+                        .requestMatchers(baseUrl + "/verify").permitAll()
+                        .requestMatchers(baseUrl + "/reset-password-request").permitAll()
+                        .requestMatchers(baseUrl + "/change-password").authenticated()
                         .anyRequest().authenticated()
-                );
+                )
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         // Add filter ordering here
         http.addFilterBefore(mdcHeaderFilter, UsernamePasswordAuthenticationFilter.class);
@@ -65,13 +73,5 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
-    }
-
-    private String getPermittedUrls(String baseUrl) {
-        if(baseUrl.endsWith("/")) {
-            return baseUrl + "**";
-        } else {
-            return baseUrl + "/**";
-        }
     }
 }

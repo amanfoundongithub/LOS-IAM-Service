@@ -1,8 +1,10 @@
 package com.loan_org.identity_and_access_management.domain.auth.controller;
 
 import com.loan_org.identity_and_access_management.domain.auth.dto.AuthResponseDto;
+import com.loan_org.identity_and_access_management.domain.auth.dto.PasswordChangeRequestDto;
 import com.loan_org.identity_and_access_management.domain.auth.dto.UserLoginDto;
 import com.loan_org.identity_and_access_management.domain.auth.dto.UserRegistrationDto;
+import com.loan_org.identity_and_access_management.domain.auth.service.UserManagementService;
 import com.loan_org.identity_and_access_management.domain.token.dto.RefreshTokenRequestDto;
 import com.loan_org.identity_and_access_management.domain.token.dto.RefreshTokenRevokeDto;
 import com.loan_org.identity_and_access_management.domain.user.dto.UserResponseDto;
@@ -14,16 +16,18 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("${api.base_url}")
+@RequestMapping("${auth.api.base_url}")
 public class AuthController {
 
     private final AuthService            authService;
     private final JwtService             jwtService;
     private final TokenManagementService tokenManagementService;
+    private final UserManagementService  userManagementService;
 
     @PostMapping("/register")
     public ResponseEntity<UserDocument> register(
@@ -72,6 +76,15 @@ public class AuthController {
     ) {
         tokenManagementService.revokeRefreshToken(revocationRequest);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<Void> changePassword(
+            @Valid @RequestBody PasswordChangeRequestDto changeRequest,
+            @AuthenticationPrincipal String email
+    ) {
+        userManagementService.updatePassword(email, changeRequest);
+        return ResponseEntity.ok().build();
     }
 
 }
