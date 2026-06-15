@@ -1,6 +1,7 @@
 package com.loan_org.identity_and_access_management.domain.token.service;
 
 import com.loan_org.identity_and_access_management.domain.token.dto.RefreshTokenRequestDto;
+import com.loan_org.identity_and_access_management.domain.token.dto.RefreshTokenRevokeDto;
 
 /**
  * Utility service to consider token creation for
@@ -24,6 +25,21 @@ public interface TokenManagementService {
      * @return The new generated token
      */
     String generateRefreshToken(RefreshTokenRequestDto request);
+
+    /**
+     * Generates a new refresh token for a user session
+     *
+     * @param email The user email
+     * @return The new generated token
+     */
+    String generateRefreshToken(String email);
+
+    /**
+     * Revokes the existing refresh token, if any
+     *
+     * @param request The refresh token to be revoked
+     */
+    void   revokeRefreshToken(RefreshTokenRevokeDto request);
 
     /**
      * Generates a new activation token for user's email confirmation
