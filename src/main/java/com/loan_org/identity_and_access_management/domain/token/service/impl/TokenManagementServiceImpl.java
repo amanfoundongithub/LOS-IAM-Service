@@ -131,7 +131,7 @@ public class TokenManagementServiceImpl implements TokenManagementService {
 
     @Override
     @Transactional
-    public String generatePasswordResetToken(String email) {
+    public void generatePasswordResetToken(String email) {
         log.info("Validating baseline identity for password reset generation sequence.");
 
         UserDocument userDocument = userRepository.findByEmail(email)
@@ -148,7 +148,6 @@ public class TokenManagementServiceImpl implements TokenManagementService {
         emailService.sendPasswordResetEmail(email, userDocument.getUsername(), tokenString);
 
         log.info("Successfully dispatched secure reset link generation to destination account: {}", email);
-        return tokenString;
     }
 
     @Override
