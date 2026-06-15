@@ -1,11 +1,12 @@
 package com.loan_org.identity_and_access_management.domain.user.factory;
 
 import com.loan_org.identity_and_access_management.domain.auth.dto.UserRegistrationDto;
+import com.loan_org.identity_and_access_management.domain.user.entity.UserRole;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
+
 
 @Component
 public class UserAttributeFactory {
@@ -25,7 +26,7 @@ public class UserAttributeFactory {
         attributes.put(KEY_MAX_APPROVAL_LIMIT, registrationData.getSigningLimit());
         attributes.put(KEY_USER_ROLE, registrationData.getRole());
 
-        if(Objects.equals(registrationData.getRole(), "LOAN_OFFICER")) {
+        if(UserRole.CREDIT_MANAGER.equals(registrationData.getRole())) {
             getAttributesForLoanOfficer(attributes);
         }
 
