@@ -21,7 +21,7 @@ public enum UserStatus {
      * Account temporarily restricted due to security
      * or administrative action.
      */
-    SUSPENDED,
+    LOCKED,
 
     /**
      * Account archived and no longer operational.
