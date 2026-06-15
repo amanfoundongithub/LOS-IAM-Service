@@ -18,7 +18,13 @@ public class UserAccountLockAudit {
     private String lockedBy;
     private String lockedAccount;
 
-    private String reason;
+    private String lockReason;
+
+    @Builder.Default
+    private String unlockReason = "Not applicable";
+
+    @Builder.Default
+    private boolean isStillLocked = true;
 
     Instant lockedAt;
 
