@@ -98,7 +98,7 @@ public class AdminUserServiceImpl implements AdminUserService {
         UserAccountLockAudit audit = UserAccountLockAudit.builder()
                 .lockedBy(lockerEmail)
                 .lockedAccount(userDocument.getEmail())
-                .reason(request.reason())
+                .lockReason(request.reason())
                 .lockedAt(Instant.now())
                 .build();
         userAccountLockAuditRepository.save(audit);
