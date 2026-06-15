@@ -27,6 +27,14 @@ public interface TokenManagementService {
     String generateRefreshToken(RefreshTokenRequestDto request);
 
     /**
+     * Generates a new refresh token for a user session
+     *
+     * @param email The user email
+     * @return The new generated token
+     */
+    String generateRefreshToken(String email);
+
+    /**
      * Revokes the existing refresh token, if any
      *
      * @param request The refresh token to be revoked

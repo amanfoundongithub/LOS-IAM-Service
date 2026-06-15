@@ -91,6 +91,21 @@ public class TokenManagementServiceImpl implements TokenManagementService {
     }
 
     @Override
+    public String generateRefreshToken(String email) {
+        log.info("Processing request for issuing of refresh token for associated with email ID: {}",
+                email);
+        refreshTokenRepository.deleteByUserEmail(email);
+        String refreshToken = jwtService.createRefreshToken();
+        RefreshTokenDocument tokenDocument = RefreshTokenDocument.builder()
+                .token(refreshToken)
+                .userEmail(email)
+                .expiresAt(Instant.now().plus(refreshExpiryDays, ChronoUnit.DAYS))
+                .build();
+        refreshTokenRepository.save(tokenDocument);
+        return refreshToken;
+    }
+
+    @Override
     @Transactional
     public void revokeRefreshToken(RefreshTokenRevokeDto request) {
         log.info("Processing request for revoking refresh token...");
