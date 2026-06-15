@@ -34,7 +34,7 @@ public class LoginSecurityEvaluatorServiceImpl implements LoginSecurityEvaluator
     public void verifyAccountPolicies(UserDocument document) {
 
         // Suspended account?
-        if (document.getStatus() == UserStatus.SUSPENDED) {
+        if (document.getStatus() == UserStatus.LOCKED) {
             throw new UnauthorizedAccessException(AuthServiceMessageFactory.accountSuspended());
         }
 

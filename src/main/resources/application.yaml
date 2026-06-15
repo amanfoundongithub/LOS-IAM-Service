@@ -22,6 +22,8 @@ api:
     base_url: /api/v1/auth
   user:
     base_url: /api/v1/user
+  admin:
+    base_url: /api/v1/admin
 
 
 # Login configuration for user

@@ -1,5 +1,6 @@
 package com.loan_org.identity_and_access_management.middleware.config;
 
+import com.loan_org.identity_and_access_management.domain.user.entity.UserRole;
 import com.loan_org.identity_and_access_management.middleware.filter.JwtAuthenticationFilter;
 import com.loan_org.identity_and_access_management.middleware.filter.MdcHeaderFilter;
 import com.loan_org.identity_and_access_management.middleware.filter.RateLimiterFilter;
@@ -29,7 +30,10 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
 
     @Value("${api.auth.base_url}")
-    private String baseUrl;
+    private String authBaseUrl;
+
+    @Value("${api.admin.base_url}")
+    private String adminBaseUrl;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -43,12 +47,13 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(baseUrl + "/register").permitAll()
-                        .requestMatchers(baseUrl + "/login").permitAll()
-                        .requestMatchers(baseUrl + "/refresh").permitAll()
-                        .requestMatchers(baseUrl + "/verify").permitAll()
-                        .requestMatchers(baseUrl + "/reset-password-request").permitAll()
-                        .requestMatchers(baseUrl + "/change-password").authenticated()
+                        .requestMatchers(authBaseUrl + "/register").permitAll()
+                        .requestMatchers(authBaseUrl + "/login").permitAll()
+                        .requestMatchers(authBaseUrl + "/refresh").permitAll()
+                        .requestMatchers(authBaseUrl + "/verify").permitAll()
+                        .requestMatchers(authBaseUrl + "/reset-password-request").permitAll()
+                        .requestMatchers(authBaseUrl + "/change-password").authenticated()
+                        .requestMatchers(adminBaseUrl + "/**").hasRole(UserRole.ADMIN.name())
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
