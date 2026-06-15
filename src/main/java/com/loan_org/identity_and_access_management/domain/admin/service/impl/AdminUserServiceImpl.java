@@ -1,6 +1,7 @@
 package com.loan_org.identity_and_access_management.domain.admin.service.impl;
 
 import com.loan_org.identity_and_access_management.domain.admin.dto.UserAccountLockRequest;
+import com.loan_org.identity_and_access_management.domain.admin.dto.UserAccountUnlockRequest;
 import com.loan_org.identity_and_access_management.domain.admin.dto.UserSearchAttributes;
 import com.loan_org.identity_and_access_management.domain.admin.dto.UserSearchResults;
 import com.loan_org.identity_and_access_management.domain.admin.service.AdminUserService;
@@ -82,12 +83,16 @@ public class AdminUserServiceImpl implements AdminUserService {
     }
 
     @Override
-    public void lockUser(String userId, String lockerEmail, UserAccountLockRequest request) {
+    public String lockUser(String userId, String lockerEmail, UserAccountLockRequest request) {
         log.info("Received request from ADMIN to lock a user account.");
         UserDocument userDocument = userRepository.findById(userId)
                 .orElseThrow(() -> new AccountNotFoundException("No user found with id: " + userId));
+        if(userDocument.getStatus() == UserStatus.LOCKED){
+            log.info("User account is already locked by another admin.");
+            return "User account is already locked. No need to lock again.";
+        }
 
-        log.info("Found user in DB. Starting locking...");
+        log.info("Found the unlocked user in DB. Starting locking...");
         userDocument.setStatus(UserStatus.LOCKED);
         userRepository.save(userDocument);
 
@@ -102,8 +107,35 @@ public class AdminUserServiceImpl implements AdminUserService {
                 .lockedAt(Instant.now())
                 .build();
         userAccountLockAuditRepository.save(audit);
+        return "User account has been locked successfully";
     }
 
+    @Override
+    public String unlockUser(String userId, String lockerEmail, UserAccountUnlockRequest request) {
+        log.info("Received request from ADMIN to unlock a user account.");
+        UserDocument userDocument = userRepository.findById(userId)
+                .orElseThrow(() -> new AccountNotFoundException("No user found with id to unlock: " + userId));
+        if(userDocument.getStatus() != UserStatus.LOCKED){
+            log.info("User account is already unlocked.");
+            return "User account is already unlocked. No need to unlock again.";
+        }
+
+        log.info("Found locked user in DB. Starting unlocking...");
+        userDocument.setStatus(UserStatus.ACTIVE);
+        userRepository.save(userDocument);
+
+        UserAccountLockAudit audit = userAccountLockAuditRepository.findByLockedByAndLockedAccount(
+                lockerEmail, userDocument.getEmail()
+        ).orElseThrow(() -> new AccountNotFoundException("No locker found with id to unlock: " + userId));
+
+        log.info("Successfully unlocked user in DB! UNLOCKING SUCCESS.");
+
+        audit.setStillLocked(false);
+        audit.setUnlockReason(request.reason());
+        audit.setUnlockedAt(Instant.now());
+        userAccountLockAuditRepository.save(audit);
+        return "User account has been unlocked successfully";
+    }
 
 
     private UserResponseDto mapToResponseDto(UserDocument userDocument) {

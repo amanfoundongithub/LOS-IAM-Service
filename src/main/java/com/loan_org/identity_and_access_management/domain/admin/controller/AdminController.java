@@ -1,6 +1,7 @@
 package com.loan_org.identity_and_access_management.domain.admin.controller;
 
 import com.loan_org.identity_and_access_management.domain.admin.dto.UserAccountLockRequest;
+import com.loan_org.identity_and_access_management.domain.admin.dto.UserAccountUnlockRequest;
 import com.loan_org.identity_and_access_management.domain.admin.dto.UserSearchAttributes;
 import com.loan_org.identity_and_access_management.domain.admin.dto.UserSearchResults;
 import com.loan_org.identity_and_access_management.domain.admin.service.AdminUserService;
@@ -50,10 +51,24 @@ public class AdminController {
             @Valid @RequestBody UserAccountLockRequest lockRequest,
             @AuthenticationPrincipal String lockerEmail
     ) {
-        adminUserService.lockUser(userId, lockerEmail, lockRequest);
+        String message = adminUserService.lockUser(userId, lockerEmail, lockRequest);
         return ResponseEntity.status(HttpStatus.OK).body(
                 Map.of(
-                        "message", "User account has been successfully locked."
+                        "message", message
+                )
+        );
+    }
+
+    @PostMapping("/{id}/unlock")
+    public ResponseEntity<Map<String, String>> unlock(
+            @PathVariable("id") String userId,
+            @Valid @RequestBody UserAccountUnlockRequest lockRequest,
+            @AuthenticationPrincipal String lockerEmail
+    ) {
+        String message = adminUserService.unlockUser(userId, lockerEmail, lockRequest);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                Map.of(
+                        "message", message
                 )
         );
     }
