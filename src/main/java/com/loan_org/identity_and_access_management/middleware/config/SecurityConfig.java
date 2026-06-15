@@ -29,7 +29,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
 
     @Value("${api.auth.base_url}")
-    private String baseUrl;
+    private String authBaseUrl;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -43,12 +43,12 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(baseUrl + "/register").permitAll()
-                        .requestMatchers(baseUrl + "/login").permitAll()
-                        .requestMatchers(baseUrl + "/refresh").permitAll()
-                        .requestMatchers(baseUrl + "/verify").permitAll()
-                        .requestMatchers(baseUrl + "/reset-password-request").permitAll()
-                        .requestMatchers(baseUrl + "/change-password").authenticated()
+                        .requestMatchers(authBaseUrl + "/register").permitAll()
+                        .requestMatchers(authBaseUrl + "/login").permitAll()
+                        .requestMatchers(authBaseUrl + "/refresh").permitAll()
+                        .requestMatchers(authBaseUrl + "/verify").permitAll()
+                        .requestMatchers(authBaseUrl + "/reset-password-request").permitAll()
+                        .requestMatchers(authBaseUrl + "/change-password").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
