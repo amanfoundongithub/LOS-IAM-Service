@@ -42,6 +42,13 @@ public interface TokenManagementService {
     void   revokeRefreshToken(RefreshTokenRevokeDto request);
 
     /**
+     * Revokes all refresh tokens for a given email
+     *
+     * @param email The email to be revoked
+     */
+    void   revokeRefreshToken(String email);
+
+    /**
      * Generates a new activation token for user's email confirmation
      *
      * @param email The email of the user to be confirmed

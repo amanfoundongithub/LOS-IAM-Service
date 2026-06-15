@@ -119,6 +119,13 @@ public class TokenManagementServiceImpl implements TokenManagementService {
     }
 
     @Override
+    public void revokeRefreshToken(String email) {
+        log.info("Processing request for revoking refresh token for given email...");
+        refreshTokenRepository.deleteByUserEmail(email);
+        log.info("successfully revoked refresh token for given email.");
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public String generateActivationToken(String email) {
         log.info("Initiating production validation workflow for activation token generation.");
