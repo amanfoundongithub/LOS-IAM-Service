@@ -24,7 +24,11 @@ public class UserAttributeFactory {
     }
 
     public Map<String, Object> getAttributes(UserRole role) {
-        return strategyMap.get(role).assign();
+        if(strategyMap.containsKey(role)) {
+            return strategyMap.get(role).assign();
+        } else {
+            return Map.of();
+        }
     }
 
 }
