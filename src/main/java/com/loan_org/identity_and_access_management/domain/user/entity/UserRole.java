@@ -10,6 +10,11 @@ public enum UserRole {
     ADMIN,
 
     /**
+     * Notification Service Admin
+     */
+    NOTIFICATION_SERVICE_ADMIN,
+
+    /**
      * Relationship Manager / Loan Officer.
      * The front-facing asset generator who sources deals, inputs borrower profiles,
      * uploads applicant documentation, and moves draft loan applications into the pipeline.

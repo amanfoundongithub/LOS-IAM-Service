@@ -52,6 +52,6 @@ public class UserRegistrationFactoryImpl implements UserRegistrationFactory {
     }
 
     private Map<String, Object> buildAttributes(UserRegistrationDto dto) {
-        return attributeFactory.buildRegistrationAttributes(dto);
+        return attributeFactory.getAttributes(dto.getRole());
     }
 }
