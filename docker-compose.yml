@@ -1,4 +1,4 @@
-name: loan_origination_system
+name: los_iam_service
 
 services:
   iam-service:

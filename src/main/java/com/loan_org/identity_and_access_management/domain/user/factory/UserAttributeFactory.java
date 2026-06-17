@@ -1,45 +1,34 @@
 package com.loan_org.identity_and_access_management.domain.user.factory;
 
-import com.loan_org.identity_and_access_management.domain.auth.dto.UserRegistrationDto;
 import com.loan_org.identity_and_access_management.domain.user.entity.UserRole;
+import com.loan_org.identity_and_access_management.domain.user.factory.roles.UserRoleAttributeAssigner;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 @Component
 public class UserAttributeFactory {
 
-    public static final String KEY_MAX_APPROVAL_LIMIT = "max_approval_limit_inr";
-    public static final String KEY_USER_ROLE = "user_role";
+    private final Map<UserRole, UserRoleAttributeAssigner> strategyMap;
 
-    public static final String DOCUMENT_UPLOAD_PERMISSION = "document:upload";
-    public static final String DOCUMENT_DOWNLOAD_PERMISSION = "document:download";
-    public static final String DOCUMENT_FETCH_PERMISSION = "document:view";
-    public static final String DOCUMENT_DELETE_PERMISSION = "document:delete";
-    public static final String DOCUMENT_UPDATE_PERMISSION = "document:update";
+    public UserAttributeFactory(List<UserRoleAttributeAssigner> assigners) {
+        this.strategyMap = assigners.stream()
+                .collect(Collectors.toMap(
+                        UserRoleAttributeAssigner::getRole,
+                        Function.identity()
+                ));
+    }
 
-    public Map<String, Object> buildRegistrationAttributes(UserRegistrationDto registrationData) {
-        Map<String, Object> attributes = new HashMap<>();
-
-        attributes.put(KEY_MAX_APPROVAL_LIMIT, registrationData.getSigningLimit());
-        attributes.put(KEY_USER_ROLE, registrationData.getRole());
-
-        if(UserRole.CREDIT_MANAGER.equals(registrationData.getRole())) {
-            getAttributesForLoanOfficer(attributes);
+    public Map<String, Object> getAttributes(UserRole role) {
+        if(strategyMap.containsKey(role)) {
+            return strategyMap.get(role).assign();
+        } else {
+            return Map.of();
         }
-
-        return attributes;
     }
-
-    private void getAttributesForLoanOfficer(Map<String, Object> attributes) {
-        attributes.put(DOCUMENT_UPLOAD_PERMISSION, true);
-        attributes.put(DOCUMENT_DOWNLOAD_PERMISSION, true);
-        attributes.put(DOCUMENT_FETCH_PERMISSION, true);
-        attributes.put(DOCUMENT_DELETE_PERMISSION, true);
-        attributes.put(DOCUMENT_UPDATE_PERMISSION, true);
-    }
-
 
 }
