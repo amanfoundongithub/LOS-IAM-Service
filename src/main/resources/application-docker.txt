@@ -1,4 +1,4 @@
-MONGO_URI: "mongodb://mongo-db-container:27017/user_db"
+MONGO_URI: "mongodb://iam-mongo-db:27017/user_db"
 RABBITMQ_HOST: "rabbitmq-container"
 RABBITMQ_PORT: 5672
 RABBITMQ_USER: "guest"

@@ -11,14 +11,14 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
-      mongo-db-container:
+      iam-mongo-db:
         condition: service_healthy
     networks:
       - loan-network
 
-  mongo-db-container:
+  iam-mongo-db:
     image: mongo:6.0
-    container_name: mongo-db-container
+    container_name: iam-mongo-db
     ports:
       - "27019:27017"
     volumes:
