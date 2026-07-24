@@ -2,11 +2,12 @@ package com.loan_org.identity_and_access_management.auth.service.impl;
 
 import com.loan_org.identity_and_access_management.auth.service.LoginSecurityEvaluatorService;
 import com.loan_org.identity_and_access_management.auth.util.AuthServiceMessageFactory;
-import com.loan_org.identity_and_access_management.domain.user.entity.SecurityBlock;
-import com.loan_org.identity_and_access_management.domain.user.entity.UserDocument;
-import com.loan_org.identity_and_access_management.domain.user.entity.UserStatus;
-import com.loan_org.identity_and_access_management.domain.user.repository.UserRepository;
 import com.loan_org.identity_and_access_management.exception.UnauthorizedAccessException;
+import com.loan_org.identity_and_access_management.user.entity.SecurityBlock;
+import com.loan_org.identity_and_access_management.user.entity.UserDocument;
+import com.loan_org.identity_and_access_management.user.entity.UserStatus;
+import com.loan_org.identity_and_access_management.user.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.domain.web;
+package com.loan_org.identity_and_access_management.passwordReset;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

@@ -1,8 +1,9 @@
-package com.loan_org.identity_and_access_management.domain.user.factory;
+package com.loan_org.identity_and_access_management.user.factory;
 
-import com.loan_org.identity_and_access_management.domain.user.entity.UserRole;
-import com.loan_org.identity_and_access_management.domain.user.factory.roles.UserRoleAttributeAssigner;
 import org.springframework.stereotype.Component;
+
+import com.loan_org.identity_and_access_management.user.entity.UserRole;
+import com.loan_org.identity_and_access_management.user.factory.roles.UserRoleAttributeAssigner;
 
 import java.util.List;
 import java.util.Map;

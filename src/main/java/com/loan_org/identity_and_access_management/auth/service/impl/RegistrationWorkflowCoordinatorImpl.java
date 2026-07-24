@@ -1,9 +1,9 @@
 package com.loan_org.identity_and_access_management.auth.service.impl;
 
 import com.loan_org.identity_and_access_management.auth.service.RegistrationWorkflowCoordinator;
-import com.loan_org.identity_and_access_management.domain.user.entity.UserDocument;
 import com.loan_org.identity_and_access_management.messaging.service.EmailService;
 import com.loan_org.identity_and_access_management.token.service.TokenManagementService;
+import com.loan_org.identity_and_access_management.user.entity.UserDocument;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,9 +1,9 @@
-package com.loan_org.identity_and_access_management.domain.user.factory.roles;
-
-import com.loan_org.identity_and_access_management.domain.user.entity.UserRole;
+package com.loan_org.identity_and_access_management.user.factory.roles;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import com.loan_org.identity_and_access_management.user.entity.UserRole;
 
 public abstract class UserRoleAttributeAssignerAbstract implements UserRoleAttributeAssigner {
 

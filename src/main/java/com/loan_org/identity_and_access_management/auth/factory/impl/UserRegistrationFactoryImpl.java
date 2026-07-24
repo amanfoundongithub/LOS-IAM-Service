@@ -2,11 +2,12 @@ package com.loan_org.identity_and_access_management.auth.factory.impl;
 
 import com.loan_org.identity_and_access_management.auth.dto.UserRegistrationDto;
 import com.loan_org.identity_and_access_management.auth.factory.UserRegistrationFactory;
-import com.loan_org.identity_and_access_management.domain.user.entity.MetadataBlock;
-import com.loan_org.identity_and_access_management.domain.user.entity.SecurityBlock;
-import com.loan_org.identity_and_access_management.domain.user.entity.UserDocument;
-import com.loan_org.identity_and_access_management.domain.user.entity.UserStatus;
-import com.loan_org.identity_and_access_management.domain.user.factory.UserAttributeFactory;
+import com.loan_org.identity_and_access_management.user.entity.MetadataBlock;
+import com.loan_org.identity_and_access_management.user.entity.SecurityBlock;
+import com.loan_org.identity_and_access_management.user.entity.UserDocument;
+import com.loan_org.identity_and_access_management.user.entity.UserStatus;
+import com.loan_org.identity_and_access_management.user.factory.UserAttributeFactory;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

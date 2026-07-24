@@ -9,11 +9,11 @@ import com.loan_org.identity_and_access_management.admin.model.account_unlock.Us
 import com.loan_org.identity_and_access_management.admin.service.AdminLockService;
 import com.loan_org.identity_and_access_management.audit.entity.UserAccountModificationAuditDocument;
 import com.loan_org.identity_and_access_management.audit.service.UserAccountModificationAuditService;
-import com.loan_org.identity_and_access_management.domain.user.entity.UserDocument;
-import com.loan_org.identity_and_access_management.domain.user.entity.UserStatus;
-import com.loan_org.identity_and_access_management.domain.user.repository.UserRepository;
 import com.loan_org.identity_and_access_management.exception.AccountNotFoundException;
 import com.loan_org.identity_and_access_management.token.repository.RefreshTokenRepository;
+import com.loan_org.identity_and_access_management.user.entity.UserDocument;
+import com.loan_org.identity_and_access_management.user.entity.UserStatus;
+import com.loan_org.identity_and_access_management.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

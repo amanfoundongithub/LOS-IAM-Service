@@ -2,7 +2,8 @@ package com.loan_org.identity_and_access_management.e2e.register;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.loan_org.identity_and_access_management.auth.dto.UserRegistrationDto;
-import com.loan_org.identity_and_access_management.domain.user.repository.UserRepository;
+import com.loan_org.identity_and_access_management.user.repository.UserRepository;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

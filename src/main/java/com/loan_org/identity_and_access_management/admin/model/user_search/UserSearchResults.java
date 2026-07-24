@@ -1,10 +1,11 @@
 package com.loan_org.identity_and_access_management.admin.model.user_search;
 
-import com.loan_org.identity_and_access_management.domain.user.dto.UserResponseDto;
 import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
+
+import com.loan_org.identity_and_access_management.user.dto.UserResponseDto;
 
 @Data
 @Builder

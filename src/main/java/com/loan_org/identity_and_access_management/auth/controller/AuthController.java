@@ -9,9 +9,9 @@ import com.loan_org.identity_and_access_management.auth.dto.UserRegistrationDto;
 import com.loan_org.identity_and_access_management.auth.service.AuthService;
 import com.loan_org.identity_and_access_management.auth.service.JwtService;
 import com.loan_org.identity_and_access_management.auth.service.UserManagementService;
-import com.loan_org.identity_and_access_management.domain.user.dto.UserResponseDto;
-import com.loan_org.identity_and_access_management.domain.user.entity.UserDocument;
 import com.loan_org.identity_and_access_management.token.service.TokenManagementService;
+import com.loan_org.identity_and_access_management.user.dto.UserResponseDto;
+import com.loan_org.identity_and_access_management.user.entity.UserDocument;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -1,11 +1,12 @@
-package com.loan_org.identity_and_access_management.domain.user.dto; // Updated package location
+package com.loan_org.identity_and_access_management.user.dto; // Updated package location
 
-import com.loan_org.identity_and_access_management.domain.user.entity.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.Map;
+
+import com.loan_org.identity_and_access_management.user.entity.UserStatus;
 
 /**
  * Data Transfer Object representing a sanitized profile view of a user account.

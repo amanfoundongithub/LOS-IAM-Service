@@ -1,12 +1,8 @@
 package com.loan_org.identity_and_access_management.token.service.impl;
 
-import com.loan_org.identity_and_access_management.domain.user.repository.UserRepository;
 import com.loan_org.identity_and_access_management.auth.dto.RefreshTokenRequestDto;
 import com.loan_org.identity_and_access_management.auth.dto.RefreshTokenRevokeDto;
 import com.loan_org.identity_and_access_management.auth.service.JwtService;
-import com.loan_org.identity_and_access_management.domain.user.entity.SecurityBlock;
-import com.loan_org.identity_and_access_management.domain.user.entity.UserDocument;
-import com.loan_org.identity_and_access_management.domain.user.entity.UserStatus;
 import com.loan_org.identity_and_access_management.exception.AccountNotFoundException;
 import com.loan_org.identity_and_access_management.exception.TokenNotProvidedException;
 import com.loan_org.identity_and_access_management.exception.UnauthorizedAccessException;
@@ -18,6 +14,10 @@ import com.loan_org.identity_and_access_management.token.repository.ActivationTo
 import com.loan_org.identity_and_access_management.token.repository.PasswordResetTokenRepository;
 import com.loan_org.identity_and_access_management.token.repository.RefreshTokenRepository;
 import com.loan_org.identity_and_access_management.token.service.TokenManagementService;
+import com.loan_org.identity_and_access_management.user.entity.SecurityBlock;
+import com.loan_org.identity_and_access_management.user.entity.UserDocument;
+import com.loan_org.identity_and_access_management.user.entity.UserStatus;
+import com.loan_org.identity_and_access_management.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -18,7 +18,7 @@ import com.loan_org.identity_and_access_management.admin.model.user_search.UserS
 import com.loan_org.identity_and_access_management.admin.model.user_search.UserSearchResults;
 import com.loan_org.identity_and_access_management.admin.service.AdminLockService;
 import com.loan_org.identity_and_access_management.admin.service.AdminUserSearchService;
-import com.loan_org.identity_and_access_management.domain.user.entity.UserRole;
+import com.loan_org.identity_and_access_management.user.entity.UserRole;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

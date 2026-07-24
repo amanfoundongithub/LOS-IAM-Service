@@ -1,9 +1,10 @@
-package com.loan_org.identity_and_access_management.domain.user.factory.roles.impl;
+package com.loan_org.identity_and_access_management.user.factory.roles.impl;
 
-import com.loan_org.identity_and_access_management.domain.user.entity.UserRole;
-import com.loan_org.identity_and_access_management.domain.user.factory.permissions.DocumentPermissions;
-import com.loan_org.identity_and_access_management.domain.user.factory.roles.UserRoleAttributeAssignerAbstract;
 import org.springframework.stereotype.Component;
+
+import com.loan_org.identity_and_access_management.user.entity.UserRole;
+import com.loan_org.identity_and_access_management.user.factory.permissions.DocumentPermissions;
+import com.loan_org.identity_and_access_management.user.factory.roles.UserRoleAttributeAssignerAbstract;
 
 @Component
 public class RelationshipManagerAttributeAssigner extends UserRoleAttributeAssignerAbstract {

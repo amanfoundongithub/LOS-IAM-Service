@@ -1,9 +1,10 @@
 package com.loan_org.identity_and_access_management.config;
 
-import com.loan_org.identity_and_access_management.domain.user.entity.UserRole;
 import com.loan_org.identity_and_access_management.middleware.filter.JwtAuthenticationFilter;
 import com.loan_org.identity_and_access_management.middleware.filter.MdcHeaderFilter;
 import com.loan_org.identity_and_access_management.middleware.filter.RateLimiterFilter;
+import com.loan_org.identity_and_access_management.user.entity.UserRole;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.domain.user.entity;
+package com.loan_org.identity_and_access_management.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;

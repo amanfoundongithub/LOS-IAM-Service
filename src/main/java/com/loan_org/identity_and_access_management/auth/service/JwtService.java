@@ -1,12 +1,13 @@
 package com.loan_org.identity_and_access_management.auth.service;
 
-import com.loan_org.identity_and_access_management.domain.user.dto.UserResponseDto;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import com.loan_org.identity_and_access_management.user.dto.UserResponseDto;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;

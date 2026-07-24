@@ -2,12 +2,12 @@ package com.loan_org.identity_and_access_management.auth.service.impl;
 
 import com.loan_org.identity_and_access_management.auth.dto.PasswordChangeRequestDto;
 import com.loan_org.identity_and_access_management.auth.service.UserManagementService;
-import com.loan_org.identity_and_access_management.domain.user.dto.UserResponseDto;
-import com.loan_org.identity_and_access_management.domain.user.entity.UserDocument;
-import com.loan_org.identity_and_access_management.domain.user.repository.UserRepository;
 import com.loan_org.identity_and_access_management.exception.AccountNotFoundException;
 import com.loan_org.identity_and_access_management.exception.UnauthorizedAccessException;
 import com.loan_org.identity_and_access_management.token.service.TokenManagementService;
+import com.loan_org.identity_and_access_management.user.dto.UserResponseDto;
+import com.loan_org.identity_and_access_management.user.entity.UserDocument;
+import com.loan_org.identity_and_access_management.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
