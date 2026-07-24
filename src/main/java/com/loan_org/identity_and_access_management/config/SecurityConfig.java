@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.middleware.config;
+package com.loan_org.identity_and_access_management.config;
 
 import com.loan_org.identity_and_access_management.domain.user.entity.UserRole;
 import com.loan_org.identity_and_access_management.middleware.filter.JwtAuthenticationFilter;

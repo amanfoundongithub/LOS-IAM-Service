@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.middleware.config;
+package com.loan_org.identity_and_access_management.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
