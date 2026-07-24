@@ -29,6 +29,4 @@ public record UserAccountLockRequest(
         Instant lockedUntil, 
 
         boolean notifyUser
-) {
-        
-}
+) {}
