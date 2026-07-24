@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import com.loan_org.identity_and_access_management.admin.model.account_lock.UserAccountLockRequest;
 import com.loan_org.identity_and_access_management.admin.model.account_unlock.UserAccountUnlockRequest;
 import com.loan_org.identity_and_access_management.admin.service.AdminLockService;
-import com.loan_org.identity_and_access_management.domain.audit.entity.UserAccountModificationAuditDocument;
-import com.loan_org.identity_and_access_management.domain.audit.service.UserAccountModificationAuditService;
+import com.loan_org.identity_and_access_management.audit.entity.UserAccountModificationAuditDocument;
+import com.loan_org.identity_and_access_management.audit.service.UserAccountModificationAuditService;
 import com.loan_org.identity_and_access_management.domain.token.repository.RefreshTokenRepository;
 import com.loan_org.identity_and_access_management.domain.user.entity.UserDocument;
 import com.loan_org.identity_and_access_management.domain.user.entity.UserStatus;
@@ -91,7 +91,7 @@ public class AdminLockServiceImpl implements AdminLockService {
                         .build();
         userAccountModificationAuditService.addLog(userDocument.getEmail(), logEntry);
         return "User account has been unlocked successfully";
-        
+
     }
 
     
