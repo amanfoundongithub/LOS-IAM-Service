@@ -1,7 +1,9 @@
-package com.loan_org.identity_and_access_management.domain.token.repository;
+package com.loan_org.identity_and_access_management.token.repository;
 
-import com.loan_org.identity_and_access_management.domain.token.entity.RefreshTokenDocument;
 import org.springframework.data.mongodb.repository.MongoRepository;
+
+import com.loan_org.identity_and_access_management.token.entity.RefreshTokenDocument;
+
 import java.util.Optional;
 
 /**

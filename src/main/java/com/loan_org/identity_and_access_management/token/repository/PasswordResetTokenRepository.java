@@ -1,7 +1,9 @@
-package com.loan_org.identity_and_access_management.domain.token.repository;
+package com.loan_org.identity_and_access_management.token.repository;
 
-import com.loan_org.identity_and_access_management.domain.token.entity.PasswordResetTokenDocument;
 import org.springframework.data.mongodb.repository.MongoRepository;
+
+import com.loan_org.identity_and_access_management.token.entity.PasswordResetTokenDocument;
+
 import java.util.Optional;
 
 /**

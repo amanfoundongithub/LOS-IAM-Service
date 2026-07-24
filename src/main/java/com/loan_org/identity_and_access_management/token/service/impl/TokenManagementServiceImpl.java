@@ -1,12 +1,6 @@
-package com.loan_org.identity_and_access_management.domain.token.service.impl;
+package com.loan_org.identity_and_access_management.token.service.impl;
 
 import com.loan_org.identity_and_access_management.domain.token.dto.RefreshTokenRevokeDto;
-import com.loan_org.identity_and_access_management.domain.token.repository.ActivationTokenRepository;
-import com.loan_org.identity_and_access_management.domain.token.repository.PasswordResetTokenRepository;
-import com.loan_org.identity_and_access_management.domain.token.repository.RefreshTokenRepository;
-import com.loan_org.identity_and_access_management.domain.token.entity.ActivationTokenDocument;
-import com.loan_org.identity_and_access_management.domain.token.entity.PasswordResetTokenDocument;
-import com.loan_org.identity_and_access_management.domain.token.entity.RefreshTokenDocument;
 import com.loan_org.identity_and_access_management.domain.user.repository.UserRepository;
 import com.loan_org.identity_and_access_management.domain.user.entity.SecurityBlock;
 import com.loan_org.identity_and_access_management.domain.user.entity.UserDocument;
@@ -17,7 +11,14 @@ import com.loan_org.identity_and_access_management.exception.TokenNotProvidedExc
 import com.loan_org.identity_and_access_management.exception.UnauthorizedAccessException;
 import com.loan_org.identity_and_access_management.domain.auth.service.JwtService;
 import com.loan_org.identity_and_access_management.messaging.service.EmailService;
-import com.loan_org.identity_and_access_management.domain.token.service.TokenManagementService;
+import com.loan_org.identity_and_access_management.token.entity.ActivationTokenDocument;
+import com.loan_org.identity_and_access_management.token.entity.PasswordResetTokenDocument;
+import com.loan_org.identity_and_access_management.token.entity.RefreshTokenDocument;
+import com.loan_org.identity_and_access_management.token.repository.ActivationTokenRepository;
+import com.loan_org.identity_and_access_management.token.repository.PasswordResetTokenRepository;
+import com.loan_org.identity_and_access_management.token.repository.RefreshTokenRepository;
+import com.loan_org.identity_and_access_management.token.service.TokenManagementService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Enterprise implementation of the {@link TokenManagementService} responsible for the atomic

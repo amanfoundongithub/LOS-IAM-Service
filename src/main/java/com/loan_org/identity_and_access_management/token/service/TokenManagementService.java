@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.domain.token.service;
+package com.loan_org.identity_and_access_management.token.service;
 
 import com.loan_org.identity_and_access_management.domain.token.dto.RefreshTokenRequestDto;
 import com.loan_org.identity_and_access_management.domain.token.dto.RefreshTokenRevokeDto;

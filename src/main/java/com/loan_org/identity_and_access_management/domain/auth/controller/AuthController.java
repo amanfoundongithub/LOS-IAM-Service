@@ -9,9 +9,10 @@ import com.loan_org.identity_and_access_management.domain.token.dto.RefreshToken
 import com.loan_org.identity_and_access_management.domain.token.dto.RefreshTokenRevokeDto;
 import com.loan_org.identity_and_access_management.domain.user.dto.UserResponseDto;
 import com.loan_org.identity_and_access_management.domain.user.entity.UserDocument;
+import com.loan_org.identity_and_access_management.token.service.TokenManagementService;
 import com.loan_org.identity_and_access_management.domain.auth.service.JwtService;
 import com.loan_org.identity_and_access_management.domain.auth.service.AuthService;
-import com.loan_org.identity_and_access_management.domain.token.service.TokenManagementService;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
