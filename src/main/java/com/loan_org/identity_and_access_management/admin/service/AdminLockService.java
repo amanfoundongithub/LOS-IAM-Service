@@ -3,7 +3,7 @@ package com.loan_org.identity_and_access_management.admin.service;
 import com.loan_org.identity_and_access_management.admin.model.account_lock.UserAccountLockRequest;
 import com.loan_org.identity_and_access_management.admin.model.account_unlock.UserAccountUnlockRequest;
 
-public interface AdminService {
+public interface AdminLockService {
 
     /**
      * Locks the user's account
