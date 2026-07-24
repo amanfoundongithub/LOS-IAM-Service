@@ -1,15 +1,15 @@
 package com.loan_org.identity_and_access_management.token.service.impl;
 
-import com.loan_org.identity_and_access_management.domain.token.dto.RefreshTokenRevokeDto;
 import com.loan_org.identity_and_access_management.domain.user.repository.UserRepository;
+import com.loan_org.identity_and_access_management.auth.dto.RefreshTokenRequestDto;
+import com.loan_org.identity_and_access_management.auth.dto.RefreshTokenRevokeDto;
+import com.loan_org.identity_and_access_management.auth.service.JwtService;
 import com.loan_org.identity_and_access_management.domain.user.entity.SecurityBlock;
 import com.loan_org.identity_and_access_management.domain.user.entity.UserDocument;
 import com.loan_org.identity_and_access_management.domain.user.entity.UserStatus;
-import com.loan_org.identity_and_access_management.domain.token.dto.RefreshTokenRequestDto;
 import com.loan_org.identity_and_access_management.exception.AccountNotFoundException;
 import com.loan_org.identity_and_access_management.exception.TokenNotProvidedException;
 import com.loan_org.identity_and_access_management.exception.UnauthorizedAccessException;
-import com.loan_org.identity_and_access_management.domain.auth.service.JwtService;
 import com.loan_org.identity_and_access_management.messaging.service.EmailService;
 import com.loan_org.identity_and_access_management.token.entity.ActivationTokenDocument;
 import com.loan_org.identity_and_access_management.token.entity.PasswordResetTokenDocument;

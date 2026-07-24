@@ -1,6 +1,6 @@
-package com.loan_org.identity_and_access_management.domain.auth.factory;
+package com.loan_org.identity_and_access_management.auth.factory;
 
-import com.loan_org.identity_and_access_management.domain.auth.dto.UserRegistrationDto;
+import com.loan_org.identity_and_access_management.auth.dto.UserRegistrationDto;
 import com.loan_org.identity_and_access_management.domain.user.entity.UserDocument;
 
 public interface UserRegistrationFactory {

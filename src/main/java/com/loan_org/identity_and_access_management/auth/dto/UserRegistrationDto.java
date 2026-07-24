@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.domain.auth.dto;
+package com.loan_org.identity_and_access_management.auth.dto;
 
 import com.loan_org.identity_and_access_management.domain.user.entity.UserRole;
 import jakarta.validation.constraints.*;

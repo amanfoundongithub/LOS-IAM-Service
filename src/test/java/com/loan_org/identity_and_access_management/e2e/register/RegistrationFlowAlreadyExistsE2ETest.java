@@ -1,7 +1,7 @@
 package com.loan_org.identity_and_access_management.e2e.register;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.loan_org.identity_and_access_management.domain.auth.dto.UserRegistrationDto;
+import com.loan_org.identity_and_access_management.auth.dto.UserRegistrationDto;
 import com.loan_org.identity_and_access_management.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -71,7 +71,6 @@ class RegistrationFlowAlreadyExistsE2ETest {
         primaryUser.setEmail(conflictEmail);
         primaryUser.setUsername("primaryUser");
         primaryUser.setPassword("securePassword123!");
-        primaryUser.setRole("LOAN_OFFICER");
         primaryUser.setSigningLimit(50000.0);
 
         mockMvc.perform(post("/api/v1/auth/register")
@@ -84,7 +83,6 @@ class RegistrationFlowAlreadyExistsE2ETest {
         duplicateUser.setEmail(conflictEmail); // Triggers the exception
         duplicateUser.setUsername("completelyNewUser");
         duplicateUser.setPassword("differentPassword999!");
-        duplicateUser.setRole("CLERK");
         duplicateUser.setSigningLimit(10000.0);
 
         // 3. WHEN & THEN: Execute the second registration and assert the global advice handling behavior
@@ -115,7 +113,6 @@ class RegistrationFlowAlreadyExistsE2ETest {
         primaryUser.setEmail("unique.first@loan_org.com");
         primaryUser.setUsername(conflictUsername);
         primaryUser.setPassword("securePassword123!");
-        primaryUser.setRole("LOAN_OFFICER");
         primaryUser.setSigningLimit(50000.0);
 
         mockMvc.perform(post("/api/v1/auth/register")
@@ -128,7 +125,6 @@ class RegistrationFlowAlreadyExistsE2ETest {
         duplicateUser.setEmail("unique.second@loan_org.com"); // Email is clean
         duplicateUser.setUsername(conflictUsername);        // Triggers username conflict path
         duplicateUser.setPassword("differentPassword999!");
-        duplicateUser.setRole("CLERK");
         duplicateUser.setSigningLimit(10000.0);
 
         // 3. WHEN & THEN: Execute and verify that the global exception advisor acts uniformly

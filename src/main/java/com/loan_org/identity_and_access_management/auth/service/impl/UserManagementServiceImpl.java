@@ -1,7 +1,7 @@
-package com.loan_org.identity_and_access_management.domain.auth.service.impl;
+package com.loan_org.identity_and_access_management.auth.service.impl;
 
-import com.loan_org.identity_and_access_management.domain.auth.dto.PasswordChangeRequestDto;
-import com.loan_org.identity_and_access_management.domain.auth.service.UserManagementService;
+import com.loan_org.identity_and_access_management.auth.dto.PasswordChangeRequestDto;
+import com.loan_org.identity_and_access_management.auth.service.UserManagementService;
 import com.loan_org.identity_and_access_management.domain.user.dto.UserResponseDto;
 import com.loan_org.identity_and_access_management.domain.user.entity.UserDocument;
 import com.loan_org.identity_and_access_management.domain.user.repository.UserRepository;

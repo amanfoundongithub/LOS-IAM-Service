@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.domain.auth.util;
+package com.loan_org.identity_and_access_management.auth.util;
 
 public class AuthServiceMessageFactory {
 

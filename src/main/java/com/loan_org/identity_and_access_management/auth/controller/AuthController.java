@@ -1,17 +1,17 @@
-package com.loan_org.identity_and_access_management.domain.auth.controller;
+package com.loan_org.identity_and_access_management.auth.controller;
 
-import com.loan_org.identity_and_access_management.domain.auth.dto.AuthResponseDto;
-import com.loan_org.identity_and_access_management.domain.auth.dto.PasswordChangeRequestDto;
-import com.loan_org.identity_and_access_management.domain.auth.dto.UserLoginDto;
-import com.loan_org.identity_and_access_management.domain.auth.dto.UserRegistrationDto;
-import com.loan_org.identity_and_access_management.domain.auth.service.UserManagementService;
-import com.loan_org.identity_and_access_management.domain.token.dto.RefreshTokenRequestDto;
-import com.loan_org.identity_and_access_management.domain.token.dto.RefreshTokenRevokeDto;
+import com.loan_org.identity_and_access_management.auth.dto.AuthResponseDto;
+import com.loan_org.identity_and_access_management.auth.dto.PasswordChangeRequestDto;
+import com.loan_org.identity_and_access_management.auth.dto.RefreshTokenRequestDto;
+import com.loan_org.identity_and_access_management.auth.dto.RefreshTokenRevokeDto;
+import com.loan_org.identity_and_access_management.auth.dto.UserLoginDto;
+import com.loan_org.identity_and_access_management.auth.dto.UserRegistrationDto;
+import com.loan_org.identity_and_access_management.auth.service.AuthService;
+import com.loan_org.identity_and_access_management.auth.service.JwtService;
+import com.loan_org.identity_and_access_management.auth.service.UserManagementService;
 import com.loan_org.identity_and_access_management.domain.user.dto.UserResponseDto;
 import com.loan_org.identity_and_access_management.domain.user.entity.UserDocument;
 import com.loan_org.identity_and_access_management.token.service.TokenManagementService;
-import com.loan_org.identity_and_access_management.domain.auth.service.JwtService;
-import com.loan_org.identity_and_access_management.domain.auth.service.AuthService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
 package com.loan_org.identity_and_access_management.token.service;
 
-import com.loan_org.identity_and_access_management.domain.token.dto.RefreshTokenRequestDto;
-import com.loan_org.identity_and_access_management.domain.token.dto.RefreshTokenRevokeDto;
+import com.loan_org.identity_and_access_management.auth.dto.RefreshTokenRequestDto;
+import com.loan_org.identity_and_access_management.auth.dto.RefreshTokenRevokeDto;
 
 /**
  * Utility service to consider token creation for

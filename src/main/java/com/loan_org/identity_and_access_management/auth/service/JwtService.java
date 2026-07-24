@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.domain.auth.service;
+package com.loan_org.identity_and_access_management.auth.service;
 
 import com.loan_org.identity_and_access_management.domain.user.dto.UserResponseDto;
 import io.jsonwebtoken.Jwts;

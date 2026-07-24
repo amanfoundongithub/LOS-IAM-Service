@@ -1,7 +1,7 @@
-package com.loan_org.identity_and_access_management.domain.auth.factory.impl;
+package com.loan_org.identity_and_access_management.auth.factory.impl;
 
-import com.loan_org.identity_and_access_management.domain.auth.dto.UserRegistrationDto;
-import com.loan_org.identity_and_access_management.domain.auth.factory.UserRegistrationFactory;
+import com.loan_org.identity_and_access_management.auth.dto.UserRegistrationDto;
+import com.loan_org.identity_and_access_management.auth.factory.UserRegistrationFactory;
 import com.loan_org.identity_and_access_management.domain.user.entity.MetadataBlock;
 import com.loan_org.identity_and_access_management.domain.user.entity.SecurityBlock;
 import com.loan_org.identity_and_access_management.domain.user.entity.UserDocument;

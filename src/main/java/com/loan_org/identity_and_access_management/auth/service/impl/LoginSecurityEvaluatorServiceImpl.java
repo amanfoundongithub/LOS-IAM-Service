@@ -1,7 +1,7 @@
-package com.loan_org.identity_and_access_management.domain.auth.service.impl;
+package com.loan_org.identity_and_access_management.auth.service.impl;
 
-import com.loan_org.identity_and_access_management.domain.auth.service.LoginSecurityEvaluatorService;
-import com.loan_org.identity_and_access_management.domain.auth.util.AuthServiceMessageFactory;
+import com.loan_org.identity_and_access_management.auth.service.LoginSecurityEvaluatorService;
+import com.loan_org.identity_and_access_management.auth.util.AuthServiceMessageFactory;
 import com.loan_org.identity_and_access_management.domain.user.entity.SecurityBlock;
 import com.loan_org.identity_and_access_management.domain.user.entity.UserDocument;
 import com.loan_org.identity_and_access_management.domain.user.entity.UserStatus;

@@ -25,6 +25,10 @@ api:
   admin:
     base_url: /api/v1/admin
 
+endpoint:
+  lock: /api/v1/admin/lock
+  unlock: /api/v1/admin/unlock
+
 
 # Login configuration for user
 login:

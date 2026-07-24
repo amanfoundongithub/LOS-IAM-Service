@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.domain.token.dto;
+package com.loan_org.identity_and_access_management.auth.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

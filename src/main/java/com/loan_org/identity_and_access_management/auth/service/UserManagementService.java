@@ -1,6 +1,6 @@
-package com.loan_org.identity_and_access_management.domain.auth.service;
+package com.loan_org.identity_and_access_management.auth.service;
 
-import com.loan_org.identity_and_access_management.domain.auth.dto.PasswordChangeRequestDto;
+import com.loan_org.identity_and_access_management.auth.dto.PasswordChangeRequestDto;
 import com.loan_org.identity_and_access_management.domain.user.dto.UserResponseDto;
 
 public interface UserManagementService {
