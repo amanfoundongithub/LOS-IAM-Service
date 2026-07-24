@@ -91,6 +91,7 @@ public class TokenManagementServiceImpl implements TokenManagementService {
     }
 
     @Override
+    @Transactional
     public String generateRefreshToken(String email) {
         log.info("Processing request for issuing of refresh token for associated with email ID: {}",
                 email);
@@ -119,6 +120,7 @@ public class TokenManagementServiceImpl implements TokenManagementService {
     }
 
     @Override
+    @Transactional
     public void revokeRefreshToken(String email) {
         log.info("Processing request for revoking refresh token for given email...");
         refreshTokenRepository.deleteByUserEmail(email);
@@ -144,7 +146,7 @@ public class TokenManagementServiceImpl implements TokenManagementService {
     }
 
     @Override
-    @Transactional // Critical: Multi-table mutation operations require atomic transactional guarantees
+    @Transactional 
     public void verifyActivationToken(String activationToken) {
         log.info("Executing transaction synchronization for activation verification.");
 
