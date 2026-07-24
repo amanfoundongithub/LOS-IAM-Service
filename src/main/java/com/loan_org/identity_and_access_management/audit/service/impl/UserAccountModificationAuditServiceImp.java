@@ -1,11 +1,12 @@
-package com.loan_org.identity_and_access_management.domain.audit.service.impl;
+package com.loan_org.identity_and_access_management.audit.service.impl;
 
-import com.loan_org.identity_and_access_management.domain.audit.entity.UserAccountModificationAuditDocument;
-import com.loan_org.identity_and_access_management.domain.audit.repository.UserAccountModificationAuditDocumentRepository;
-import com.loan_org.identity_and_access_management.domain.audit.service.UserAccountModificationAuditService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import com.loan_org.identity_and_access_management.audit.entity.UserAccountModificationAuditDocument;
+import com.loan_org.identity_and_access_management.audit.repository.UserAccountModificationAuditDocumentRepository;
+import com.loan_org.identity_and_access_management.audit.service.UserAccountModificationAuditService;
 
 import java.util.ArrayList;
 import java.util.Optional;

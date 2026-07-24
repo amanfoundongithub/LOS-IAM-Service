@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.domain.audit.entity;
+package com.loan_org.identity_and_access_management.audit.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
