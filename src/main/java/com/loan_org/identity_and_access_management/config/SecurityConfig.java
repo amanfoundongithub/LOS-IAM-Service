@@ -1,9 +1,11 @@
 package com.loan_org.identity_and_access_management.config;
 
+import com.loan_org.identity_and_access_management.filters.AccountStatusFilter;
 import com.loan_org.identity_and_access_management.filters.JwtAuthenticationFilter;
 import com.loan_org.identity_and_access_management.filters.MdcHeaderFilter;
 import com.loan_org.identity_and_access_management.filters.RateLimiterFilter;
 import com.loan_org.identity_and_access_management.filters.RequestLoggingFilter;
+import com.loan_org.identity_and_access_management.security.JwtAuthenticationEntryPoint;
 import com.loan_org.identity_and_access_management.user.entity.UserRole;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -31,9 +33,10 @@ public class SecurityConfig {
     private final RateLimiterFilter rateLimiterFilter;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final RequestLoggingFilter requestLoggingFilter;
+    private final AccountStatusFilter accountStatusFilter;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     // Uncomment once implemented
-    // private final JwtAuthenticationEntryPoint authenticationEntryPoint;
     // private final JwtAccessDeniedHandler accessDeniedHandler;
 
     private final String authBaseUrl;
@@ -45,6 +48,8 @@ public class SecurityConfig {
             RateLimiterFilter rateLimiterFilter,
             JwtAuthenticationFilter jwtAuthenticationFilter,
             RequestLoggingFilter requestLoggingFilter,
+            AccountStatusFilter accountStatusFilter,
+            JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
             @Value("${api.auth.base_url}") String authBaseUrl,
             @Value("${api.admin.base_url}") String adminBaseUrl) {
 
@@ -53,6 +58,8 @@ public class SecurityConfig {
         this.rateLimiterFilter = rateLimiterFilter;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.requestLoggingFilter = requestLoggingFilter;
+        this.accountStatusFilter  = accountStatusFilter;
+        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
         this.authBaseUrl = authBaseUrl;
         this.adminBaseUrl = adminBaseUrl;
     }
@@ -77,13 +84,11 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
-                /*
                 .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(authenticationEntryPoint)
-                        .accessDeniedHandler(accessDeniedHandler)
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                        // .accessDeniedHandler(accessDeniedHandler)
                 )
-                */
-
+                
                 .authorizeHttpRequests(auth -> auth
 
                         .requestMatchers(
@@ -122,8 +127,13 @@ public class SecurityConfig {
                 )
 
                 .addFilterAfter(
-                        requestLoggingFilter,
+                        accountStatusFilter,
                         JwtAuthenticationFilter.class
+                )
+
+                .addFilterAfter(
+                        requestLoggingFilter,
+                        AccountStatusFilter.class
                 );
 
         return http.build();

@@ -12,7 +12,7 @@ import org.jspecify.annotations.NonNull;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -89,7 +89,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             MDC.put("role", role);
             filterChain.doFilter(request, response);
         } catch (JwtException ex) {
-            throw new InsufficientAuthenticationException("Invalid JWT", ex);
+            throw new BadCredentialsException("Invalid JWT", ex);
         }
     }
 
