@@ -3,6 +3,7 @@ package com.loan_org.identity_and_access_management.config;
 import com.loan_org.identity_and_access_management.filters.JwtAuthenticationFilter;
 import com.loan_org.identity_and_access_management.filters.MdcHeaderFilter;
 import com.loan_org.identity_and_access_management.filters.RateLimiterFilter;
+import com.loan_org.identity_and_access_management.filters.RequestLoggingFilter;
 import com.loan_org.identity_and_access_management.user.entity.UserRole;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -25,25 +26,33 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
     private final CorsProperties corsProperties;
-    private final RateLimiterFilter rateLimiterFilter;
+
     private final MdcHeaderFilter mdcHeaderFilter;
+    private final RateLimiterFilter rateLimiterFilter;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final RequestLoggingFilter requestLoggingFilter;
+
+    // Uncomment once implemented
+    // private final JwtAuthenticationEntryPoint authenticationEntryPoint;
+    // private final JwtAccessDeniedHandler accessDeniedHandler;
 
     private final String authBaseUrl;
     private final String adminBaseUrl;
 
     public SecurityConfig(
             CorsProperties corsProperties,
-            RateLimiterFilter rateLimiterFilter,
             MdcHeaderFilter mdcHeaderFilter,
+            RateLimiterFilter rateLimiterFilter,
             JwtAuthenticationFilter jwtAuthenticationFilter,
+            RequestLoggingFilter requestLoggingFilter,
             @Value("${api.auth.base_url}") String authBaseUrl,
             @Value("${api.admin.base_url}") String adminBaseUrl) {
 
         this.corsProperties = corsProperties;
-        this.rateLimiterFilter = rateLimiterFilter;
         this.mdcHeaderFilter = mdcHeaderFilter;
+        this.rateLimiterFilter = rateLimiterFilter;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.requestLoggingFilter = requestLoggingFilter;
         this.authBaseUrl = authBaseUrl;
         this.adminBaseUrl = adminBaseUrl;
     }
@@ -59,9 +68,22 @@ public class SecurityConfig {
 
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
+                .cors(cors ->
+                        cors.configurationSource(corsConfigurationSource())
+                )
+
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+
+                /*
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                        .accessDeniedHandler(accessDeniedHandler)
+                )
+                */
+
                 .authorizeHttpRequests(auth -> auth
 
                         .requestMatchers(
@@ -72,11 +94,13 @@ public class SecurityConfig {
                                 authBaseUrl + "/reset-password-request"
                         ).permitAll()
 
-                        .requestMatchers(authBaseUrl + "/change-password")
-                        .authenticated()
+                        .requestMatchers(
+                                authBaseUrl + "/change-password"
+                        ).authenticated()
 
-                        .requestMatchers(adminBaseUrl + "/**")
-                        .hasRole(UserRole.ADMIN.name())
+                        .requestMatchers(
+                                adminBaseUrl + "/**"
+                        ).hasRole(UserRole.ADMIN.name())
 
                         .anyRequest()
                         .authenticated()
@@ -96,7 +120,11 @@ public class SecurityConfig {
                         jwtAuthenticationFilter,
                         RateLimiterFilter.class
                 )
-                ;
+
+                .addFilterAfter(
+                        requestLoggingFilter,
+                        JwtAuthenticationFilter.class
+                );
 
         return http.build();
     }
