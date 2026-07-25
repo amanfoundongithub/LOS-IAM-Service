@@ -1,14 +1,13 @@
 package com.loan_org.identity_and_access_management.config;
 
-import com.loan_org.identity_and_access_management.middleware.filter.JwtAuthenticationFilter;
-import com.loan_org.identity_and_access_management.middleware.filter.MdcHeaderFilter;
-import com.loan_org.identity_and_access_management.middleware.filter.RateLimiterFilter;
+import com.loan_org.identity_and_access_management.filters.JwtAuthenticationFilter;
+import com.loan_org.identity_and_access_management.filters.MdcHeaderFilter;
+import com.loan_org.identity_and_access_management.filters.RateLimiterFilter;
 import com.loan_org.identity_and_access_management.user.entity.UserRole;
-
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -21,54 +20,92 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
-@RequiredArgsConstructor
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
-    private final CorsProperties          corsProperties;
-    private final RateLimiterFilter       rateLimiterFilter;
-    private final MdcHeaderFilter         mdcHeaderFilter;
-    private final JwtAuthenticationFilter jwtAuthFilter;
+    private final CorsProperties corsProperties;
+    private final RateLimiterFilter rateLimiterFilter;
+    private final MdcHeaderFilter mdcHeaderFilter;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    @Value("${api.auth.base_url}")
-    private String authBaseUrl;
+    private final String authBaseUrl;
+    private final String adminBaseUrl;
 
-    @Value("${api.admin.base_url}")
-    private String adminBaseUrl;
+    public SecurityConfig(
+            CorsProperties corsProperties,
+            RateLimiterFilter rateLimiterFilter,
+            MdcHeaderFilter mdcHeaderFilter,
+            JwtAuthenticationFilter jwtAuthenticationFilter,
+            @Value("${api.auth.base_url}") String authBaseUrl,
+            @Value("${api.admin.base_url}") String adminBaseUrl) {
 
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        this.corsProperties = corsProperties;
+        this.rateLimiterFilter = rateLimiterFilter;
+        this.mdcHeaderFilter = mdcHeaderFilter;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.authBaseUrl = authBaseUrl;
+        this.adminBaseUrl = adminBaseUrl;
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http){
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(12);
+    }
+
+    @Bean
+    @SuppressWarnings("null")
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(authBaseUrl + "/register").permitAll()
-                        .requestMatchers(authBaseUrl + "/login").permitAll()
-                        .requestMatchers(authBaseUrl + "/refresh").permitAll()
-                        .requestMatchers(authBaseUrl + "/verify").permitAll()
-                        .requestMatchers(authBaseUrl + "/reset-password-request").permitAll()
-                        .requestMatchers(authBaseUrl + "/change-password").authenticated()
-                        .requestMatchers(adminBaseUrl + "/**").hasRole(UserRole.ADMIN.name())
-                        .anyRequest().authenticated()
-                )
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-        // Add filter ordering here
-        http.addFilterBefore(mdcHeaderFilter, UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(rateLimiterFilter, MdcHeaderFilter.class);
+                        .requestMatchers(
+                                authBaseUrl + "/register",
+                                authBaseUrl + "/login",
+                                authBaseUrl + "/refresh",
+                                authBaseUrl + "/verify",
+                                authBaseUrl + "/reset-password-request"
+                        ).permitAll()
+
+                        .requestMatchers(authBaseUrl + "/change-password")
+                        .authenticated()
+
+                        .requestMatchers(adminBaseUrl + "/**")
+                        .hasRole(UserRole.ADMIN.name())
+
+                        .anyRequest()
+                        .authenticated()
+                )
+
+                .addFilterBefore(
+                        mdcHeaderFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                )
+
+                .addFilterAfter(
+                        rateLimiterFilter,
+                        MdcHeaderFilter.class
+                )
+
+                .addFilterAfter(
+                        jwtAuthenticationFilter,
+                        RateLimiterFilter.class
+                )
+                ;
 
         return http.build();
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+
         CorsConfiguration configuration = new CorsConfiguration();
+
         configuration.setAllowedOrigins(corsProperties.getAllowedOrigins());
         configuration.setAllowedMethods(corsProperties.getAllowedMethods());
         configuration.setAllowedHeaders(corsProperties.getAllowedHeaders());
@@ -78,6 +115,7 @@ public class SecurityConfig {
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+
         return source;
     }
 }
