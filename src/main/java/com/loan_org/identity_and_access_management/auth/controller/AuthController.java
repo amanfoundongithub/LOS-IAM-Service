@@ -1,8 +1,8 @@
 package com.loan_org.identity_and_access_management.auth.controller;
 
 import com.loan_org.identity_and_access_management.auth.dto.PasswordChangeRequestDto;
-import com.loan_org.identity_and_access_management.auth.dto.RefreshTokenRequestDto;
 import com.loan_org.identity_and_access_management.auth.dto.RefreshTokenRevokeDto;
+import com.loan_org.identity_and_access_management.auth.refreshToken.RefreshTokenRequest;
 import com.loan_org.identity_and_access_management.auth.service.UserManagementService;
 import com.loan_org.identity_and_access_management.token.service.TokenManagementService;
 
@@ -23,7 +23,7 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ResponseEntity<String> refreshToken(
-            @Valid @RequestBody RefreshTokenRequestDto request
+            @Valid @RequestBody RefreshTokenRequest request
     ) {
         return new ResponseEntity<>(tokenManagementService.generateRefreshToken(request), HttpStatus.OK);
     }

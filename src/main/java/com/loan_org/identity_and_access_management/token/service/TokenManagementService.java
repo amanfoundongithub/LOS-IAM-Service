@@ -1,7 +1,7 @@
 package com.loan_org.identity_and_access_management.token.service;
 
-import com.loan_org.identity_and_access_management.auth.dto.RefreshTokenRequestDto;
 import com.loan_org.identity_and_access_management.auth.dto.RefreshTokenRevokeDto;
+import com.loan_org.identity_and_access_management.auth.refreshToken.RefreshTokenRequest;
 
 /**
  * Utility service to consider token creation for
@@ -24,7 +24,7 @@ public interface TokenManagementService {
      * @param request The request for generation
      * @return The new generated token
      */
-    String generateRefreshToken(RefreshTokenRequestDto request);
+    String generateRefreshToken(RefreshTokenRequest request);
 
     /**
      * Generates a new refresh token for a user session

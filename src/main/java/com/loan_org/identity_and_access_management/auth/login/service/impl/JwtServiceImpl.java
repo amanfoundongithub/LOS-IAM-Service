@@ -54,16 +54,4 @@ public class JwtServiceImpl implements JwtService {
                 .signWith(signingKey)
                 .compact();
     }
-
-    public String createRefreshToken() {
-        return UUID.randomUUID() + "-" + UUID.randomUUID();
-    }
-
-    public String createPasswordResetToken() {
-        return UUID.randomUUID().toString();
-    }
-
-    public String createAccountActivationToken() {
-        return UUID.randomUUID().toString();
-    }
 }

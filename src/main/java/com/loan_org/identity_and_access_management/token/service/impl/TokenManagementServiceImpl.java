@@ -1,8 +1,7 @@
 package com.loan_org.identity_and_access_management.token.service.impl;
 
-import com.loan_org.identity_and_access_management.auth.dto.RefreshTokenRequestDto;
 import com.loan_org.identity_and_access_management.auth.dto.RefreshTokenRevokeDto;
-import com.loan_org.identity_and_access_management.auth.login.service.JwtService;
+import com.loan_org.identity_and_access_management.auth.refreshToken.RefreshTokenRequest;
 import com.loan_org.identity_and_access_management.exception.AccountNotFoundException;
 import com.loan_org.identity_and_access_management.exception.TokenNotProvidedException;
 import com.loan_org.identity_and_access_management.exception.UnauthorizedAccessException;
@@ -13,6 +12,7 @@ import com.loan_org.identity_and_access_management.token.entity.RefreshTokenDocu
 import com.loan_org.identity_and_access_management.token.repository.ActivationTokenRepository;
 import com.loan_org.identity_and_access_management.token.repository.PasswordResetTokenRepository;
 import com.loan_org.identity_and_access_management.token.repository.RefreshTokenRepository;
+import com.loan_org.identity_and_access_management.token.service.TokenGenerationService;
 import com.loan_org.identity_and_access_management.token.service.TokenManagementService;
 import com.loan_org.identity_and_access_management.userEntity.entity.SecurityBlock;
 import com.loan_org.identity_and_access_management.userEntity.entity.UserDocument;
@@ -48,7 +48,7 @@ public class TokenManagementServiceImpl implements TokenManagementService {
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final EmailService emailService;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
+    private final TokenGenerationService tokenGenerationService;
 
     @Value("${app.token.refresh_token.expiry_in_days}")
     private int refreshExpiryDays;
@@ -61,10 +61,10 @@ public class TokenManagementServiceImpl implements TokenManagementService {
 
     @Override
     @Transactional
-    public String generateRefreshToken(RefreshTokenRequestDto request) {
+    public String generateRefreshToken(RefreshTokenRequest request) {
         log.info("Processing request for refresh token renewal.");
 
-        String originalToken = request.getRefreshToken();
+        String originalToken = request.refreshToken();
         RefreshTokenDocument document = refreshTokenRepository.findByToken(originalToken)
                 .orElseThrow(() -> new TokenNotProvidedException("Provided refresh token is invalid or missing. Verification failed."));
 
@@ -73,7 +73,7 @@ public class TokenManagementServiceImpl implements TokenManagementService {
             throw new UnauthorizedAccessException("The refresh token has expired. Please re-authenticate.");
         }
 
-        String newRefreshToken = jwtService.createRefreshToken();
+        String newRefreshToken = tokenGenerationService.createRefreshToken();
         Instant expiry = Instant.now().plus(refreshExpiryDays, ChronoUnit.DAYS);
 
         // Atomic cycle prevents multi-node cluster collisions
@@ -96,7 +96,7 @@ public class TokenManagementServiceImpl implements TokenManagementService {
         log.info("Processing request for issuing of refresh token for associated with email ID: {}",
                 email);
         refreshTokenRepository.deleteByUserEmail(email);
-        String refreshToken = jwtService.createRefreshToken();
+        String refreshToken = tokenGenerationService.createRefreshToken();
         RefreshTokenDocument tokenDocument = RefreshTokenDocument.builder()
                 .token(refreshToken)
                 .userEmail(email)
@@ -132,7 +132,7 @@ public class TokenManagementServiceImpl implements TokenManagementService {
     public String generateActivationToken(String email) {
         log.info("Initiating production validation workflow for activation token generation.");
 
-        String tokenString = jwtService.createAccountActivationToken();
+        String tokenString = tokenGenerationService.createAccountActivationToken();
         ActivationTokenDocument tokenDocument = ActivationTokenDocument.builder()
                 .token(tokenString)
                 .userEmail(email)
@@ -176,7 +176,7 @@ public class TokenManagementServiceImpl implements TokenManagementService {
         UserDocument userDocument = userRepository.findByEmail(email)
                 .orElseThrow(() -> new AccountNotFoundException("No account linked to email destination: " + email));
 
-        String tokenString = jwtService.createPasswordResetToken();
+        String tokenString = tokenGenerationService.createPasswordResetToken();
         PasswordResetTokenDocument tokenDocument = PasswordResetTokenDocument.builder()
                 .token(tokenString)
                 .expiresAt(Instant.now().plus(resetExpiryHours, ChronoUnit.HOURS))
