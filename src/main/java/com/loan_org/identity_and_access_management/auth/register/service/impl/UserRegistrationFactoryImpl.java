@@ -1,7 +1,7 @@
-package com.loan_org.identity_and_access_management.auth.factory.impl;
+package com.loan_org.identity_and_access_management.auth.register.service.impl;
 
-import com.loan_org.identity_and_access_management.auth.factory.UserRegistrationFactory;
 import com.loan_org.identity_and_access_management.auth.register.UserRegistrationRequest;
+import com.loan_org.identity_and_access_management.auth.register.service.UserRegistrationFactory;
 import com.loan_org.identity_and_access_management.userEntity.entity.MetadataBlock;
 import com.loan_org.identity_and_access_management.userEntity.entity.SecurityBlock;
 import com.loan_org.identity_and_access_management.userEntity.entity.UserDocument;
@@ -27,10 +27,10 @@ public class UserRegistrationFactoryImpl implements UserRegistrationFactory {
     @Override
     public UserDocument createPendingUser(UserRegistrationRequest registrationDetails) {
         return UserDocument.builder()
-                .email(registrationDetails.getEmail())
-                .username(registrationDetails.getUsername())
+                .email(registrationDetails.email())
+                .username(registrationDetails.username())
                 .status(UserStatus.PENDING_VERIFICATION)
-                .security(buildSecurityBlock(registrationDetails.getPassword()))
+                .security(buildSecurityBlock(registrationDetails.password()))
                 .metadata(buildMetadataBlock())
                 .attributes(buildAttributes(registrationDetails))
                 .build();
@@ -53,6 +53,6 @@ public class UserRegistrationFactoryImpl implements UserRegistrationFactory {
     }
 
     private Map<String, Object> buildAttributes(UserRegistrationRequest dto) {
-        return attributeFactory.getAttributes(dto.getRole());
+        return attributeFactory.getAttributes(dto.role());
     }
 }

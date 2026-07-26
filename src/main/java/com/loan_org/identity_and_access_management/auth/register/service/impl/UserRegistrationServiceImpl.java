@@ -1,9 +1,9 @@
 package com.loan_org.identity_and_access_management.auth.register.service.impl;
 
-import com.loan_org.identity_and_access_management.auth.factory.UserRegistrationFactory;
 import com.loan_org.identity_and_access_management.auth.register.UserRegistrationRequest;
 import com.loan_org.identity_and_access_management.auth.register.UserRegistrationResponse;
 import com.loan_org.identity_and_access_management.auth.register.service.RegistrationWorkflowCoordinator;
+import com.loan_org.identity_and_access_management.auth.register.service.UserRegistrationFactory;
 import com.loan_org.identity_and_access_management.auth.register.service.UserRegistrationService;
 import com.loan_org.identity_and_access_management.exception.AccountAlreadyExistsException;
 import com.loan_org.identity_and_access_management.userEntity.dto.UserResponseDto;
