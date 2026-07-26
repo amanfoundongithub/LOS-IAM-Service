@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("${api.auth.base_url}")
-public class AuthController {
+@RequestMapping("/api/v1/auth/password")
+public class PasswordResetController {
 
     private final TokenManagementService tokenManagementService;
     private final UserManagementService  userManagementService;
 
-    @PostMapping("/reset-password")
+    @PostMapping("/reset")
     public ResponseEntity<String> resetPasswordRequest(
             @RequestParam("email") String email
     ) {
@@ -26,9 +26,9 @@ public class AuthController {
         return new ResponseEntity<>("Sent to:" + email, HttpStatus.ACCEPTED);
     }
 
-    @PostMapping("/change-password")
+    @PostMapping("/change")
     public ResponseEntity<Void> changePassword(
-            @Valid @RequestBody PasswordChangeRequestDto changeRequest,
+            @Valid @RequestBody PasswordResetRequest changeRequest,
             @AuthenticationPrincipal String email
     ) {
         userManagementService.updatePassword(email, changeRequest);

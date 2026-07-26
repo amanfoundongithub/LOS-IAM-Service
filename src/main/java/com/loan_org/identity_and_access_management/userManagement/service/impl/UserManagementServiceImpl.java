@@ -1,6 +1,6 @@
 package com.loan_org.identity_and_access_management.userManagement.service.impl;
 
-import com.loan_org.identity_and_access_management.auth.passwordReset.PasswordChangeRequestDto;
+import com.loan_org.identity_and_access_management.auth.passwordReset.PasswordResetRequest;
 import com.loan_org.identity_and_access_management.exception.AccountNotFoundException;
 import com.loan_org.identity_and_access_management.exception.UnauthorizedAccessException;
 import com.loan_org.identity_and_access_management.token.service.TokenManagementService;
@@ -24,7 +24,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
-    public void updatePassword(String email, PasswordChangeRequestDto changeRequest) {
+    public void updatePassword(String email, PasswordResetRequest changeRequest) {
         log.info("Received request to update password for email: {}",
                 email);
 
