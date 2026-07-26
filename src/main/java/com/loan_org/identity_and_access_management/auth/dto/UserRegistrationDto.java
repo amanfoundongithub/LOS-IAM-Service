@@ -1,28 +1,58 @@
 package com.loan_org.identity_and_access_management.auth.dto;
 
 import com.loan_org.identity_and_access_management.user.entity.UserRole;
-
 import jakarta.validation.constraints.*;
-import lombok.Data;
 
-@Data
-public class UserRegistrationDto {
+import java.math.BigDecimal;
 
-    @NotBlank(message = "Email is required field")
-    @Email(message = "Please provide valid email")
-    private String email;
+/**
+ * Represents a user registration request.
+ *
+ * @author Aman Raj
+ * @since 1.0.0
+ */
+public record UserRegistrationDto(
 
-    @NotBlank(message = "Username is required")
-    @Size(min = 4, max = 20, message = "Username must be between 4 and 20 characters")
-    private String username;
+        /**
+         * User email address.
+         */
+        @NotBlank(message = "Email is required.")
+        @Email(message = "Please provide a valid email address.")
+        String email,
 
-    @NotBlank(message = "Password is required")
-    @Size(min = 8, message = "Password must be at least 8 characters long")
-    private String password;
+        /**
+         * Unique username.
+         */
+        @NotBlank(message = "Username is required.")
+        @Size(min = 4, max = 20, message = "Username must be between 4 and 20 characters.")
+        @Pattern(
+                regexp = "^[a-zA-Z0-9_.-]+$",
+                message = "Username may only contain letters, numbers, '_', '-' and '.'."
+        )
+        String username,
 
-    @NotNull(message = "Your role is required, please provide a valid role")
-    private UserRole role;
+        /**
+         * Plain-text password.
+         */
+        @NotBlank(message = "Password is required.")
+        @Size(min = 8, max = 128, message = "Password must be between 8 and 128 characters.")
+        @Pattern(
+                regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!?.*()_\\-])[A-Za-z\\d@#$%^&+=!?.*()_\\-]{8,128}$",
+                message = "Password must contain an uppercase letter, lowercase letter, digit and special character."
+        )
+        String password,
 
-    @PositiveOrZero(message = "Signing limit cannot be negative")
-    private Double signingLimit;
+        /**
+         * User role.
+         */
+        @NotNull(message = "Role is required.")
+        UserRole role,
+
+        /**
+         * Maximum signing authority.
+         */
+        @PositiveOrZero(message = "Signing limit cannot be negative.")
+        BigDecimal signingLimit
+
+) {
 }
