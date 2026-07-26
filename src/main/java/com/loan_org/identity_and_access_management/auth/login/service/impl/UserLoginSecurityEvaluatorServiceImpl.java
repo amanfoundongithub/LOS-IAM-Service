@@ -1,7 +1,6 @@
 package com.loan_org.identity_and_access_management.auth.login.service.impl;
 
 import com.loan_org.identity_and_access_management.auth.login.service.UserLoginSecurityEvaluatorService;
-import com.loan_org.identity_and_access_management.auth.util.AuthServiceMessageFactory;
 import com.loan_org.identity_and_access_management.exception.UnauthorizedAccessException;
 import com.loan_org.identity_and_access_management.userEntity.entity.SecurityBlock;
 import com.loan_org.identity_and_access_management.userEntity.entity.UserDocument;
@@ -36,7 +35,7 @@ public class UserLoginSecurityEvaluatorServiceImpl implements UserLoginSecurityE
 
         // Suspended account?
         if (document.getStatus() == UserStatus.LOCKED) {
-            throw new UnauthorizedAccessException(AuthServiceMessageFactory.accountSuspended());
+            throw new UnauthorizedAccessException("Account is suspended");
         }
 
         // Check for security lockout and raise error if account is locked
@@ -44,7 +43,7 @@ public class UserLoginSecurityEvaluatorServiceImpl implements UserLoginSecurityE
         if (checkIfSecurityLockoutEnabled(security)) {
             TimeLeftWithUnit leftTime = calculateTimeLeftWithUnits(security);
             throw new UnauthorizedAccessException(
-                    AuthServiceMessageFactory.accountLocked(leftTime.timeLeft(), leftTime.unit())
+                    "Lots of time left"
             );
         }
 
@@ -57,7 +56,7 @@ public class UserLoginSecurityEvaluatorServiceImpl implements UserLoginSecurityE
             int currentAttempts = security.getFailedLoginAttempts() + 1;
             handleFailedAttempt(document, currentAttempts);
             int attemptsLeft = Math.max(0, maxAttempts - currentAttempts);
-            throw new UnauthorizedAccessException(AuthServiceMessageFactory.wrongPasswordAttempt(attemptsLeft));
+            throw new UnauthorizedAccessException("Wrong password");
         }
     }
 
