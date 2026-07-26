@@ -11,60 +11,73 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @Configuration
 @EnableAsync
 public class AsyncMdcConfig {
 
-    @Value("${threadConfig.async.corePoolSize}")
-    private int corePoolSize;
+    private final int corePoolSize;
+    private final int maxPoolSize;
+    private final int queueCapacity;
+    private final String threadNamePrefix;
 
-    @Value("${threadConfig.async.maxPoolSize}")
-    private int maxPoolSize;
+    public AsyncMdcConfig(
+            @Value("${threadConfig.async.corePoolSize}") int corePoolSize,
+            @Value("${threadConfig.async.maxPoolSize}") int maxPoolSize,
+            @Value("${threadConfig.async.queueCapacity}") int queueCapacity,
+            @Value("${threadConfig.async.threadNamePrefix}") String threadNamePrefix) {
 
-    @Value("${threadConfig.async.queueCapacity}")
-    private int queueCapacity;
-
-    @Value("${threadConfig.async.threadNamePrefix}")
-    private String threadNamePrefix;
+        this.corePoolSize = corePoolSize;
+        this.maxPoolSize = maxPoolSize;
+        this.queueCapacity = queueCapacity;
+        this.threadNamePrefix = threadNamePrefix;
+    }
 
     @Bean(name = "taskExecutor")
     public Executor taskExecutor() {
 
-        // Define a new task executor
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 
-        // Set params from the yaml
         executor.setCorePoolSize(corePoolSize);
         executor.setMaxPoolSize(maxPoolSize);
         executor.setQueueCapacity(queueCapacity);
         executor.setThreadNamePrefix(threadNamePrefix);
 
-        // Our context tracking bridge
+        // Propagate MDC to async threads
         executor.setTaskDecorator(new MdcTaskDecorator());
+
+        // Production-friendly settings
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        executor.setWaitForTasksToCompleteOnShutdown(true);
+        executor.setAwaitTerminationSeconds(30);
+
         executor.initialize();
         return executor;
     }
-}
 
-class MdcTaskDecorator implements TaskDecorator {
+    private static final class MdcTaskDecorator implements TaskDecorator {
 
-    @Override
-    @NonNull
-    public Runnable decorate(@NonNull Runnable runnable) {
-        Map<String, String> contextMap = MDC.getCopyOfContextMap();
-        return () -> {
-            try {
-                if (contextMap != null) {
-                    MDC.setContextMap(contextMap);
-                } else {
+        @Override
+        @NonNull
+        public Runnable decorate(@NonNull Runnable runnable) {
+
+            Map<String, String> contextMap = MDC.getCopyOfContextMap();
+
+            return () -> {
+                try {
+                    if (contextMap != null) {
+                        MDC.setContextMap(contextMap);
+                    } else {
+                        MDC.clear();
+                    }
+
+                    runnable.run();
+
+                } finally {
                     MDC.clear();
                 }
-                runnable.run();
-            } finally {
-                MDC.clear();
-            }
-        };
+            };
+        }
     }
-
 }
