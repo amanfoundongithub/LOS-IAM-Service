@@ -5,6 +5,7 @@ import com.loan_org.identity_and_access_management.filters.JwtAuthenticationFilt
 import com.loan_org.identity_and_access_management.filters.MdcHeaderFilter;
 import com.loan_org.identity_and_access_management.filters.RateLimiterFilter;
 import com.loan_org.identity_and_access_management.filters.RequestLoggingFilter;
+import com.loan_org.identity_and_access_management.security.JwtAccessDeniedHandler;
 import com.loan_org.identity_and_access_management.security.JwtAuthenticationEntryPoint;
 import com.loan_org.identity_and_access_management.user.entity.UserRole;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,7 +38,7 @@ public class SecurityConfig {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     // Uncomment once implemented
-    // private final JwtAccessDeniedHandler accessDeniedHandler;
+    private final JwtAccessDeniedHandler accessDeniedHandler;
 
     private final String authBaseUrl;
     private final String adminBaseUrl;
@@ -49,6 +50,7 @@ public class SecurityConfig {
             JwtAuthenticationFilter jwtAuthenticationFilter,
             RequestLoggingFilter requestLoggingFilter,
             AccountStatusFilter accountStatusFilter,
+            JwtAccessDeniedHandler jwtAccessDeniedHandler,
             JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
             @Value("${api.auth.base_url}") String authBaseUrl,
             @Value("${api.admin.base_url}") String adminBaseUrl) {
@@ -60,6 +62,7 @@ public class SecurityConfig {
         this.requestLoggingFilter = requestLoggingFilter;
         this.accountStatusFilter  = accountStatusFilter;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+        this.accessDeniedHandler = jwtAccessDeniedHandler;
         this.authBaseUrl = authBaseUrl;
         this.adminBaseUrl = adminBaseUrl;
     }
@@ -86,7 +89,7 @@ public class SecurityConfig {
 
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                        // .accessDeniedHandler(accessDeniedHandler)
+                        .accessDeniedHandler(accessDeniedHandler)
                 )
                 
                 .authorizeHttpRequests(auth -> auth
