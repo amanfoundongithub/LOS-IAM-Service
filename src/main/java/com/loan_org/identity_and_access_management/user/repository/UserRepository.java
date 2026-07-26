@@ -1,9 +1,7 @@
 package com.loan_org.identity_and_access_management.user.repository;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
-
 import com.loan_org.identity_and_access_management.user.entity.UserDocument;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;
 
@@ -13,14 +11,8 @@ import java.util.Optional;
  *
  * <p>
  * Provides standard CRUD operations through
- * {@link org.springframework.data.mongodb.repository.MongoRepository}
- * along with custom query methods for user lookup by email and username.
- * </p>
- *
- * <p>
- * This repository is primarily used by the authentication and identity
- * management services for user retrieval, registration validation,
- * and credential-based authentication workflows.
+ * {@link MongoRepository} along with common lookup methods
+ * required by the Identity and Access Management (IAM) service.
  * </p>
  *
  * <p>
@@ -34,24 +26,47 @@ import java.util.Optional;
  * @author Aman Raj
  * @since 1.0
  */
-@Repository
 public interface UserRepository extends MongoRepository<UserDocument, String> {
 
     /**
-     * Retrieves a user by their email address.
+     * Finds a user by their unique email address.
      *
-     * @param email the unique email address of the user
-     * @return an {@link Optional} containing the matching user if found,
-     * otherwise an empty {@link Optional}
+     * @param email user's email
+     * @return matching user if present
      */
     Optional<UserDocument> findByEmail(String email);
 
     /**
-     * Retrieves a user by their username.
+     * Finds a user by their unique username.
      *
-     * @param username the unique username of the user
-     * @return an {@link Optional} containing the matching user if found,
-     * otherwise an empty {@link Optional}
+     * @param username user's username
+     * @return matching user if present
      */
     Optional<UserDocument> findByUsername(String username);
+
+    /**
+     * Finds a user by either email or username.
+     * Useful for login flows where either identifier is accepted.
+     *
+     * @param email email to search
+     * @param username username to search
+     * @return matching user if present
+     */
+    Optional<UserDocument> findByEmailOrUsername(String email, String username);
+
+    /**
+     * Checks whether an email is already registered.
+     *
+     * @param email user's email
+     * @return true if email already exists
+     */
+    boolean existsByEmail(String email);
+
+    /**
+     * Checks whether a username is already registered.
+     *
+     * @param username user's username
+     * @return true if username already exists
+     */
+    boolean existsByUsername(String username);
 }
