@@ -9,8 +9,8 @@ import java.time.Instant;
 /**
  * Embedded operational metadata model associated with a user account.
  *
- * <p>Stores lifecycle timestamps and activity-related information
- * used for auditing, account monitoring, and operational tracking.</p>
+ * Stores lifecycle timestamps and activity-related information
+ * used for auditing and operational tracking.
  *
  * @author Aman Raj
  */
@@ -27,5 +27,24 @@ public class MetadataBlock {
     @LastModifiedDate
     private Instant updatedAt;
 
+    /**
+     * Last successful authentication.
+     */
     private Instant lastLoginAt;
+
+    /**
+     * Last observed activity.
+     */
+    private Instant lastSeenAt;
+
+    /**
+     * Creator of this account.
+     * Typically SYSTEM or an administrator email.
+     */
+    private String createdBy;
+
+    /**
+     * Last user/admin who modified this account.
+     */
+    private String updatedBy;
 }

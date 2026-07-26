@@ -9,9 +9,9 @@ import java.time.Instant;
  * Embedded security model containing authentication and
  * account protection data associated with a user identity.
  *
- * <p>Stores credential-related information, multi-factor
+ * Stores credential-related information, multi-factor
  * authentication configuration, login protection state,
- * and security lifecycle metadata.</p>
+ * and security lifecycle metadata.
  *
  * @author Aman Raj
  */
@@ -24,11 +24,11 @@ public class SecurityBlock {
 
     @JsonIgnore
     @ToString.Exclude
-    private String  passwordHash;
+    private String passwordHash;
 
     @JsonIgnore
     @ToString.Exclude
-    private String  mfaSecretEncrypted;
+    private String mfaSecretEncrypted;
 
     @Builder.Default
     private boolean emailVerified = false;
@@ -39,6 +39,28 @@ public class SecurityBlock {
     @Builder.Default
     private int failedLoginAttempts = 0;
 
+    /**
+     * Account remains locked until this instant.
+     */
     private Instant lockoutUntil;
+
+    /**
+     * Last successful password change.
+     */
     private Instant passwordChangedAt;
+
+    /**
+     * Last password reset request completion.
+     */
+    private Instant lastPasswordResetAt;
+
+    /**
+     * Last failed login attempt.
+     */
+    private Instant lastFailedLoginAt;
+
+    /**
+     * Last successful MFA verification.
+     */
+    private Instant lastMfaVerifiedAt;
 }
