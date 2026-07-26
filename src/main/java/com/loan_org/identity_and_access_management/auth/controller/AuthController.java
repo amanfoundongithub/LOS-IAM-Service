@@ -3,11 +3,8 @@ package com.loan_org.identity_and_access_management.auth.controller;
 import com.loan_org.identity_and_access_management.auth.dto.PasswordChangeRequestDto;
 import com.loan_org.identity_and_access_management.auth.dto.RefreshTokenRequestDto;
 import com.loan_org.identity_and_access_management.auth.dto.RefreshTokenRevokeDto;
-import com.loan_org.identity_and_access_management.auth.register.UserRegistrationRequest;
-import com.loan_org.identity_and_access_management.auth.service.AuthService;
 import com.loan_org.identity_and_access_management.auth.service.UserManagementService;
 import com.loan_org.identity_and_access_management.token.service.TokenManagementService;
-import com.loan_org.identity_and_access_management.user.entity.UserDocument;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,17 +18,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("${api.auth.base_url}")
 public class AuthController {
 
-    private final AuthService            authService;
     private final TokenManagementService tokenManagementService;
     private final UserManagementService  userManagementService;
-
-    @PostMapping("/register")
-    public ResponseEntity<UserDocument> register(
-            @Valid @RequestBody UserRegistrationRequest registration
-    ) {
-        UserDocument document = authService.register(registration);
-        return new ResponseEntity<>(document, HttpStatus.CREATED);
-    }
 
     @PostMapping("/refresh")
     public ResponseEntity<String> refreshToken(
