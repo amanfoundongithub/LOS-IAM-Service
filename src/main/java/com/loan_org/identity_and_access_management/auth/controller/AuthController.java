@@ -2,7 +2,6 @@ package com.loan_org.identity_and_access_management.auth.controller;
 
 import com.loan_org.identity_and_access_management.auth.dto.PasswordChangeRequestDto;
 import com.loan_org.identity_and_access_management.auth.dto.RefreshTokenRevokeDto;
-import com.loan_org.identity_and_access_management.auth.refreshToken.RefreshTokenRequest;
 import com.loan_org.identity_and_access_management.auth.service.UserManagementService;
 import com.loan_org.identity_and_access_management.token.service.TokenManagementService;
 
@@ -20,21 +19,6 @@ public class AuthController {
 
     private final TokenManagementService tokenManagementService;
     private final UserManagementService  userManagementService;
-
-    @PostMapping("/refresh")
-    public ResponseEntity<String> refreshToken(
-            @Valid @RequestBody RefreshTokenRequest request
-    ) {
-        return new ResponseEntity<>(tokenManagementService.generateRefreshToken(request), HttpStatus.OK);
-    }
-
-    @GetMapping("/verify")
-    public ResponseEntity<String> verifyAccount(
-            @RequestParam("token") String token
-    ) {
-        tokenManagementService.verifyActivationToken(token);
-        return new ResponseEntity<>("Account successfully activated! You can now log in.", HttpStatus.OK);
-    }
 
     @PostMapping("/reset-password")
     public ResponseEntity<String> resetPasswordRequest(
