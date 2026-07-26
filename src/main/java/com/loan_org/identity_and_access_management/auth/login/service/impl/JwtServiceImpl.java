@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.loan_org.identity_and_access_management.auth.login.service.JwtService;
-import com.loan_org.identity_and_access_management.user.dto.UserResponseDto;
+import com.loan_org.identity_and_access_management.userEntity.dto.UserResponseDto;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;

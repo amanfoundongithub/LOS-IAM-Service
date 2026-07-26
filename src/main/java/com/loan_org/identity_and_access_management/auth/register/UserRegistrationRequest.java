@@ -1,9 +1,10 @@
 package com.loan_org.identity_and_access_management.auth.register;
 
-import com.loan_org.identity_and_access_management.user.entity.UserRole;
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
+
+import com.loan_org.identity_and_access_management.userEntity.entity.UserRole;
 
 /**
  * Represents a user registration request.

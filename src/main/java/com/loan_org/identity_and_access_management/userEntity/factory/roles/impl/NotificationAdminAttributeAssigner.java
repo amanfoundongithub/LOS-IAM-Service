@@ -1,10 +1,10 @@
-package com.loan_org.identity_and_access_management.user.factory.roles.impl;
+package com.loan_org.identity_and_access_management.userEntity.factory.roles.impl;
 
 import org.springframework.stereotype.Component;
 
-import com.loan_org.identity_and_access_management.user.entity.UserRole;
-import com.loan_org.identity_and_access_management.user.factory.permissions.NotificationTemplatePermissions;
-import com.loan_org.identity_and_access_management.user.factory.roles.UserRoleAttributeAssignerAbstract;
+import com.loan_org.identity_and_access_management.userEntity.entity.UserRole;
+import com.loan_org.identity_and_access_management.userEntity.factory.permissions.NotificationTemplatePermissions;
+import com.loan_org.identity_and_access_management.userEntity.factory.roles.UserRoleAttributeAssignerAbstract;
 
 @Component
 public class NotificationAdminAttributeAssigner extends UserRoleAttributeAssignerAbstract {

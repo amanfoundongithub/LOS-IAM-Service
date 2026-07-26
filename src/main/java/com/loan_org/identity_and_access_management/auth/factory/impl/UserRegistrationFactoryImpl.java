@@ -2,11 +2,11 @@ package com.loan_org.identity_and_access_management.auth.factory.impl;
 
 import com.loan_org.identity_and_access_management.auth.factory.UserRegistrationFactory;
 import com.loan_org.identity_and_access_management.auth.register.UserRegistrationRequest;
-import com.loan_org.identity_and_access_management.user.entity.MetadataBlock;
-import com.loan_org.identity_and_access_management.user.entity.SecurityBlock;
-import com.loan_org.identity_and_access_management.user.entity.UserDocument;
-import com.loan_org.identity_and_access_management.user.entity.UserStatus;
-import com.loan_org.identity_and_access_management.user.factory.UserAttributeFactory;
+import com.loan_org.identity_and_access_management.userEntity.entity.MetadataBlock;
+import com.loan_org.identity_and_access_management.userEntity.entity.SecurityBlock;
+import com.loan_org.identity_and_access_management.userEntity.entity.UserDocument;
+import com.loan_org.identity_and_access_management.userEntity.entity.UserStatus;
+import com.loan_org.identity_and_access_management.userEntity.factory.UserAttributeFactory;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

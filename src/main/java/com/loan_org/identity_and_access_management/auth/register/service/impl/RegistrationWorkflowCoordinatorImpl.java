@@ -3,7 +3,8 @@ package com.loan_org.identity_and_access_management.auth.register.service.impl;
 import com.loan_org.identity_and_access_management.auth.register.service.RegistrationWorkflowCoordinator;
 import com.loan_org.identity_and_access_management.messaging.service.EmailService;
 import com.loan_org.identity_and_access_management.token.service.TokenManagementService;
-import com.loan_org.identity_and_access_management.user.entity.UserDocument;
+import com.loan_org.identity_and_access_management.userEntity.entity.UserDocument;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -3,9 +3,10 @@ package com.loan_org.identity_and_access_management.middleware.account.impl;
 import com.loan_org.identity_and_access_management.exception.AccountLockedException;
 import com.loan_org.identity_and_access_management.exception.AccountNotFoundException;
 import com.loan_org.identity_and_access_management.middleware.account.AccountStatusService;
-import com.loan_org.identity_and_access_management.user.entity.UserDocument;
-import com.loan_org.identity_and_access_management.user.entity.UserStatus;
-import com.loan_org.identity_and_access_management.user.repository.UserRepository;
+import com.loan_org.identity_and_access_management.userEntity.entity.UserDocument;
+import com.loan_org.identity_and_access_management.userEntity.entity.UserStatus;
+import com.loan_org.identity_and_access_management.userEntity.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

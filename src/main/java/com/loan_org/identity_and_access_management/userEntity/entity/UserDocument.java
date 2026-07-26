@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.user.entity;
+package com.loan_org.identity_and_access_management.userEntity.entity;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

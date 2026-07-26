@@ -11,9 +11,9 @@ import com.loan_org.identity_and_access_management.audit.entity.UserAccountModif
 import com.loan_org.identity_and_access_management.audit.service.UserAccountModificationAuditService;
 import com.loan_org.identity_and_access_management.exception.AccountNotFoundException;
 import com.loan_org.identity_and_access_management.token.repository.RefreshTokenRepository;
-import com.loan_org.identity_and_access_management.user.entity.UserDocument;
-import com.loan_org.identity_and_access_management.user.entity.UserStatus;
-import com.loan_org.identity_and_access_management.user.repository.UserRepository;
+import com.loan_org.identity_and_access_management.userEntity.entity.UserDocument;
+import com.loan_org.identity_and_access_management.userEntity.entity.UserStatus;
+import com.loan_org.identity_and_access_management.userEntity.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

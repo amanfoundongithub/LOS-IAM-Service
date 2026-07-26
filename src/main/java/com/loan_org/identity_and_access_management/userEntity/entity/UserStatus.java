@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.user.entity;
+package com.loan_org.identity_and_access_management.userEntity.entity;
 
 /**
  * Represents the lifecycle and operational state

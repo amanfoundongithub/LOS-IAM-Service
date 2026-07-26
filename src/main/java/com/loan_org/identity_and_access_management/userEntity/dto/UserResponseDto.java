@@ -1,10 +1,10 @@
-package com.loan_org.identity_and_access_management.user.dto;
-
-import com.loan_org.identity_and_access_management.user.entity.UserStatus;
+package com.loan_org.identity_and_access_management.userEntity.dto;
 
 import lombok.Builder;
 
 import java.util.Map;
+
+import com.loan_org.identity_and_access_management.userEntity.entity.UserStatus;
 
 /**
  * Represents a sanitized view of a user account returned to clients.

@@ -1,6 +1,6 @@
 package com.loan_org.identity_and_access_management.admin.model.user_search;
 
-import com.loan_org.identity_and_access_management.user.entity.UserRole;
+import com.loan_org.identity_and_access_management.userEntity.entity.UserRole;
 
 import lombok.Builder;
 

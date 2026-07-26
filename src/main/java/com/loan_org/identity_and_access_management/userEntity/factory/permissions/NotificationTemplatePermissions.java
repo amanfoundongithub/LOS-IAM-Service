@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.user.factory.permissions;
+package com.loan_org.identity_and_access_management.userEntity.factory.permissions;
 
 public class NotificationTemplatePermissions {
 

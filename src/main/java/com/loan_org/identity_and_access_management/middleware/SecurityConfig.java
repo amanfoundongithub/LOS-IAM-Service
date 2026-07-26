@@ -7,7 +7,8 @@ import com.loan_org.identity_and_access_management.middleware.filters.RateLimite
 import com.loan_org.identity_and_access_management.middleware.filters.RequestLoggingFilter;
 import com.loan_org.identity_and_access_management.middleware.handler.JwtAccessDeniedHandler;
 import com.loan_org.identity_and_access_management.middleware.handler.JwtAuthenticationEntryPoint;
-import com.loan_org.identity_and_access_management.user.entity.UserRole;
+import com.loan_org.identity_and_access_management.userEntity.entity.UserRole;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -14,10 +14,10 @@ import org.springframework.data.domain.Pageable;
 import com.loan_org.identity_and_access_management.admin.model.user_search.UserSearchAttributes;
 import com.loan_org.identity_and_access_management.admin.model.user_search.UserSearchResults;
 import com.loan_org.identity_and_access_management.admin.service.AdminUserSearchService;
-import com.loan_org.identity_and_access_management.user.dto.UserResponseDto;
-import com.loan_org.identity_and_access_management.user.entity.UserDocument;
-import com.loan_org.identity_and_access_management.user.entity.UserStatus;
-import com.loan_org.identity_and_access_management.user.repository.UserRepository;
+import com.loan_org.identity_and_access_management.userEntity.dto.UserResponseDto;
+import com.loan_org.identity_and_access_management.userEntity.entity.UserDocument;
+import com.loan_org.identity_and_access_management.userEntity.entity.UserStatus;
+import com.loan_org.identity_and_access_management.userEntity.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

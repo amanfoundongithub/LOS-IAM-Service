@@ -14,10 +14,10 @@ import com.loan_org.identity_and_access_management.token.repository.ActivationTo
 import com.loan_org.identity_and_access_management.token.repository.PasswordResetTokenRepository;
 import com.loan_org.identity_and_access_management.token.repository.RefreshTokenRepository;
 import com.loan_org.identity_and_access_management.token.service.TokenManagementService;
-import com.loan_org.identity_and_access_management.user.entity.SecurityBlock;
-import com.loan_org.identity_and_access_management.user.entity.UserDocument;
-import com.loan_org.identity_and_access_management.user.entity.UserStatus;
-import com.loan_org.identity_and_access_management.user.repository.UserRepository;
+import com.loan_org.identity_and_access_management.userEntity.entity.SecurityBlock;
+import com.loan_org.identity_and_access_management.userEntity.entity.UserDocument;
+import com.loan_org.identity_and_access_management.userEntity.entity.UserStatus;
+import com.loan_org.identity_and_access_management.userEntity.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

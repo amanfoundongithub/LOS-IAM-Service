@@ -5,7 +5,7 @@ import lombok.Data;
 
 import java.util.List;
 
-import com.loan_org.identity_and_access_management.user.dto.UserResponseDto;
+import com.loan_org.identity_and_access_management.userEntity.dto.UserResponseDto;
 
 @Data
 @Builder

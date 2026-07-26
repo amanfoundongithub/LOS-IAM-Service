@@ -1,7 +1,8 @@
-package com.loan_org.identity_and_access_management.user.repository;
+package com.loan_org.identity_and_access_management.userEntity.repository;
 
-import com.loan_org.identity_and_access_management.user.entity.UserDocument;
 import org.springframework.data.mongodb.repository.MongoRepository;
+
+import com.loan_org.identity_and_access_management.userEntity.entity.UserDocument;
 
 import java.util.Optional;
 
