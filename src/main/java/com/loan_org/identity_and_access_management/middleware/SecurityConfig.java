@@ -1,12 +1,12 @@
-package com.loan_org.identity_and_access_management.config;
+package com.loan_org.identity_and_access_management.middleware;
 
-import com.loan_org.identity_and_access_management.filters.AccountStatusFilter;
-import com.loan_org.identity_and_access_management.filters.JwtAuthenticationFilter;
-import com.loan_org.identity_and_access_management.filters.MdcHeaderFilter;
-import com.loan_org.identity_and_access_management.filters.RateLimiterFilter;
-import com.loan_org.identity_and_access_management.filters.RequestLoggingFilter;
-import com.loan_org.identity_and_access_management.security.JwtAccessDeniedHandler;
-import com.loan_org.identity_and_access_management.security.JwtAuthenticationEntryPoint;
+import com.loan_org.identity_and_access_management.middleware.filters.AccountStatusFilter;
+import com.loan_org.identity_and_access_management.middleware.filters.JwtAuthenticationFilter;
+import com.loan_org.identity_and_access_management.middleware.filters.MdcHeaderFilter;
+import com.loan_org.identity_and_access_management.middleware.filters.RateLimiterFilter;
+import com.loan_org.identity_and_access_management.middleware.filters.RequestLoggingFilter;
+import com.loan_org.identity_and_access_management.middleware.handler.JwtAccessDeniedHandler;
+import com.loan_org.identity_and_access_management.middleware.handler.JwtAuthenticationEntryPoint;
 import com.loan_org.identity_and_access_management.user.entity.UserRole;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

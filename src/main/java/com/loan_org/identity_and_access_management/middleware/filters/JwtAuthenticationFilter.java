@@ -1,8 +1,5 @@
-package com.loan_org.identity_and_access_management.filters;
+package com.loan_org.identity_and_access_management.middleware.filters;
 
-import com.loan_org.identity_and_access_management.jwt.JwtUserClaims;
-import com.loan_org.identity_and_access_management.jwt.JwtVerificationService;
-import com.loan_org.identity_and_access_management.security.UserPrincipal;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -19,6 +16,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.loan_org.identity_and_access_management.middleware.UserPrincipal;
+import com.loan_org.identity_and_access_management.middleware.jwt.JwtUserClaims;
+import com.loan_org.identity_and_access_management.middleware.jwt.JwtVerificationService;
 
 import java.io.IOException;
 import java.util.List;

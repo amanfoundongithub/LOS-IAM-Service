@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.security;
+package com.loan_org.identity_and_access_management.middleware.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;

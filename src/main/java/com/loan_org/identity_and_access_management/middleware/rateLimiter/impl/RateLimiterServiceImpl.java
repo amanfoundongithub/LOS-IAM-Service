@@ -1,8 +1,8 @@
-package com.loan_org.identity_and_access_management.rateLimiter.impl;
+package com.loan_org.identity_and_access_management.middleware.rateLimiter.impl;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.loan_org.identity_and_access_management.rateLimiter.RateLimiterService;
+import com.loan_org.identity_and_access_management.middleware.rateLimiter.RateLimiterService;
 
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;

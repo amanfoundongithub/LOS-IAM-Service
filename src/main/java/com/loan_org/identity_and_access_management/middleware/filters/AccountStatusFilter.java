@@ -1,7 +1,5 @@
-package com.loan_org.identity_and_access_management.filters;
+package com.loan_org.identity_and_access_management.middleware.filters;
 
-import com.loan_org.identity_and_access_management.account.AccountStatusService;
-import com.loan_org.identity_and_access_management.security.UserPrincipal;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +11,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.loan_org.identity_and_access_management.middleware.UserPrincipal;
+import com.loan_org.identity_and_access_management.middleware.account.AccountStatusService;
 
 import java.io.IOException;
 

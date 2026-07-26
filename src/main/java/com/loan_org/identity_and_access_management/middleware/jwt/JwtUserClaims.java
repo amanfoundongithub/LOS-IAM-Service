@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.jwt;
+package com.loan_org.identity_and_access_management.middleware.jwt;
 
 import java.util.Map;
 

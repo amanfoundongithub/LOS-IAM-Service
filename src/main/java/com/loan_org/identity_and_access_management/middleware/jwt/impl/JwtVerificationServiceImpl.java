@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.jwt.impl;
+package com.loan_org.identity_and_access_management.middleware.jwt.impl;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -9,8 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.loan_org.identity_and_access_management.jwt.JwtUserClaims;
-import com.loan_org.identity_and_access_management.jwt.JwtVerificationService;
+import com.loan_org.identity_and_access_management.middleware.jwt.JwtUserClaims;
+import com.loan_org.identity_and_access_management.middleware.jwt.JwtVerificationService;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;

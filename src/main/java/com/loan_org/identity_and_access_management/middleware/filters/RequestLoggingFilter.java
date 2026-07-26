@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.filters;
+package com.loan_org.identity_and_access_management.middleware.filters;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

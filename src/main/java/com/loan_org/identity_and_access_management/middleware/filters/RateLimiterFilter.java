@@ -1,6 +1,5 @@
-package com.loan_org.identity_and_access_management.filters;
+package com.loan_org.identity_and_access_management.middleware.filters;
 
-import com.loan_org.identity_and_access_management.rateLimiter.RateLimiterService;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.ConsumptionProbe;
 import jakarta.servlet.FilterChain;
@@ -13,6 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.loan_org.identity_and_access_management.middleware.rateLimiter.RateLimiterService;
 
 import java.io.IOException;
 import java.time.Instant;

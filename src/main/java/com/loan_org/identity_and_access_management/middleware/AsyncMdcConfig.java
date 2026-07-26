@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.config;
+package com.loan_org.identity_and_access_management.middleware;
 
 import org.jspecify.annotations.NonNull;
 import org.slf4j.MDC;
