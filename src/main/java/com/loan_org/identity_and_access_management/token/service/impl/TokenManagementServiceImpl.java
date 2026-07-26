@@ -2,7 +2,7 @@ package com.loan_org.identity_and_access_management.token.service.impl;
 
 import com.loan_org.identity_and_access_management.auth.dto.RefreshTokenRequestDto;
 import com.loan_org.identity_and_access_management.auth.dto.RefreshTokenRevokeDto;
-import com.loan_org.identity_and_access_management.auth.service.JwtService;
+import com.loan_org.identity_and_access_management.auth.login.service.JwtService;
 import com.loan_org.identity_and_access_management.exception.AccountNotFoundException;
 import com.loan_org.identity_and_access_management.exception.TokenNotProvidedException;
 import com.loan_org.identity_and_access_management.exception.UnauthorizedAccessException;

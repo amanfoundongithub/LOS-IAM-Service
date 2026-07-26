@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.auth.service;
+package com.loan_org.identity_and_access_management.auth.login.service;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -39,13 +39,13 @@ public class JwtService {
 
     public String generateToken(UserResponseDto response) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("username", response.getUsername());
-        claims.put("status", response.getStatus());
-        claims.put("attributes", response.getAttributes());
+        claims.put("username", response.username());
+        claims.put("status", response.status());
+        claims.put("attributes", response.attributes());
 
         return Jwts.builder()
                 .claims(claims)
-                .subject(response.getEmail())
+                .subject(response.email())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + jwtExpirationInMinutes * MINUTES_TO_MILLISECONDS))
                 .signWith(signingKey)

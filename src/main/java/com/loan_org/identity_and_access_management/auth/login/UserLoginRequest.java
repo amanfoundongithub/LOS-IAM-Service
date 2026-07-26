@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.auth.dto;
+package com.loan_org.identity_and_access_management.auth.login;
 
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
@@ -15,7 +15,7 @@ import jakarta.validation.constraints.NotBlank;
  * @author Aman Raj
  * @since 1.0.0
  */
-public record UserLoginDto(
+public record UserLoginRequest(
 
         /**
          * Registered email address of the account.

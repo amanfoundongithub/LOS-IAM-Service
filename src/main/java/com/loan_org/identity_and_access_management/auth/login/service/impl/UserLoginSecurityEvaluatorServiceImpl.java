@@ -1,6 +1,6 @@
-package com.loan_org.identity_and_access_management.auth.service.impl;
+package com.loan_org.identity_and_access_management.auth.login.service.impl;
 
-import com.loan_org.identity_and_access_management.auth.service.LoginSecurityEvaluatorService;
+import com.loan_org.identity_and_access_management.auth.login.service.UserLoginSecurityEvaluatorService;
 import com.loan_org.identity_and_access_management.auth.util.AuthServiceMessageFactory;
 import com.loan_org.identity_and_access_management.exception.UnauthorizedAccessException;
 import com.loan_org.identity_and_access_management.user.entity.SecurityBlock;
@@ -20,7 +20,7 @@ import java.time.Instant;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class LoginSecurityEvaluatorServiceImpl implements LoginSecurityEvaluatorService {
+public class UserLoginSecurityEvaluatorServiceImpl implements UserLoginSecurityEvaluatorService {
 
     @Value("${login.max_attempt}")
     private int maxAttempts;

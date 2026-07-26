@@ -4,10 +4,10 @@ import com.loan_org.identity_and_access_management.auth.dto.AuthResponseDto;
 import com.loan_org.identity_and_access_management.auth.dto.PasswordChangeRequestDto;
 import com.loan_org.identity_and_access_management.auth.dto.RefreshTokenRequestDto;
 import com.loan_org.identity_and_access_management.auth.dto.RefreshTokenRevokeDto;
-import com.loan_org.identity_and_access_management.auth.dto.UserLoginDto;
 import com.loan_org.identity_and_access_management.auth.dto.UserRegistrationDto;
+import com.loan_org.identity_and_access_management.auth.login.UserLoginRequest;
+import com.loan_org.identity_and_access_management.auth.login.service.JwtService;
 import com.loan_org.identity_and_access_management.auth.service.AuthService;
-import com.loan_org.identity_and_access_management.auth.service.JwtService;
 import com.loan_org.identity_and_access_management.auth.service.UserManagementService;
 import com.loan_org.identity_and_access_management.token.service.TokenManagementService;
 import com.loan_org.identity_and_access_management.user.dto.UserResponseDto;
@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService            authService;
-    private final JwtService             jwtService;
     private final TokenManagementService tokenManagementService;
     private final UserManagementService  userManagementService;
 
@@ -36,16 +35,6 @@ public class AuthController {
     ) {
         UserDocument document = authService.register(registration);
         return new ResponseEntity<>(document, HttpStatus.CREATED);
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<AuthResponseDto> login(
-            @Valid @RequestBody UserLoginDto loginRequest
-    ) {
-        UserResponseDto response = authService.login(loginRequest);
-        String accessToken       = jwtService.generateToken(response);
-        String refreshToken      = tokenManagementService.generateRefreshToken(response.getEmail());
-        return new ResponseEntity<>(new AuthResponseDto(accessToken, refreshToken, response), HttpStatus.OK);
     }
 
     @PostMapping("/refresh")

@@ -61,6 +61,10 @@ dependencies {
     // Logging library
     implementation 'net.logstash.logback:logstash-logback-encoder:9.0'
 
+    // Swagger UI
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+
+
     // Lombok Annotation Processor
     compileOnly             'org.projectlombok:lombok'
     annotationProcessor     'org.projectlombok:lombok'

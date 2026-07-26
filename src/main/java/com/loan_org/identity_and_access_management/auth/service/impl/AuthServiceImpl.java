@@ -1,10 +1,10 @@
 package com.loan_org.identity_and_access_management.auth.service.impl;
 
-import com.loan_org.identity_and_access_management.auth.dto.UserLoginDto;
 import com.loan_org.identity_and_access_management.auth.dto.UserRegistrationDto;
 import com.loan_org.identity_and_access_management.auth.factory.UserRegistrationFactory;
+import com.loan_org.identity_and_access_management.auth.login.UserLoginRequest;
+import com.loan_org.identity_and_access_management.auth.login.service.UserLoginSecurityEvaluatorService;
 import com.loan_org.identity_and_access_management.auth.service.AuthService;
-import com.loan_org.identity_and_access_management.auth.service.LoginSecurityEvaluatorService;
 import com.loan_org.identity_and_access_management.auth.service.RegistrationWorkflowCoordinator;
 import com.loan_org.identity_and_access_management.auth.util.AuthServiceMessageFactory;
 import com.loan_org.identity_and_access_management.exception.AccountAlreadyExistsException;
@@ -28,7 +28,7 @@ public class AuthServiceImpl implements AuthService {
     // Services injected for the authentication
     private final UserRegistrationFactory         userRegistrationFactory;
     private final RegistrationWorkflowCoordinator registrationWorkflowCoordinator;
-    private final LoginSecurityEvaluatorService   loginSecurityEvaluatorService;
+    private final UserLoginSecurityEvaluatorService   loginSecurityEvaluatorService;
     private final UserRepository                  userRepository;
 
     @Override
@@ -53,45 +53,7 @@ public class AuthServiceImpl implements AuthService {
         return savedEntity;
     }
 
-    @Override
-    @Transactional
-    public UserResponseDto login(UserLoginDto loginRequest) {
-
-        log.info("Received request for login for user. Finding user in DB...");
-        UserDocument userDocument = findUser(loginRequest);
-
-        log.info("User document is found. Performing account policy checks...");
-        loginSecurityEvaluatorService.verifyAccountPolicies(userDocument);
-
-        log.info("Policy checks successful. Now verifying credentials...");
-        loginSecurityEvaluatorService.verifyCredentials(userDocument, loginRequest.getPassword());
-
-        log.info("User is successfully verified. LOGIN OK");
-        userDocument.getSecurity().setFailedLoginAttempts(0);
-        userDocument.getSecurity().setLockoutUntil(null);
-        userDocument.getMetadata().setLastLoginAt(Instant.now());
-        userRepository.save(userDocument);
-
-        return UserResponseDto.builder()
-                .id(userDocument.getId())
-                .email(userDocument.getEmail())
-                .username(userDocument.getUsername())
-                .status(userDocument.getStatus())
-                .attributes(userDocument.getAttributes())
-                .build();
-    }
-
-    // ---------- HELPERS ------------
-    private void hasUniqueIdentifier(String email, String username) {
-        if(userRepository.findByEmail(email).isPresent()) {
-            throw new AccountAlreadyExistsException(AuthServiceMessageFactory.emailAlreadyExists(email));
-        }
-        if(userRepository.findByUsername(username).isPresent()) {
-            throw new AccountAlreadyExistsException(AuthServiceMessageFactory.usernameAlreadyExists(username));
-        }
-    }
-
-    private UserDocument findUser(UserLoginDto request) {
+    private UserDocument findUser(UserLoginRequest request) {
         if (request.getEmail() != null && !request.getEmail().isBlank()) {
             return userRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> new AccountNotFoundException(AuthServiceMessageFactory.emailNotFound(request.getEmail())));
