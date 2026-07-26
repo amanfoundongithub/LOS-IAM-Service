@@ -1,7 +1,6 @@
 package com.loan_org.identity_and_access_management.auth.controller;
 
 import com.loan_org.identity_and_access_management.auth.dto.PasswordChangeRequestDto;
-import com.loan_org.identity_and_access_management.auth.dto.RefreshTokenRevokeDto;
 import com.loan_org.identity_and_access_management.auth.service.UserManagementService;
 import com.loan_org.identity_and_access_management.token.service.TokenManagementService;
 
@@ -26,14 +25,6 @@ public class AuthController {
     ) {
         tokenManagementService.generatePasswordResetToken(email);
         return new ResponseEntity<>("Sent to:" + email, HttpStatus.ACCEPTED);
-    }
-
-    @PostMapping("/logout")
-    public ResponseEntity<Void> logout(
-            @Valid @RequestBody RefreshTokenRevokeDto revocationRequest
-    ) {
-        tokenManagementService.revokeRefreshToken(revocationRequest);
-        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/change-password")

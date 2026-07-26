@@ -1,6 +1,6 @@
 package com.loan_org.identity_and_access_management.token.service;
 
-import com.loan_org.identity_and_access_management.auth.dto.RefreshTokenRevokeDto;
+import com.loan_org.identity_and_access_management.auth.logout.LogoutRequest;
 import com.loan_org.identity_and_access_management.auth.refreshToken.RefreshTokenRequest;
 
 /**
@@ -39,7 +39,7 @@ public interface TokenManagementService {
      *
      * @param request The refresh token to be revoked
      */
-    void   revokeRefreshToken(RefreshTokenRevokeDto request);
+    void   revokeRefreshToken(LogoutRequest request);
 
     /**
      * Revokes all refresh tokens for a given email

@@ -1,6 +1,6 @@
 package com.loan_org.identity_and_access_management.token.service.impl;
 
-import com.loan_org.identity_and_access_management.auth.dto.RefreshTokenRevokeDto;
+import com.loan_org.identity_and_access_management.auth.logout.LogoutRequest;
 import com.loan_org.identity_and_access_management.auth.refreshToken.RefreshTokenRequest;
 import com.loan_org.identity_and_access_management.exception.AccountNotFoundException;
 import com.loan_org.identity_and_access_management.exception.TokenNotProvidedException;
@@ -108,7 +108,7 @@ public class TokenManagementServiceImpl implements TokenManagementService {
 
     @Override
     @Transactional
-    public void revokeRefreshToken(RefreshTokenRevokeDto request) {
+    public void revokeRefreshToken(LogoutRequest request) {
         log.info("Processing request for revoking refresh token...");
         Optional<RefreshTokenDocument> tokenDocument = refreshTokenRepository.findByToken(request.refreshToken());
         if(tokenDocument.isEmpty()) {
