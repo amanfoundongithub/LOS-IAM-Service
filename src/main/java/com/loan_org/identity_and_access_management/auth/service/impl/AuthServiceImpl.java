@@ -1,9 +1,9 @@
 package com.loan_org.identity_and_access_management.auth.service.impl;
 
-import com.loan_org.identity_and_access_management.auth.dto.UserRegistrationDto;
 import com.loan_org.identity_and_access_management.auth.factory.UserRegistrationFactory;
 import com.loan_org.identity_and_access_management.auth.login.UserLoginRequest;
 import com.loan_org.identity_and_access_management.auth.login.service.UserLoginSecurityEvaluatorService;
+import com.loan_org.identity_and_access_management.auth.register.UserRegistrationRequest;
 import com.loan_org.identity_and_access_management.auth.service.AuthService;
 import com.loan_org.identity_and_access_management.auth.service.RegistrationWorkflowCoordinator;
 import com.loan_org.identity_and_access_management.auth.util.AuthServiceMessageFactory;
@@ -33,7 +33,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public UserDocument register(UserRegistrationDto registrationData) {
+    public UserDocument register(UserRegistrationRequest registrationData) {
 
         log.info("Received request for creating account for new {} with username {}.",
                 registrationData.getRole(),

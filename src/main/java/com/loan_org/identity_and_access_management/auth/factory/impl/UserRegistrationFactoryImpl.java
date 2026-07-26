@@ -1,7 +1,7 @@
 package com.loan_org.identity_and_access_management.auth.factory.impl;
 
-import com.loan_org.identity_and_access_management.auth.dto.UserRegistrationDto;
 import com.loan_org.identity_and_access_management.auth.factory.UserRegistrationFactory;
+import com.loan_org.identity_and_access_management.auth.register.UserRegistrationRequest;
 import com.loan_org.identity_and_access_management.user.entity.MetadataBlock;
 import com.loan_org.identity_and_access_management.user.entity.SecurityBlock;
 import com.loan_org.identity_and_access_management.user.entity.UserDocument;
@@ -25,7 +25,7 @@ public class UserRegistrationFactoryImpl implements UserRegistrationFactory {
     private final UserAttributeFactory  attributeFactory;
 
     @Override
-    public UserDocument createPendingUser(UserRegistrationDto registrationDetails) {
+    public UserDocument createPendingUser(UserRegistrationRequest registrationDetails) {
         return UserDocument.builder()
                 .email(registrationDetails.getEmail())
                 .username(registrationDetails.getUsername())
@@ -52,7 +52,7 @@ public class UserRegistrationFactoryImpl implements UserRegistrationFactory {
                 .build();
     }
 
-    private Map<String, Object> buildAttributes(UserRegistrationDto dto) {
+    private Map<String, Object> buildAttributes(UserRegistrationRequest dto) {
         return attributeFactory.getAttributes(dto.getRole());
     }
 }

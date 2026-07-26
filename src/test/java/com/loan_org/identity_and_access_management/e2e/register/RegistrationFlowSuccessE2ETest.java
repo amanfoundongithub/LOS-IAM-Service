@@ -1,7 +1,7 @@
 package com.loan_org.identity_and_access_management.e2e.register;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.loan_org.identity_and_access_management.auth.dto.UserRegistrationDto;
+import com.loan_org.identity_and_access_management.auth.register.UserRegistrationRequest;
 import com.loan_org.identity_and_access_management.user.entity.UserDocument;
 import com.loan_org.identity_and_access_management.user.entity.UserStatus;
 import com.loan_org.identity_and_access_management.user.repository.UserRepository;
@@ -73,7 +73,7 @@ class RegistrationFlowSuccessE2ETest {
         String password = "thisiavergjiru";
         String username = "alpha.beta_221";
 
-        UserRegistrationDto requestPayload = new UserRegistrationDto();
+        UserRegistrationRequest requestPayload = new UserRegistrationRequest();
         requestPayload.setEmail(email);
         requestPayload.setUsername(username);
         requestPayload.setPassword(password);
@@ -109,7 +109,7 @@ class RegistrationFlowSuccessE2ETest {
             String testName, String email, String username, String role, Double signingLimit) throws Exception {
 
         // Given
-        UserRegistrationDto requestPayload = new UserRegistrationDto();
+        UserRegistrationRequest requestPayload = new UserRegistrationRequest();
         requestPayload.setEmail(email);
         requestPayload.setUsername(username);
         requestPayload.setPassword("highlySecurePlaintext123!");

@@ -1,16 +1,12 @@
 package com.loan_org.identity_and_access_management.auth.controller;
 
-import com.loan_org.identity_and_access_management.auth.dto.AuthResponseDto;
 import com.loan_org.identity_and_access_management.auth.dto.PasswordChangeRequestDto;
 import com.loan_org.identity_and_access_management.auth.dto.RefreshTokenRequestDto;
 import com.loan_org.identity_and_access_management.auth.dto.RefreshTokenRevokeDto;
-import com.loan_org.identity_and_access_management.auth.dto.UserRegistrationDto;
-import com.loan_org.identity_and_access_management.auth.login.UserLoginRequest;
-import com.loan_org.identity_and_access_management.auth.login.service.JwtService;
+import com.loan_org.identity_and_access_management.auth.register.UserRegistrationRequest;
 import com.loan_org.identity_and_access_management.auth.service.AuthService;
 import com.loan_org.identity_and_access_management.auth.service.UserManagementService;
 import com.loan_org.identity_and_access_management.token.service.TokenManagementService;
-import com.loan_org.identity_and_access_management.user.dto.UserResponseDto;
 import com.loan_org.identity_and_access_management.user.entity.UserDocument;
 
 import jakarta.validation.Valid;
@@ -31,7 +27,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<UserDocument> register(
-            @Valid @RequestBody UserRegistrationDto registration
+            @Valid @RequestBody UserRegistrationRequest registration
     ) {
         UserDocument document = authService.register(registration);
         return new ResponseEntity<>(document, HttpStatus.CREATED);

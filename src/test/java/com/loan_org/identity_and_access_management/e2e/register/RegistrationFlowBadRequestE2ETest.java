@@ -1,7 +1,7 @@
 package com.loan_org.identity_and_access_management.e2e.register;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.loan_org.identity_and_access_management.auth.dto.UserRegistrationDto;
+import com.loan_org.identity_and_access_management.auth.register.UserRegistrationRequest;
 import com.loan_org.identity_and_access_management.user.repository.UserRepository;
 
 import org.junit.jupiter.api.AfterEach;
@@ -66,7 +66,7 @@ class RegistrationFlowBadRequestE2ETest {
     void register_ShouldReturn400BadRequest_WhenPayloadViolatesValidationConstraints() throws Exception {
 
         // 1. GIVEN: Build a payload that deliberately violates multiple DTO annotation rules
-        UserRegistrationDto malformedPayload = new UserRegistrationDto();
+        UserRegistrationRequest malformedPayload = new UserRegistrationRequest();
         malformedPayload.setEmail("invalid-email-format");   // Violates @Email
         malformedPayload.setUsername("abc");                  // Violates @Size(min = 4)
         malformedPayload.setPassword("");                     // Violates @NotBlank & @Size(min = 8)

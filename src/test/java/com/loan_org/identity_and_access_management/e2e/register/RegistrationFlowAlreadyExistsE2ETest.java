@@ -1,7 +1,7 @@
 package com.loan_org.identity_and_access_management.e2e.register;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.loan_org.identity_and_access_management.auth.dto.UserRegistrationDto;
+import com.loan_org.identity_and_access_management.auth.register.UserRegistrationRequest;
 import com.loan_org.identity_and_access_management.user.repository.UserRepository;
 
 import org.junit.jupiter.api.AfterEach;
@@ -68,7 +68,7 @@ class RegistrationFlowAlreadyExistsE2ETest {
         // 1. GIVEN: Create a base user payload and register them successfully
         String conflictEmail = "clash@loan_org.com";
 
-        UserRegistrationDto primaryUser = new UserRegistrationDto();
+        UserRegistrationRequest primaryUser = new UserRegistrationRequest();
         primaryUser.setEmail(conflictEmail);
         primaryUser.setUsername("primaryUser");
         primaryUser.setPassword("securePassword123!");
@@ -80,7 +80,7 @@ class RegistrationFlowAlreadyExistsE2ETest {
                 .andExpect(status().isCreated());
 
         // 2. GIVEN: Construct a completely different user profile but with the EXACT same email address
-        UserRegistrationDto duplicateUser = new UserRegistrationDto();
+        UserRegistrationRequest duplicateUser = new UserRegistrationRequest();
         duplicateUser.setEmail(conflictEmail); // Triggers the exception
         duplicateUser.setUsername("completelyNewUser");
         duplicateUser.setPassword("differentPassword999!");
@@ -110,7 +110,7 @@ class RegistrationFlowAlreadyExistsE2ETest {
         String conflictUsername = "clash_username";
 
         // 1. GIVEN: Register a base user profile
-        UserRegistrationDto primaryUser = new UserRegistrationDto();
+        UserRegistrationRequest primaryUser = new UserRegistrationRequest();
         primaryUser.setEmail("unique.first@loan_org.com");
         primaryUser.setUsername(conflictUsername);
         primaryUser.setPassword("securePassword123!");
@@ -122,7 +122,7 @@ class RegistrationFlowAlreadyExistsE2ETest {
                 .andExpect(status().isCreated());
 
         // 2. GIVEN: Create a second user with a unique email, but a duplicate username
-        UserRegistrationDto duplicateUser = new UserRegistrationDto();
+        UserRegistrationRequest duplicateUser = new UserRegistrationRequest();
         duplicateUser.setEmail("unique.second@loan_org.com"); // Email is clean
         duplicateUser.setUsername(conflictUsername);        // Triggers username conflict path
         duplicateUser.setPassword("differentPassword999!");

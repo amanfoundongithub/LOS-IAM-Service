@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.auth.dto;
+package com.loan_org.identity_and_access_management.auth.register;
 
 import com.loan_org.identity_and_access_management.user.entity.UserRole;
 import jakarta.validation.constraints.*;
@@ -11,7 +11,7 @@ import java.math.BigDecimal;
  * @author Aman Raj
  * @since 1.0.0
  */
-public record UserRegistrationDto(
+public record UserRegistrationRequest(
 
         /**
          * User email address.
