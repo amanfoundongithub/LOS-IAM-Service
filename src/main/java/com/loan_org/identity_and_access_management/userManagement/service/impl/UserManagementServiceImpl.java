@@ -1,6 +1,6 @@
 package com.loan_org.identity_and_access_management.userManagement.service.impl;
 
-import com.loan_org.identity_and_access_management.auth.dto.PasswordChangeRequestDto;
+import com.loan_org.identity_and_access_management.auth.passwordReset.PasswordChangeRequestDto;
 import com.loan_org.identity_and_access_management.exception.AccountNotFoundException;
 import com.loan_org.identity_and_access_management.exception.UnauthorizedAccessException;
 import com.loan_org.identity_and_access_management.token.service.TokenManagementService;

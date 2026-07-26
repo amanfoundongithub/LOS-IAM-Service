@@ -1,6 +1,5 @@
-package com.loan_org.identity_and_access_management.auth.controller;
+package com.loan_org.identity_and_access_management.auth.passwordReset;
 
-import com.loan_org.identity_and_access_management.auth.dto.PasswordChangeRequestDto;
 import com.loan_org.identity_and_access_management.token.service.TokenManagementService;
 import com.loan_org.identity_and_access_management.userManagement.service.UserManagementService;
 
