@@ -1,7 +1,7 @@
-package com.loan_org.identity_and_access_management.auth.controller;
+package com.loan_org.identity_and_access_management.userManagement;
 
-import com.loan_org.identity_and_access_management.auth.service.UserManagementService;
 import com.loan_org.identity_and_access_management.userEntity.dto.UserResponseDto;
+import com.loan_org.identity_and_access_management.userManagement.service.UserManagementService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

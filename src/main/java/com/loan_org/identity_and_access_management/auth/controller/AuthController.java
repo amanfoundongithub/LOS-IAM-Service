@@ -1,8 +1,8 @@
 package com.loan_org.identity_and_access_management.auth.controller;
 
 import com.loan_org.identity_and_access_management.auth.dto.PasswordChangeRequestDto;
-import com.loan_org.identity_and_access_management.auth.service.UserManagementService;
 import com.loan_org.identity_and_access_management.token.service.TokenManagementService;
+import com.loan_org.identity_and_access_management.userManagement.service.UserManagementService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
