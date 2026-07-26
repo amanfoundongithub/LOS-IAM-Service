@@ -39,6 +39,7 @@ public class JwtServiceImpl implements JwtService {
         signingKey = Keys.hmacShaKeyFor(jwtKey.getBytes(StandardCharsets.UTF_8));
     }
 
+    @Override
     public String generateToken(UserResponseDto response) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("username", response.username());
