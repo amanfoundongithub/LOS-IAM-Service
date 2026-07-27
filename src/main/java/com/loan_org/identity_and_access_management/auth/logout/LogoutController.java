@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/auth/logout")
+@RequestMapping("${api.endpoint.logout.url}")
 public class LogoutController {
 
     private final TokenManagementService tokenManagementService;

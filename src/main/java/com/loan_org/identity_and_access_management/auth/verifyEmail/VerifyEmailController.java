@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/auth/verify-email")
+@RequestMapping("${api.endpoint.verify_email.url}")
 public class VerifyEmailController {
 
     private final TokenManagementService tokenManagementService;

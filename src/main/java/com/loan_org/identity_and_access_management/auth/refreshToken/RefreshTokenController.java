@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/auth/refresh")
+@RequestMapping("${api.endpoint.refresh_token.url}")
 public class RefreshTokenController {
     
     private final TokenManagementService tokenManagementService;
