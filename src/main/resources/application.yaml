@@ -31,6 +31,8 @@ api:
       url: /api/v1/auth/logout
     password:
       url: /api/v1/auth/password
+    admin: 
+      url: /api/v1/auth/admin
 
 endpoint:
   lock: /api/v1/admin/lock
