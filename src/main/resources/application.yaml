@@ -41,11 +41,6 @@ api:
     admin: 
       url: /api/v1/auth/admin
 
-endpoint:
-  lock: /api/v1/admin/lock
-  unlock: /api/v1/admin/unlock
-
-
 # Login configuration for user
 login:
   max_attempt: 5
