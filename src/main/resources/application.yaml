@@ -18,6 +18,13 @@ server:
 
 # Endpoint related configuration
 api: 
+  auth:
+    base_url: /api/v1/auth 
+  admin:
+    base_url: /api/v1/admin 
+  user: 
+    base_url: /api/v1/users
+
   endpoint: 
     login:
       url: /api/v1/auth/login
