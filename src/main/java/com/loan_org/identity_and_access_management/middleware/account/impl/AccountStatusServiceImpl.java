@@ -1,7 +1,7 @@
 package com.loan_org.identity_and_access_management.middleware.account.impl;
 
-import com.loan_org.identity_and_access_management.exception.AccountLockedException;
-import com.loan_org.identity_and_access_management.exception.AccountNotFoundException;
+import com.loan_org.identity_and_access_management.exception.account.AccountNotFoundException;
+import com.loan_org.identity_and_access_management.exception.security.AccountCurrentlyLockedException;
 import com.loan_org.identity_and_access_management.middleware.account.AccountStatusService;
 import com.loan_org.identity_and_access_management.userEntity.entity.UserDocument;
 import com.loan_org.identity_and_access_management.userEntity.entity.UserStatus;
@@ -22,13 +22,13 @@ public class AccountStatusServiceImpl implements AccountStatusService {
         UserDocument user = userRepository.findByEmail(email)
                 .orElseThrow(() ->
                         new AccountNotFoundException(
-                                "Account not found for email: " + email
+                                "email", email
                         )
                 );
 
         if (user.getStatus() == UserStatus.LOCKED) {
-            throw new AccountLockedException(
-                    "Account is locked for email: " + email
+            throw new AccountCurrentlyLockedException(
+                    "email", email
             );
         }
     }
