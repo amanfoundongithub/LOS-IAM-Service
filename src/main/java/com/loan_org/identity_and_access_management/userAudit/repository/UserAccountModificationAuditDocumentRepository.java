@@ -1,9 +1,9 @@
-package com.loan_org.identity_and_access_management.audit.repository;
+package com.loan_org.identity_and_access_management.userAudit.repository;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
-import com.loan_org.identity_and_access_management.audit.entity.UserAccountModificationAuditDocument;
+import com.loan_org.identity_and_access_management.userAudit.entity.UserAccountModificationAuditDocument;
 
 import java.util.Optional;
 
