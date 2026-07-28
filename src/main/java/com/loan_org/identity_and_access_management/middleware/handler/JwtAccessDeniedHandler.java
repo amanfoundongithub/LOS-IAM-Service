@@ -1,7 +1,6 @@
 package com.loan_org.identity_and_access_management.middleware.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
