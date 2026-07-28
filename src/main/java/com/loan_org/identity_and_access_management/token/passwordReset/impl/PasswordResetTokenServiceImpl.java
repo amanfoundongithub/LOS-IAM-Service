@@ -9,7 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.loan_org.identity_and_access_management.exception.AccountNotFoundException;
+import com.loan_org.identity_and_access_management.exception.account.AccountNotFoundException;
 import com.loan_org.identity_and_access_management.exception.UnauthorizedAccessException;
 import com.loan_org.identity_and_access_management.messaging.service.EmailService;
 import com.loan_org.identity_and_access_management.token.passwordReset.PasswordResetTokenDocument;

@@ -1,7 +1,7 @@
 package com.loan_org.identity_and_access_management.userManagement.service.impl;
 
 import com.loan_org.identity_and_access_management.auth.passwordReset.PasswordResetRequest;
-import com.loan_org.identity_and_access_management.exception.AccountNotFoundException;
+import com.loan_org.identity_and_access_management.exception.account.AccountNotFoundException;
 import com.loan_org.identity_and_access_management.exception.UnauthorizedAccessException;
 import com.loan_org.identity_and_access_management.token.refresh.RefreshTokenService;
 import com.loan_org.identity_and_access_management.userEntity.dto.UserResponseDto;

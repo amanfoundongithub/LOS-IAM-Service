@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import com.loan_org.identity_and_access_management.admin.model.account_lock.UserAccountLockRequest;
 import com.loan_org.identity_and_access_management.admin.model.account_unlock.UserAccountUnlockRequest;
 import com.loan_org.identity_and_access_management.admin.service.AdminLockService;
-import com.loan_org.identity_and_access_management.exception.AccountNotFoundException;
+import com.loan_org.identity_and_access_management.exception.account.AccountNotFoundException;
 import com.loan_org.identity_and_access_management.token.refresh.RefreshTokenRepository;
 import com.loan_org.identity_and_access_management.userAudit.entity.UserAccountModificationAuditDocument;
 import com.loan_org.identity_and_access_management.userAudit.service.UserAccountModificationAuditService;

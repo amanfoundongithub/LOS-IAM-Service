@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.loan_org.identity_and_access_management.exception.AccountNotFoundException;
+import com.loan_org.identity_and_access_management.exception.account.AccountNotFoundException;
 import com.loan_org.identity_and_access_management.exception.UnauthorizedAccessException;
 import com.loan_org.identity_and_access_management.token.emailActivation.EmailActivationTokenDocument;
 import com.loan_org.identity_and_access_management.token.emailActivation.EmailActivationTokenRepository;
