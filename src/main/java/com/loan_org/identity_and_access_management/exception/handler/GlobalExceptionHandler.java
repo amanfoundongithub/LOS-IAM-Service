@@ -1,7 +1,10 @@
 package com.loan_org.identity_and_access_management.exception.handler;
 
-import com.loan_org.identity_and_access_management.exception.AccountAlreadyExistsException;
-import com.loan_org.identity_and_access_management.exception.AccountNotFoundException;
+import com.loan_org.identity_and_access_management.exception.account.AccountAlreadyExistsException;
+import com.loan_org.identity_and_access_management.exception.account.AccountNotFoundException;
+import com.loan_org.identity_and_access_management.exception.security.AccountCurrentlyLockedException;
+import com.loan_org.identity_and_access_management.exception.security.InvalidPasswordException;
+
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,22 +23,34 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccountAlreadyExistsException.class)
-    public ResponseEntity<ApiErrorResponse> handleAccountAlreadyExistsException(
-            AccountAlreadyExistsException ex, HttpServletRequest request) {
-        log.warn("WARNING: Triggered an AccountAlreadyExistsException with the following message: {}",
-                ex.getMessage());
+    public ResponseEntity<ApiErrorResponse> handleAccountAlreadyExistsException(AccountAlreadyExistsException ex, HttpServletRequest request) {
+        log.warn("WARNING: Triggered an AccountAlreadyExistsException with the following message: {}",ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(
                 create(ex, HttpStatus.CONFLICT, request)
         );
     }
 
     @ExceptionHandler(AccountNotFoundException.class)
-    public ResponseEntity<ApiErrorResponse> handleAccountNotFoundException(
-            AccountNotFoundException ex, HttpServletRequest request) {
-        log.warn("WARNING: Triggered an AccountNotFoundException with the following message: {}",
-                ex.getMessage());
+    public ResponseEntity<ApiErrorResponse> handleAccountNotFoundException(AccountNotFoundException ex, HttpServletRequest request) {
+        log.warn("WARNING: Triggered an AccountNotFoundException with the following message: {}",ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 create(ex, HttpStatus.NOT_FOUND, request)
+        );
+    }
+
+    @ExceptionHandler(AccountCurrentlyLockedException.class)
+    public ResponseEntity<ApiErrorResponse> handleAccountCurrentlyLockedException(AccountCurrentlyLockedException ex, HttpServletRequest request) {
+        log.warn("WARNING: Triggered an AccountCurrentlyLockedException with the following message: {}",ex.getMessage());
+        return ResponseEntity.status(HttpStatus.LOCKED).body(
+                create(ex, HttpStatus.LOCKED, request)
+        );
+    }
+
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidPasswordException(InvalidPasswordException ex, HttpServletRequest request) {
+        log.warn("WARNING: Triggered an InvalidPasswordException with the following message: {}",ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                create(ex, HttpStatus.FORBIDDEN, request)
         );
     }
 
@@ -59,8 +74,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleException(
             Exception ex, HttpServletRequest request) {
-        log.warn("WARNING: Encountered an internal server exception with message: {}",
-                ex.getMessage());
+        log.warn("WARNING: Encountered an internal server exception with message: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                 create(ex, HttpStatus.INTERNAL_SERVER_ERROR, request)
         );
