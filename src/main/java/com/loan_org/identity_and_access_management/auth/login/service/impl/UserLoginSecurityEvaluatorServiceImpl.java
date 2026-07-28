@@ -21,10 +21,10 @@ import java.time.Instant;
 @RequiredArgsConstructor
 public class UserLoginSecurityEvaluatorServiceImpl implements UserLoginSecurityEvaluatorService {
 
-    @Value("${login.max_attempt}")
+    @Value("${api.endpoint.login.config.max_attempt}")
     private int maxAttempts;
 
-    @Value("${login.lockout_in_minutes}")
+    @Value("${lapi.endpoint.login.config.lockout_in_minutes}")
     private int lockoutInMinutes;
 
     private final BCryptPasswordEncoder passwordEncoder;

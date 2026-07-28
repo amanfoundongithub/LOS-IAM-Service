@@ -16,36 +16,6 @@ spring:
 server:
   port: 4200
 
-# Endpoint related configuration
-api: 
-  auth:
-    base_url: /api/v1/auth 
-  admin:
-    base_url: /api/v1/admin 
-  user: 
-    base_url: /api/v1/users
-
-  endpoint: 
-    login:
-      url: /api/v1/auth/login
-    register:
-      url: /api/v1/auth/register
-    refresh_token:
-      url: /api/v1/auth/refresh
-    verify_email:
-      url: /api/v1/auth/verify-email
-    logout:
-      url: /api/v1/auth/logout
-    password:
-      url: /api/v1/auth/password
-    admin: 
-      url: /api/v1/auth/admin
-
-# Login configuration for user
-login:
-  max_attempt: 5
-  lockout_in_minutes: 15
-
 # Filter Level Configuration
 filter:
   mdc:
@@ -100,6 +70,43 @@ security-config:
       - "Authorization"
     allow_credentials: true
     max_age: 3600
+
+# Endpoint related configuration
+api: 
+  auth:
+    base_url: /api/v1/auth 
+  admin:
+    base_url: /api/v1/admin 
+  user: 
+    base_url: /api/v1/users
+
+  endpoint: 
+    login:
+      url: /api/v1/auth/login
+      config:
+        max_attempts: 5
+        lockout_in_minutes: 15
+    register:
+      url: /api/v1/auth/register
+    refresh_token:
+      url: /api/v1/auth/refresh
+    verify_email:
+      url: /api/v1/auth/verify-email
+    logout:
+      url: /api/v1/auth/logout
+    password:
+      url: /api/v1/auth/password
+    admin: 
+      url: /api/v1/auth/admin
+
+# Token configuration
+token: 
+  refresh_token:
+    expiry_in_days: 30
+  email_activation_token:
+    expiry_in_hours: 24
+  password_reset_token:
+    expiry_in_hours: 20
 
 app:
 

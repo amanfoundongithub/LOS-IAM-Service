@@ -32,7 +32,7 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
     private final EmailService emailService;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    @Value("${app.token.reset_token.expiry_in_hours}")
+    @Value("${token.password_reset_token.expiry_in_hours}")
     private int resetExpiryHours;
 
     @Override

@@ -28,7 +28,7 @@ public class EmailActivationTokenServiceImpl implements EmailActivationTokenServ
     private final EmailActivationTokenRepository emailActivationTokenRepository;
     private final UserRepository userRepository;
 
-    @Value("${app.token.activation_token.expiry_in_hours}")
+    @Value("$token.email_activation_token.expiry_in_hours}")
     private int activationExpiryHours;
 
     @Override

@@ -27,7 +27,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     
     private final RefreshTokenRepository refreshTokenRepository;
 
-    @Value("${app.token.refresh_token.expiry_in_days}")
+    @Value("${token.refresh_token.expiry_in_days}")
     private int refreshExpiryDays;
 
     @Override
