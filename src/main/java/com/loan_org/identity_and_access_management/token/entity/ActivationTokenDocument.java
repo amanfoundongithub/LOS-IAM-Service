@@ -26,7 +26,7 @@ import java.time.Instant;
 public class ActivationTokenDocument {
 
     @Id
-    @Setter(AccessLevel.NONE) // Protect database-assigned ID immutability
+    @Setter(AccessLevel.NONE)
     private String id;
 
     @Indexed(unique = true)
@@ -41,10 +41,8 @@ public class ActivationTokenDocument {
     @Indexed(expireAfter = "0s")
     private Instant expiresAt;
 
-    /**
-     * Runtime validation utility ensuring token freshness.
-     */
     public boolean isExpired() {
         return Instant.now().isAfter(this.expiresAt);
     }
+    
 }
