@@ -1,6 +1,6 @@
 package com.loan_org.identity_and_access_management.auth.passwordReset;
 
-import com.loan_org.identity_and_access_management.token.service.TokenManagementService;
+import com.loan_org.identity_and_access_management.token.passwordReset.PasswordResetTokenService;
 import com.loan_org.identity_and_access_management.userManagement.service.UserManagementService;
 
 import jakarta.validation.Valid;
@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("${api.endpoint.password.url}")
 public class PasswordResetController {
 
-    private final TokenManagementService tokenManagementService;
+    private final PasswordResetTokenService passwordResetTokenService;
     private final UserManagementService  userManagementService;
 
     @PostMapping("/reset")
     public ResponseEntity<String> resetPasswordRequest(
             @RequestParam("email") String email
     ) {
-        tokenManagementService.generatePasswordResetToken(email);
+        passwordResetTokenService.generatePasswordResetToken(email);
         return new ResponseEntity<>("Sent to:" + email, HttpStatus.ACCEPTED);
     }
 
