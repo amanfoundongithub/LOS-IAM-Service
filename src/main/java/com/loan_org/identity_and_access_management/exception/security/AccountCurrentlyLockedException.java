@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.exception.account;
+package com.loan_org.identity_and_access_management.exception.security;
 
 public class AccountCurrentlyLockedException extends RuntimeException {
 

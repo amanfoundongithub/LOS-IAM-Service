@@ -1,7 +1,7 @@
 package com.loan_org.identity_and_access_management.auth.login.service.impl;
 
 import com.loan_org.identity_and_access_management.auth.login.service.UserLoginSecurityEvaluatorService;
-import com.loan_org.identity_and_access_management.exception.account.AccountCurrentlyLockedException;
+import com.loan_org.identity_and_access_management.exception.security.AccountCurrentlyLockedException;
 import com.loan_org.identity_and_access_management.exception.security.InvalidPasswordException;
 import com.loan_org.identity_and_access_management.userEntity.entity.SecurityBlock;
 import com.loan_org.identity_and_access_management.userEntity.entity.UserDocument;
