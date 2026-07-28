@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.loan_org.identity_and_access_management.token.service.TokenManagementService;
+import com.loan_org.identity_and_access_management.token.refresh.RefreshTokenService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +17,13 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("${api.endpoint.logout.url}")
 public class LogoutController {
 
-    private final TokenManagementService tokenManagementService;
+    private final RefreshTokenService refreshTokenService;
     
     @PostMapping
     public ResponseEntity<Void> logout(
             @Valid @RequestBody LogoutRequest revocationRequest
     ) {
-        tokenManagementService.revokeRefreshToken(revocationRequest);
+        refreshTokenService.revokeRefreshToken(revocationRequest);
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
         .build();
     }

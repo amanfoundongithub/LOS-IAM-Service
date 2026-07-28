@@ -2,7 +2,7 @@ package com.loan_org.identity_and_access_management.auth.register.service.impl;
 
 import com.loan_org.identity_and_access_management.auth.register.service.RegistrationWorkflowCoordinator;
 import com.loan_org.identity_and_access_management.messaging.service.EmailService;
-import com.loan_org.identity_and_access_management.token.service.TokenManagementService;
+import com.loan_org.identity_and_access_management.token.emailActivation.EmailActivationTokenService;
 import com.loan_org.identity_and_access_management.userEntity.entity.UserDocument;
 
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 public class RegistrationWorkflowCoordinatorImpl
         implements RegistrationWorkflowCoordinator {
 
-    private final TokenManagementService tokenManagementService;
+    private final EmailActivationTokenService emailActivationTokenService;
     private final EmailService emailService;
 
     @Override
@@ -29,7 +29,7 @@ public class RegistrationWorkflowCoordinatorImpl
         log.debug("Generating activation token for user [{}].", email);
 
         String activationToken =
-                tokenManagementService.generateActivationToken(email);
+                emailActivationTokenService.generateActivationToken(email);
 
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
 

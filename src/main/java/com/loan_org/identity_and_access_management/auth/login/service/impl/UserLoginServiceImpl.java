@@ -6,7 +6,7 @@ import com.loan_org.identity_and_access_management.auth.login.service.JwtService
 import com.loan_org.identity_and_access_management.auth.login.service.UserLoginSecurityEvaluatorService;
 import com.loan_org.identity_and_access_management.auth.login.service.UserLoginService;
 import com.loan_org.identity_and_access_management.exception.AccountNotFoundException;
-import com.loan_org.identity_and_access_management.token.service.TokenManagementService;
+import com.loan_org.identity_and_access_management.token.refresh.RefreshTokenService;
 import com.loan_org.identity_and_access_management.userEntity.dto.UserResponseDto;
 import com.loan_org.identity_and_access_management.userEntity.entity.UserDocument;
 import com.loan_org.identity_and_access_management.userEntity.repository.UserRepository;
@@ -26,7 +26,7 @@ public class UserLoginServiceImpl implements UserLoginService {
     private final UserLoginSecurityEvaluatorService loginSecurityEvaluatorService;
     private final UserRepository userRepository;
     private final JwtService jwtService;
-    private final TokenManagementService tokenManagementService;
+    private final RefreshTokenService refreshTokenService;
 
     @Override
     @Transactional
@@ -58,7 +58,7 @@ public class UserLoginServiceImpl implements UserLoginService {
                         .build();
 
         String accessToken = jwtService.generateToken(user);
-        String refreshToken = tokenManagementService.generateRefreshToken(userDocument.getEmail());
+        String refreshToken = refreshTokenService.generateRefreshToken(userDocument.getEmail());
 
         log.info("User [{}] authenticated successfully.", user.email());
 

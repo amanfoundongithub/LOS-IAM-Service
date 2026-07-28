@@ -1,14 +1,12 @@
-package com.loan_org.identity_and_access_management.token.repository;
+package com.loan_org.identity_and_access_management.token.emailActivation;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
-
-import com.loan_org.identity_and_access_management.token.entity.ActivationTokenDocument;
 
 import java.util.Optional;
 
 /**
  * Repository interface for managing persistence operations related to
- * {@link ActivationTokenDocument} entities in MongoDB.
+ * {@link EmailActivationTokenDocument} entities in MongoDB.
  *
  * <p>
  * Provides standard CRUD operations through
@@ -34,8 +32,8 @@ import java.util.Optional;
  * @author Aman Raj
  * @since 1.0
  */
-public interface ActivationTokenRepository
-        extends MongoRepository<ActivationTokenDocument, String> {
+public interface EmailActivationTokenRepository
+        extends MongoRepository<EmailActivationTokenDocument, String> {
 
     /**
      * Retrieves an activation token document by its token value.
@@ -44,5 +42,5 @@ public interface ActivationTokenRepository
      * @return an {@link Optional} containing the matching activation token
      * document if found, otherwise an empty {@link Optional}
      */
-    Optional<ActivationTokenDocument> findByToken(String token);
+    Optional<EmailActivationTokenDocument> findByToken(String token);
 }

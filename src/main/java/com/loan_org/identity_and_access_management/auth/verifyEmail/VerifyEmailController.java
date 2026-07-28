@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.loan_org.identity_and_access_management.token.service.TokenManagementService;
+import com.loan_org.identity_and_access_management.token.emailActivation.EmailActivationTokenService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,13 +18,13 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("${api.endpoint.verify_email.url}")
 public class VerifyEmailController {
 
-    private final TokenManagementService tokenManagementService;
+    private final EmailActivationTokenService emailActivationTokenService;
     
     @GetMapping
     public ResponseEntity<Map<String, String>> verifyAccount(
             @RequestParam("token") String token
     ) {
-        tokenManagementService.verifyActivationToken(token);
+        emailActivationTokenService.verifyActivationToken(token);
         return ResponseEntity.status(HttpStatus.OK)
         .body(
             Map.of(

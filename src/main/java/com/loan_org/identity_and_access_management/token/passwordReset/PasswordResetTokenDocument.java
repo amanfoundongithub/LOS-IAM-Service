@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.token.entity;
+package com.loan_org.identity_and_access_management.token.passwordReset;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -44,5 +44,5 @@ public class PasswordResetTokenDocument {
     public boolean isExpired() {
         return Instant.now().isAfter(this.expiresAt);
     }
-    
+
 }

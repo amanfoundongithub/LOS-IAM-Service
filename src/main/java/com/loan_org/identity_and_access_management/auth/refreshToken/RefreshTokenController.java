@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.loan_org.identity_and_access_management.token.service.TokenManagementService;
+import com.loan_org.identity_and_access_management.token.refresh.RefreshTokenService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("${api.endpoint.refresh_token.url}")
 public class RefreshTokenController {
     
-    private final TokenManagementService tokenManagementService;
+    private final RefreshTokenService refreshTokenService;
 
     @PostMapping
     public ResponseEntity<String> refreshToken(
@@ -25,7 +25,7 @@ public class RefreshTokenController {
     ) {
         return ResponseEntity.status(HttpStatus.OK)
             .body(
-                tokenManagementService.generateRefreshToken(request)
+                refreshTokenService.generateRefreshToken(request)
             );
     }
 }

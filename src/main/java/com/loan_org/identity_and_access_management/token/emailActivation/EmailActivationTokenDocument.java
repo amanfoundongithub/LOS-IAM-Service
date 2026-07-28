@@ -1,4 +1,4 @@
-package com.loan_org.identity_and_access_management.token.entity;
+package com.loan_org.identity_and_access_management.token.emailActivation;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -9,21 +9,21 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.Instant;
 
 /**
- * MongoDB document representing a time-bound refresh token
- * associated with a user session.
+ * MongoDB document representing a time-bound account activation token
+ * associated with a user identity.
  *
- * <p>Used to issue new access tokens without requiring
- * re-authentication while maintaining session continuity.</p>
+ * <p>Used during account verification workflows to validate ownership
+ * of a registered email address.</p>
  *
  * @author Aman Raj
  */
-@Document(collection = "refresh_tokens")
+@Document(collection = "activation_tokens")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RefreshTokenDocument {
+public class EmailActivationTokenDocument {
 
     @Id
     @Setter(AccessLevel.NONE)
@@ -38,11 +38,11 @@ public class RefreshTokenDocument {
     @Email
     private String userEmail;
 
-    @Indexed(name = "refresh_token_expiry_idx", expireAfter = "0s")
+    @Indexed(expireAfter = "0s")
     private Instant expiresAt;
 
     public boolean isExpired() {
         return Instant.now().isAfter(this.expiresAt);
     }
-
+    
 }
