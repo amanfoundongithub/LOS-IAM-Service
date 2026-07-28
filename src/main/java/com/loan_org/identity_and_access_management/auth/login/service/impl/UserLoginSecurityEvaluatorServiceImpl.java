@@ -1,7 +1,8 @@
 package com.loan_org.identity_and_access_management.auth.login.service.impl;
 
 import com.loan_org.identity_and_access_management.auth.login.service.UserLoginSecurityEvaluatorService;
-import com.loan_org.identity_and_access_management.exception.UnauthorizedAccessException;
+import com.loan_org.identity_and_access_management.exception.account.AccountCurrentlyLockedException;
+import com.loan_org.identity_and_access_management.exception.security.InvalidPasswordException;
 import com.loan_org.identity_and_access_management.userEntity.entity.SecurityBlock;
 import com.loan_org.identity_and_access_management.userEntity.entity.UserDocument;
 import com.loan_org.identity_and_access_management.userEntity.entity.UserStatus;
@@ -35,15 +36,21 @@ public class UserLoginSecurityEvaluatorServiceImpl implements UserLoginSecurityE
 
         // Suspended account?
         if (document.getStatus() == UserStatus.LOCKED) {
-            throw new UnauthorizedAccessException("Account is suspended");
+            throw new AccountCurrentlyLockedException(
+                "email", 
+                document.getEmail()
+            );
         }
 
         // Check for security lockout and raise error if account is locked
         SecurityBlock security = document.getSecurity();
         if (checkIfSecurityLockoutEnabled(security)) {
             TimeLeftWithUnit leftTime = calculateTimeLeftWithUnits(security);
-            throw new UnauthorizedAccessException(
-                    "Lots of time left"
+            throw new AccountCurrentlyLockedException(
+                    "email",
+                    document.getEmail(),
+                    leftTime.timeLeft(),
+                    leftTime.unit()
             );
         }
 
@@ -56,7 +63,12 @@ public class UserLoginSecurityEvaluatorServiceImpl implements UserLoginSecurityE
             int currentAttempts = security.getFailedLoginAttempts() + 1;
             handleFailedAttempt(document, currentAttempts);
             int attemptsLeft = Math.max(0, maxAttempts - currentAttempts);
-            throw new UnauthorizedAccessException("Wrong password");
+            throw new InvalidPasswordException(
+                "email", 
+                document.getEmail(), 
+                attemptsLeft, 
+                maxAttempts
+            );
         }
     }
 

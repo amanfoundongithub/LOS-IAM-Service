@@ -5,7 +5,7 @@ import com.loan_org.identity_and_access_management.auth.login.UserLoginResponse;
 import com.loan_org.identity_and_access_management.auth.login.service.JwtService;
 import com.loan_org.identity_and_access_management.auth.login.service.UserLoginSecurityEvaluatorService;
 import com.loan_org.identity_and_access_management.auth.login.service.UserLoginService;
-import com.loan_org.identity_and_access_management.exception.AccountNotFoundException;
+import com.loan_org.identity_and_access_management.exception.account.AccountNotFoundException;
 import com.loan_org.identity_and_access_management.token.refresh.RefreshTokenService;
 import com.loan_org.identity_and_access_management.userEntity.dto.UserResponseDto;
 import com.loan_org.identity_and_access_management.userEntity.entity.UserDocument;
@@ -75,7 +75,7 @@ public class UserLoginServiceImpl implements UserLoginService {
                 .findByEmailOrUsername(request.email(), request.username())
                 .orElseThrow(() ->
                         new AccountNotFoundException(
-                                "Invalid username/email or password."
+                                "The account with the given email/username could not be found."
                         ));
     }
 }

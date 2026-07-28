@@ -5,7 +5,7 @@ import com.loan_org.identity_and_access_management.auth.register.UserRegistratio
 import com.loan_org.identity_and_access_management.auth.register.service.RegistrationWorkflowCoordinator;
 import com.loan_org.identity_and_access_management.auth.register.service.UserRegistrationFactory;
 import com.loan_org.identity_and_access_management.auth.register.service.UserRegistrationService;
-import com.loan_org.identity_and_access_management.exception.AccountAlreadyExistsException;
+import com.loan_org.identity_and_access_management.exception.account.AccountAlreadyExistsException;
 import com.loan_org.identity_and_access_management.userEntity.dto.UserResponseDto;
 import com.loan_org.identity_and_access_management.userEntity.entity.UserDocument;
 import com.loan_org.identity_and_access_management.userEntity.repository.UserRepository;
@@ -67,20 +67,13 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
                 .build();
     }
 
-    private void validateUniqueIdentifier(
-            String email,
-            String username) {
-
+    private void validateUniqueIdentifier(String email, String username) {
         if (userRepository.existsByEmail(email)) {
-            throw new AccountAlreadyExistsException(
-                    "An account with this email already exists."
-            );
+            throw new AccountAlreadyExistsException("email", email);
         }
-
         if (userRepository.existsByUsername(username)) {
-            throw new AccountAlreadyExistsException(
-                    "An account with this username already exists."
-            );
+            throw new AccountAlreadyExistsException("username", username);
         }
     }
+    
 }
