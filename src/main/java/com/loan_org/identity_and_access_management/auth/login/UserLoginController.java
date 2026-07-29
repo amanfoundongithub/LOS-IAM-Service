@@ -7,8 +7,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import java.time.Duration;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,10 +75,18 @@ public class UserLoginController {
     })
     @PostMapping
     public ResponseEntity<UserLoginResponse> login(
-            @Valid @RequestBody UserLoginRequest request) {
-
-        return ResponseEntity.ok(
-                userLoginService.login(request)
-        );
+            @Valid @RequestBody UserLoginRequest request,
+                                HttpServletResponse httpResponse) {
+        
+        UserLoginResponse response = userLoginService.login(request);
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", response.refreshToken())
+            .httpOnly(true)
+            .secure(false)        
+            .sameSite("Lax")
+            .path("/auth/refresh")
+            .maxAge(Duration.ofDays(7))
+            .build();
+        httpResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        return ResponseEntity.ok(response);
     }
 }
