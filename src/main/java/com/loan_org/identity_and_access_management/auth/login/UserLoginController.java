@@ -83,7 +83,6 @@ public class UserLoginController {
             .httpOnly(true)
             .secure(false)        
             .sameSite("Lax")
-            .path("/auth/refresh")
             .maxAge(Duration.ofDays(7))
             .build();
         httpResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
