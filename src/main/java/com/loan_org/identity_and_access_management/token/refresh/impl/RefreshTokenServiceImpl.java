@@ -9,13 +9,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.loan_org.identity_and_access_management.auth.login.UserLoginResponse;
+import com.loan_org.identity_and_access_management.auth.login.service.JwtService;
 import com.loan_org.identity_and_access_management.auth.logout.LogoutRequest;
 import com.loan_org.identity_and_access_management.auth.refreshToken.RefreshTokenRequest;
 import com.loan_org.identity_and_access_management.exception.TokenNotProvidedException;
 import com.loan_org.identity_and_access_management.exception.UnauthorizedAccessException;
+import com.loan_org.identity_and_access_management.exception.account.AccountNotFoundException;
 import com.loan_org.identity_and_access_management.token.refresh.RefreshTokenDocument;
 import com.loan_org.identity_and_access_management.token.refresh.RefreshTokenRepository;
 import com.loan_org.identity_and_access_management.token.refresh.RefreshTokenService;
+import com.loan_org.identity_and_access_management.userEntity.dto.UserResponseDto;
+import com.loan_org.identity_and_access_management.userEntity.entity.UserDocument;
+import com.loan_org.identity_and_access_management.userEntity.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +32,8 @@ import lombok.extern.slf4j.Slf4j;
 public class RefreshTokenServiceImpl implements RefreshTokenService {
     
     private final RefreshTokenRepository refreshTokenRepository;
+    private final UserRepository userRepository;
+    private final JwtService jwtService;
 
     @Value("${token.refresh_token.expiry_in_days}")
     private int refreshExpiryDays;
@@ -100,6 +108,49 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         refreshTokenRepository.deleteByUserEmail(email);
         log.info("successfully revoked refresh token for given email.");
     }
+
+    @Override
+@Transactional
+public String loginUsingRefreshToken(RefreshTokenRequest request) {
+
+    log.info("Processing refresh token login request.");
+
+    if (request.refreshToken() == null || request.refreshToken().isBlank()) {
+        throw new UnauthorizedAccessException(
+                "The refresh token is not present. Please re-authenticate."
+        );
+    }
+
+    RefreshTokenDocument document = refreshTokenRepository
+            .findByToken(request.refreshToken())
+            .orElseThrow(() ->
+                    new TokenNotProvidedException(
+                            "Provided refresh token is invalid or missing."
+                    ));
+
+    if (document.isExpired()) {
+        refreshTokenRepository.delete(document);
+        throw new UnauthorizedAccessException(
+                "The refresh token has expired. Please re-authenticate."
+        );
+    }
+
+    UserDocument user = userRepository.findByEmail(document.getUserEmail())
+            .orElseThrow(() ->
+                    new AccountNotFoundException(
+                            "Associated user account not found."
+                    ));
+
+    UserResponseDto userDto = UserResponseDto.builder()
+            .id(user.getId())
+            .email(user.getEmail())
+            .username(user.getUsername())
+            .status(user.getStatus())
+            .attributes(user.getAttributes())
+            .build();
+
+    return jwtService.generateToken(userDto);
+}
 
     private String generateRefreshToken() {
         return UUID.randomUUID() + "-" + UUID.randomUUID();
