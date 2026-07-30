@@ -1,5 +1,6 @@
 package com.loan_org.identity_and_access_management.userManagement;
 
+import com.loan_org.identity_and_access_management.middleware.UserPrincipal;
 import com.loan_org.identity_and_access_management.userEntity.dto.UserResponseDto;
 import com.loan_org.identity_and_access_management.userManagement.service.UserManagementService;
 
@@ -20,10 +21,10 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<UserResponseDto> me(
-            @AuthenticationPrincipal String email
+            @AuthenticationPrincipal UserPrincipal principal
     ) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(userManagementService.fetchUserByEmail(email));
+                .body(userManagementService.fetchUserByEmail(principal.email()));
     }
 
 }

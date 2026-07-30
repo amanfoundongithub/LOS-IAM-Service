@@ -24,7 +24,7 @@ public class JwtVerificationServiceImpl implements JwtVerificationService {
 
     // Define the keys for accessing JWT Claims
     private static final String ATTRIBUTES = "attributes";
-    private static final String USER_ROLE = "user_role";
+    private static final String USER_ROLE = "userRole";
 
     // Define the JWT secret key from yaml
     @Value("${jwt.secret.key}")

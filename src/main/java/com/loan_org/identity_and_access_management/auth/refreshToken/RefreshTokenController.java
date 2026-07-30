@@ -2,14 +2,13 @@ package com.loan_org.identity_and_access_management.auth.refreshToken;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.loan_org.identity_and_access_management.token.refresh.RefreshTokenService;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -21,8 +20,9 @@ public class RefreshTokenController {
 
     @PostMapping
     public ResponseEntity<String> refreshToken(
-            @Valid @RequestBody RefreshTokenRequest request
+            @CookieValue(value = "refreshToken", required = false) String refreshToken
     ) {
+        RefreshTokenRequest request = new RefreshTokenRequest(refreshToken);
         return ResponseEntity.status(HttpStatus.OK)
             .body(
                 refreshTokenService.generateRefreshToken(request)

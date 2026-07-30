@@ -35,6 +35,10 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     public String generateRefreshToken(RefreshTokenRequest request) {
         log.info("Processing request for refresh token renewal.");
 
+        if(request.refreshToken() == null) {
+            throw new UnauthorizedAccessException("The refresh token is not present. Please re-authenticate.");
+        }
+
         String originalToken = request.refreshToken();
         RefreshTokenDocument document = refreshTokenRepository.findByToken(originalToken)
                 .orElseThrow(() -> new TokenNotProvidedException("Provided refresh token is invalid or missing. Verification failed."));

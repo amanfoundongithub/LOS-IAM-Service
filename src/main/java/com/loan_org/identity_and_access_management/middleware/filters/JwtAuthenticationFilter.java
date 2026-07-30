@@ -28,7 +28,7 @@ import java.util.Map;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final String USER_ROLE = "user_role";
+    private static final String USER_ROLE = "userRole";
 
     private final String baseUrl;
     private final JwtVerificationService jwtVerificationService;
@@ -68,12 +68,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             
             Map<String, Object> attributes = claims.attributes();
             String role = (String) attributes.get(USER_ROLE);
-
             UserPrincipal principal = new UserPrincipal(
                     claims.email(),
                     role
             );
-
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
                             principal,
