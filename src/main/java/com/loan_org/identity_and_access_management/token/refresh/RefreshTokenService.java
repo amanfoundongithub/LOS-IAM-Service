@@ -1,6 +1,5 @@
 package com.loan_org.identity_and_access_management.token.refresh;
 
-import com.loan_org.identity_and_access_management.auth.login.UserLoginResponse;
 import com.loan_org.identity_and_access_management.auth.logout.LogoutRequest;
 import com.loan_org.identity_and_access_management.auth.refreshToken.RefreshTokenRequest;
 

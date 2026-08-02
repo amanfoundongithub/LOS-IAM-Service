@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.loan_org.identity_and_access_management.auth.login.UserLoginResponse;
 import com.loan_org.identity_and_access_management.auth.login.service.JwtService;
 import com.loan_org.identity_and_access_management.auth.logout.LogoutRequest;
 import com.loan_org.identity_and_access_management.auth.refreshToken.RefreshTokenRequest;

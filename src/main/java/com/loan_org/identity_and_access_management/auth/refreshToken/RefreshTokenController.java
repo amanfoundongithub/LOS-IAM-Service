@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.loan_org.identity_and_access_management.token.refresh.RefreshTokenService;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
