@@ -2,6 +2,7 @@ package com.loan_org.identity_and_access_management.userEntity.dto;
 
 import lombok.Builder;
 
+import java.time.Instant;
 import java.util.Map;
 
 import com.loan_org.identity_and_access_management.userEntity.entity.UserStatus;
@@ -39,6 +40,9 @@ public record UserResponseDto(
          * Current account status.
          */
         UserStatus status,
+
+        Instant createdDate,
+        Instant lastLoginDate,
 
         /**
          * User access attributes (role, permissions, etc.).
