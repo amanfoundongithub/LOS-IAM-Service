@@ -99,8 +99,10 @@ public class SecurityConfig {
                                 authBaseUrl + "/register",
                                 authBaseUrl + "/login",
                                 authBaseUrl + "/refresh",
+                                authBaseUrl + "/refresh/login",
                                 authBaseUrl + "/verify",
-                                authBaseUrl + "/reset-password-request"
+                                authBaseUrl + "/reset-password-request",
+                                authBaseUrl + "/allUserRoles"
                         ).permitAll()
 
                         .requestMatchers(

@@ -1,15 +1,15 @@
 package com.loan_org.identity_and_access_management.admin.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.Pageable;
-
 
 import com.loan_org.identity_and_access_management.admin.model.user_search.UserSearchAttributes;
 import com.loan_org.identity_and_access_management.admin.model.user_search.UserSearchResults;
@@ -28,48 +28,70 @@ import lombok.extern.slf4j.Slf4j;
 public class AdminUserSearchServiceImpl implements AdminUserSearchService {
 
     private final UserRepository userRepository;
-    
+
     @Override
     public UserSearchResults searchUsers(UserSearchAttributes searchAttributes) {
 
-        log.info("Received ADMIN request to search for users based on criteria: {}",
-                searchAttributes.toString());
+        log.info("Received ADMIN request to search users with criteria: {}", searchAttributes);
 
-        // Sort criteria
-        String sortBy = searchAttributes.sortBy();
-        String sortDir = searchAttributes.sortDir();
-        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.DESC.name())
-                ? Sort.by(sortBy).descending()
-                : Sort.by(sortBy).ascending();
+        // Sort
+        Sort sort = Sort.by(
+                "desc".equalsIgnoreCase(searchAttributes.sortDir())
+                        ? Sort.Direction.DESC
+                        : Sort.Direction.ASC,
+                searchAttributes.sortBy()
+        );
 
-        // Pageable result
-        Pageable pageable = PageRequest.of(searchAttributes.page(), searchAttributes.size(), sort);
+        Pageable pageable = PageRequest.of(
+                searchAttributes.page(),
+                searchAttributes.size(),
+                sort
+        );
 
-        // Sample reference
-        UserDocument sampleDocument = new UserDocument();
-        if (searchAttributes.role() != null) {
-            sampleDocument.getAttributes().put("role", searchAttributes.role());
+        Page<UserDocument> userPage;
+
+        boolean hasRoleFilter = searchAttributes.role() != null;
+        boolean hasStatusFilter =
+                searchAttributes.status() != null &&
+                !searchAttributes.status().isBlank();
+
+        // No filters -> return all users
+        if (!hasRoleFilter && !hasStatusFilter) {
+
+            userPage = userRepository.findAll(pageable);
+
+        } else {
+
+            UserDocument probe = new UserDocument();
+
+            if (hasStatusFilter) {
+                probe.setStatus(UserStatus.valueOf(searchAttributes.status().toUpperCase()));
+            }
+
+            if (hasRoleFilter) {
+                probe.setAttributes(new HashMap<>());
+                probe.getAttributes().put("role", searchAttributes.role());
+            }
+
+            ExampleMatcher matcher = ExampleMatcher.matchingAll()
+                    .withIgnoreNullValues();
+
+            Example<UserDocument> example = Example.of(probe, matcher);
+
+            userPage = userRepository.findAll(example, pageable);
         }
-        if (searchAttributes.status() != null){
-            sampleDocument.setStatus(UserStatus.valueOf(searchAttributes.status()));
-        }
 
-        // Matcher
-        ExampleMatcher matcher = ExampleMatcher.matchingAll().withIgnoreNullValues();
-        Example<UserDocument> example = Example.of(sampleDocument, matcher);
-
-        // Find all documents in the page
-        Page<UserDocument> userPage = userRepository.findAll(example, pageable);
-        log.info("Found {} users based on criteria: {}",
-                userPage.getTotalElements(),
-                userPage.toString());
-
-        List<UserResponseDto> dtoList = userPage.getContent().stream()
+        List<UserResponseDto> dtoList = userPage.getContent()
+                .stream()
                 .map(this::mapToResponseDto)
                 .toList();
-        log.info("Filtered & found {} users based on the example: {}",
+
+        log.info(
+                "Returning {} users (page {} of {})",
                 dtoList.size(),
-                example.toString());
+                userPage.getNumber(),
+                userPage.getTotalPages()
+        );
 
         return UserSearchResults.builder()
                 .content(dtoList)
@@ -88,7 +110,8 @@ public class AdminUserSearchServiceImpl implements AdminUserSearchService {
                 .username(userDocument.getUsername())
                 .status(userDocument.getStatus())
                 .attributes(userDocument.getAttributes())
+                .createdDate(userDocument.getMetadata().getCreatedAt())
+                .lastLoginDate(userDocument.getMetadata().getLastLoginAt())
                 .build();
     }
-
 }

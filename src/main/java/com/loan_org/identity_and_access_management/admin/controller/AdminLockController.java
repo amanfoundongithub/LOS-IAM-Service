@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("${api.endpoint.admin.url}")
+@RequestMapping("${api.admin.base_url}")
 public class AdminLockController {
     
     private final AdminLockService adminLockService;

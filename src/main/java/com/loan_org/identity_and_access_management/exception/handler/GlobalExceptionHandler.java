@@ -1,5 +1,6 @@
 package com.loan_org.identity_and_access_management.exception.handler;
 
+import com.loan_org.identity_and_access_management.exception.UnauthorizedAccessException;
 import com.loan_org.identity_and_access_management.exception.account.AccountAlreadyExistsException;
 import com.loan_org.identity_and_access_management.exception.account.AccountNotFoundException;
 import com.loan_org.identity_and_access_management.exception.security.AccountCurrentlyLockedException;
@@ -51,6 +52,14 @@ public class GlobalExceptionHandler {
         log.warn("WARNING: Triggered an InvalidPasswordException with the following message: {}",ex.getMessage());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
                 create(ex, HttpStatus.FORBIDDEN, request)
+        );
+    }
+
+    @ExceptionHandler(UnauthorizedAccessException.class)
+    public ResponseEntity<ApiErrorResponse> handleUnauthorizedException(UnauthorizedAccessException ex, HttpServletRequest request) {
+        log.warn("WARNING: Triggered an UnauthorizedAccessException with the following message: {}",ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                create(ex, HttpStatus.UNAUTHORIZED, request)
         );
     }
 

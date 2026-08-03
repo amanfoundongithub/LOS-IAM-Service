@@ -27,6 +27,8 @@ public interface RefreshTokenService {
      */
     void   revokeRefreshToken(LogoutRequest request);
 
+    String loginUsingRefreshToken(RefreshTokenRequest request);
+
     /**
      * Revokes all refresh tokens for a given email
      *
