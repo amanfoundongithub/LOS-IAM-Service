@@ -1,11 +1,6 @@
 package com.loan_org.identity_and_access_management.admin.model.account_lock;
 
-import java.time.Instant;
-
-import com.loan_org.identity_and_access_management.admin.shared.LockType;
-
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 /**
  * 
@@ -21,12 +16,6 @@ public record UserAccountLockRequest(
         String reason,
 
         @NotBlank(message = "Please provide the userId for locking the account.")
-        String userId,
+        String userId
 
-        @NotNull(message = "Provide a lock type to determine if lock is temporary or permanent.")
-        LockType lockType,
-
-        Instant lockedUntil, 
-
-        boolean notifyUser
 ) {}
