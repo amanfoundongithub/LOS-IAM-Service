@@ -127,7 +127,8 @@ api:
       url: /api/v1/auth/admin
     allRoles:
       url: /api/v1/auth/allUserRoles
-
+    allStatus:
+      url: /api/v1/auth/allUserStatus
 # Token configuration
 token: 
   refresh_token:

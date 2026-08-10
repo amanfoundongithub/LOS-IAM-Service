@@ -40,8 +40,8 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
 
         return new DashboardUsersSummary(
             totalUsers,
-            blockedUsers,
             activeUsers,
+            blockedUsers,
             adminUsers
         );
     }

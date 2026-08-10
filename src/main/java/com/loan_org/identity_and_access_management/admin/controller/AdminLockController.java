@@ -65,10 +65,12 @@ public class AdminLockController {
             @RequestParam(value = "sortBy", defaultValue = "id", required = false) String sortBy,
             @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir,
             @RequestParam(value = "role", required = false) UserRole role,
-            @RequestParam(value = "status", required = false) String status
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "q", required = false) String query 
     ) {
         // Create a search attribute
         UserSearchAttributes searchAttributes = UserSearchAttributes.builder()
+                .query(query)
                 .page(page)
                 .size(size)
                 .sortBy(sortBy)
