@@ -18,6 +18,7 @@ import com.loan_org.identity_and_access_management.admin.model.user_search.UserS
 import com.loan_org.identity_and_access_management.admin.model.user_search.UserSearchResults;
 import com.loan_org.identity_and_access_management.admin.service.AdminLockService;
 import com.loan_org.identity_and_access_management.admin.service.AdminUserSearchService;
+import com.loan_org.identity_and_access_management.middleware.UserPrincipal;
 import com.loan_org.identity_and_access_management.userEntity.entity.UserRole;
 
 import jakarta.validation.Valid;
@@ -34,9 +35,9 @@ public class AdminLockController {
     @PostMapping("/lock")
     public ResponseEntity<Map<String, String>> lock(
             @Valid @RequestBody UserAccountLockRequest lockRequest,
-            @AuthenticationPrincipal String lockerId
+            @AuthenticationPrincipal UserPrincipal lockerId
     ) {
-        String message = adminLockService.lockUser(lockerId, lockRequest);
+        String message = adminLockService.lockUser(lockerId.email(), lockRequest);
         return ResponseEntity.status(HttpStatus.OK).body(
                 Map.of(
                         "message", message
@@ -47,9 +48,9 @@ public class AdminLockController {
     @PostMapping("/unlock")
     public ResponseEntity<Map<String, String>> unlock(
             @Valid @RequestBody UserAccountUnlockRequest lockRequest,
-            @AuthenticationPrincipal String unlockerId
+            @AuthenticationPrincipal UserPrincipal unlockerId
     ) {
-        String message = adminLockService.unlockUser(unlockerId, lockRequest);
+        String message = adminLockService.unlockUser(unlockerId.email(), lockRequest);
         return ResponseEntity.status(HttpStatus.OK).body(
                 Map.of(
                         "message", message
@@ -64,10 +65,12 @@ public class AdminLockController {
             @RequestParam(value = "sortBy", defaultValue = "id", required = false) String sortBy,
             @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir,
             @RequestParam(value = "role", required = false) UserRole role,
-            @RequestParam(value = "status", required = false) String status
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "q", required = false) String query 
     ) {
         // Create a search attribute
         UserSearchAttributes searchAttributes = UserSearchAttributes.builder()
+                .query(query)
                 .page(page)
                 .size(size)
                 .sortBy(sortBy)

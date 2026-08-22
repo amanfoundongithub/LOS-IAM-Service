@@ -6,6 +6,7 @@ import lombok.Builder;
 
 @Builder
 public record UserSearchAttributes(
+        String query,
         int page,
         int size,
         String sortBy,
