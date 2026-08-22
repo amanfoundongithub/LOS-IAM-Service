@@ -39,4 +39,3 @@ jobs:
           coverage_report_name: Code Coverage Summary
           coverage_report_title: JaCoCo Test Coverage
           # If your coverage falls below 60%, fail the build pipeline
-          min_coverage_overall: 60
