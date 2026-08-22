@@ -36,7 +36,7 @@ cp src/main/resources/application-docker.txt src/main/resources/application-dock
 # Edit application-docker.yaml and set JWT_SECRET_KEY and deployment credentials
 
 # Create the shared network if it does not already exist
-docker network create los-network
+docker network inspect los-network >/dev/null 2>&1 || docker network create los-network
 
 # Build and start the service and MongoDB
 docker compose up --build
